@@ -3,7 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import { MilitaryBaseFactory } from './Factories/MilitaryBaseFactory';
 import { PopulationAreaFactory } from './Factories/PopulationAreaFactory';
-import { CountryMap } from './Entities/WorldObjects/WorldMap';
+import { CountryMap } from './Entities/WorldObjects/CountryMap';
+import { MapComponent } from './Components/MapComponent';
 
 class App extends Component {
 
@@ -23,29 +24,19 @@ class App extends Component {
 
     const map = new CountryMap({sizeX: 10, sizeY: 10});
 
-    map.logMapToConsole();
-    
-    console.log(`App.tsx: componentDidMount: new map:`, map);
-    console.table(map);
+    // map.logDetailedMapToConsole();
+
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
+        {/* <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        </header> */}
+
+        <MapComponent countryMap={new CountryMap({sizeX: 10, sizeY: 10})} />
+      
       </div>
     );
   }

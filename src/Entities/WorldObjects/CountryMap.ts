@@ -8,7 +8,7 @@ export class CountryMap {
     private sizeX: number;
     private sizeY: number;
 
-    private map: AbstractMapLocation[][]
+    public map: AbstractMapLocation[][]
 
     private readonly newRuralArea = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Rural"});
 
@@ -21,7 +21,7 @@ export class CountryMap {
         this.initializeMap();
     }
 
-    public logMapToConsole() {
+    public logDetailedMapToConsole() {
 
         console.log(`WorldMap.ts: logSelfToConsole: logging map:`, {map: this.map});
         
