@@ -1,11 +1,11 @@
-import { MilitaryBaseTypeLabels } from "../Entities/Bases/MilitaryBaseTypes";
-import { AbmBase } from "../Entities/Bases/AbmBase";
-import { RadarBase } from "../Entities/Bases/RadarBase";
-import { MissileBase } from "../Entities/Bases/MissleBase";
-import { AirBase } from "../Entities/Bases/AirBase";
-import { ArmyBase } from "../Entities/Bases/ArmyBase";
-import { AbstractMilitaryBase } from "../Entities/Bases/AbstractMilitaryBase";
-import { NavyBase } from "../Entities/Bases/NavyBase";
+import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
+import { AbmBase } from "../Entities/WorldObjects/Bases/AbmBase";
+import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
+import { MissileBase } from "../Entities/WorldObjects/Bases/MissleBase";
+import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
+import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
+import { AbstractMilitaryBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";
+import { NavyBase } from "../Entities/WorldObjects/Bases/NavyBase";
 
 export interface MilitaryBaseProperties {
 

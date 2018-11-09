@@ -1,9 +1,10 @@
 import { AbstractMilitaryBase } from "./AbstractMilitaryBase";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
 
-export class AirBase extends AbstractMilitaryBase {
+export class RadarBase extends AbstractMilitaryBase {
 
-    public readonly BaseType: MilitaryBaseTypeLabels = "Air";
+    public readonly BaseType: MilitaryBaseTypeLabels = "Radar";
+    public gameYear: number = 1;
 
     constructor() {
         super();

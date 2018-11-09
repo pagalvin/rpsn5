@@ -1,6 +1,6 @@
 
-import { AbstractGameEntity } from "../gameEntity";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
+import { AbstractGameEntity } from "../../gameEntity";
 
 export interface MilitaryBaseProperties {
     Name: string;
