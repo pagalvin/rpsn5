@@ -21,13 +21,22 @@ export class CountryMap {
         this.initializeMap();
     }
 
+    public logMapToConsole() {
+
+        console.log(`WorldMap.ts: logSelfToConsole: logging map:`, {map: this.map});
+        
+        for (let i = 0; i < this.map.length; i++) {
+            console.table(this.map[i]);
+        }
+    }
+
     private initializeMap() {
 
         // First, create sizeX by sizeY  collection of negligble population centers
         for (let x = 0; x < this.sizeX; x++) {
 
             this.map.push([]);
-            
+
             for (let y = 0; y < this.sizeY; y++) {
 
                 const mi = new MapLocation();

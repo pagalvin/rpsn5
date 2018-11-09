@@ -23,6 +23,8 @@ class App extends Component {
 
     const map = new CountryMap({sizeX: 10, sizeY: 10});
 
+    map.logMapToConsole();
+    
     console.log(`App.tsx: componentDidMount: new map:`, map);
     console.table(map);
   }
