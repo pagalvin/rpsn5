@@ -8,7 +8,7 @@ export class CountryMap {
     private sizeX: number;
     private sizeY: number;
 
-    public map: AbstractMapLocation[][]
+    public map: MapLocation[][]
 
     private readonly newRuralArea = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Rural"});
 

@@ -3,7 +3,7 @@ import { PopulationAreaTypeLabels } from "./PopulationAreaTypes";
 export interface PopulationAreaProperties {
     Name: string;
     Population: number;
-    PopulationAreaType: PopulationAreaTypeLabels;
+    WorldObjectLabel: PopulationAreaTypeLabels;
 }
 
 
@@ -11,7 +11,7 @@ export abstract class AbstractPopulationArea implements PopulationAreaProperties
 
     public Name: string;
     public Population: number;
-    abstract PopulationAreaType: PopulationAreaTypeLabels;
+    abstract WorldObjectLabel: PopulationAreaTypeLabels;
 
     constructor() {
         this.Name = "";

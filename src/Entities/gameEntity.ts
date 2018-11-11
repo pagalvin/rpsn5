@@ -10,6 +10,9 @@ export class Game extends AbstractGameEntity {
 
     private static instance: Game;
 
+    public isPeacetime: boolean = true;
+    public isWartime: boolean = false;
+    
     public turn: number = 0;
     public get gameYear() { return this.turn + 1944;}
     

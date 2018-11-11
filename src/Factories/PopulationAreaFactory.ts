@@ -26,7 +26,7 @@ export class PopulationAreaFactory {
     }
 
     private newName(args: {forPopulationArea: AbstractPopulationArea}) {
-        console.log(`${this.msh}: newName: typeof base:`, args.forPopulationArea.PopulationAreaType);
+        console.log(`${this.msh}: newName: typeof base:`, args.forPopulationArea.WorldObjectLabel);
         return 'xyzzy';
     }
 
@@ -59,6 +59,8 @@ export class PopulationAreaFactory {
             }
             
         }
+
+        return null;
 
     }
 

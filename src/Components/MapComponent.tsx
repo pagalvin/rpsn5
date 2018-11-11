@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { CountryMap } from '../Entities/WorldObjects/CountryMap';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
 import { AbstractMapLocation } from '../Entities/MapObjects/AbstractMapLocation';
+import { MapItemComponent } from './MapItemComponent';
 
 export interface state {
 
@@ -28,13 +29,16 @@ export class MapComponent extends React.Component<props, state> {
 
   render() {
 
-    const mapRow = (mapRow: AbstractMapLocation[]) => {
+    const mapRow = (mapRow: MapLocation[]) => {
 
-      console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
+      // console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
 
       const result = 
         <tr key={this.uiIdx++}>
-          {mapRow.map(cell => <td key={this.uiIdx++}>cell</td>)}
+          {
+            mapRow.map(cell => <td key={this.uiIdx++}><MapItemComponent mapItem={cell} key={this.uiIdx++}/></td>)
+          }
+
         </tr>
       ;
 

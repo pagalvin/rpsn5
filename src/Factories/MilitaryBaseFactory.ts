@@ -32,7 +32,7 @@ export class MilitaryBaseFactory {
     }
 
     private newName(args: {forBase: AbstractMilitaryBase}) {
-        console.log(`${this.msh}: newName: typeof base:`, args.forBase.BaseType);
+        console.log(`${this.msh}: newName: typeof base:`, args.forBase.WorldObjectLabel);
         return 'xyzzy';
     }
 

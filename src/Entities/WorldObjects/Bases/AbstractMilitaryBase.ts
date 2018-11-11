@@ -5,7 +5,7 @@ import { AbstractGameEntity } from "../../gameEntity";
 export interface MilitaryBaseProperties {
     Name: string;
     Age: number;
-    BaseType: MilitaryBaseTypeLabels;
+    WorldObjectLabel: MilitaryBaseTypeLabels;
 }
 
 export interface MilitaryBasedActions {
@@ -19,9 +19,9 @@ export abstract class AbstractMilitaryBase extends AbstractGameEntity implements
 
     // Having a "BaseType" label here helps some code work a little more generically since "typeof [any base object]" returns "object"
     // This gives us a shot at treating bases a little more generically. Look at MilitaryBaseFactory.ts for an example.
-    abstract BaseType: MilitaryBaseTypeLabels;
+    public abstract WorldObjectLabel: MilitaryBaseTypeLabels;
 
-    abstract activate(): void;
+    public abstract activate(): void;
 
     constructor() {
         super();

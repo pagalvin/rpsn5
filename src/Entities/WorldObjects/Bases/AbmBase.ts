@@ -3,7 +3,7 @@ import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
 
 export class AbmBase extends AbstractMilitaryBase {
 
-    public readonly BaseType: MilitaryBaseTypeLabels = "ABM";
+    public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "ABM";
 
     public gameYear: number = 1;
 

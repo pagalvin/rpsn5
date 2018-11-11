@@ -1,13 +1,11 @@
-import { MilitaryBaseTypes } from "../WorldObjects/Bases/MilitaryBaseTypes";
-import { PopulationAreaTypes } from "../WorldObjects/PopulationCenters/PopulationAreaTypes";
-import { RuralArea } from "../WorldObjects/PopulationCenters/Rural";
-
+import { MilitaryBaseTypes, MilitaryBaseTypeLabels } from "../WorldObjects/Bases/MilitaryBaseTypes";
+import { PopulationAreaTypes, PopulationAreaTypeLabels } from "../WorldObjects/PopulationCenters/PopulationAreaTypes";
 
 export abstract class AbstractMapLocation {
     
-    public Contents: MilitaryBaseTypes | PopulationAreaTypes | RuralArea | null;
-
+    abstract Contents: MilitaryBaseTypes | PopulationAreaTypes;
+    
     constructor() {
-        this.Contents = null;
+        // this.Contents = null;
     }
 }
