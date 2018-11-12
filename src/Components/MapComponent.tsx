@@ -1,13 +1,22 @@
 
-import React, { Component } from 'react';
+import React, { Component, SyntheticEvent } from 'react';
 import { CountryMap } from '../Entities/WorldObjects/CountryMap';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
-import { AbstractMapLocation } from '../Entities/MapObjects/AbstractMapLocation';
 import { MapItemComponent } from './MapItemComponent';
+import { GameRules } from '../Game/GameRules';
+import { Constants } from '../Game/constants';
+import { MilitaryBaseFactory } from '../Factories/MilitaryBaseFactory';
+import { MilitaryBaseTypeLabels } from '../Entities/WorldObjects/Bases/MilitaryBaseTypes';
 
-export interface state {
-
+export interface buildBaseResult {
+  manifestIndex: number;
+  didSucceed: boolean;
+  message: string;
 }
+
+export type notifyBuildDragResult = (args: { result: buildBaseResult }) => void;
+
+export interface state {}
 
 export interface props {
   countryMap: CountryMap;
@@ -27,26 +36,113 @@ export class MapComponent extends React.Component<props, state> {
 
   }
 
+  private handleDrop(args: { dropEvent: any /* SyntheticEvent<HTMLTableCellElement>*/, cell: MapLocation }) {
+
+    const notifyDragResult: notifyBuildDragResult = (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME];
+
+    console.log(`MapComponent.tsx: handleDrop: Got a drop event on a cell:`, {
+      event: args.dropEvent,
+      cell: args.cell,
+      baseType: args.dropEvent.dataTransfer.getData("baseType"),
+      manifestIndex: args.dropEvent.dataTransfer.getData("manifestIndex")
+    }
+    );
+
+    const isOK = GameRules.canPlaceItemAtMapLocation(
+      {
+        atLocation: args.cell,
+        itemToCheck: args.cell.Contents.WorldObjectLabel,
+        map: new CountryMap({ sizeX: 10, sizeY: 10 })
+      });
+
+    if (isOK) {
+
+      const newBase = MilitaryBaseFactory.getInstance().createNewBase({baseType: (args.dropEvent.dataTransfer.getData("baseType") as MilitaryBaseTypeLabels)});
+
+      if (newBase) {
+        args.cell.placeItem({ itemToPlace: newBase });
+
+        notifyDragResult(
+          {
+            result: {
+              didSucceed: true,
+              manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
+              message: `Successfully built a base, type=${newBase.WorldObjectLabel} named ${newBase.Name}.`
+            }
+          });
+        }
+        else {
+          notifyDragResult(
+            {
+              result: {
+                didSucceed: true,
+                manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
+                message: `unknown base type!.`
+              }
+            });
+          }
+    }
+    else {
+      console.log(`You can't place an object there because of rules or it's not an empty location.`);
+      notifyDragResult(
+        {
+          result: {
+            didSucceed: false,
+            manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
+            message: "You cannot build a base there because it is already occupied by another base or large population area."
+          }
+        });
+    }
+
+    console.log(`MapComponent.tsx: handleDrop: this.notifyDragResult:`, { notifyDragResult: notifyDragResult });
+
+    this.forceUpdate();
+
+  }
+
   render() {
 
     const mapRow = (mapRow: MapLocation[]) => {
 
       // console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
 
-      const result = 
+      const result =
         <tr key={this.uiIdx++}>
           {
-            mapRow.map(cell => <td key={this.uiIdx++}><MapItemComponent mapItem={cell} key={this.uiIdx++}/></td>)
+            mapRow.map(cell => (
+              <td key={this.uiIdx++}
+                onDrop={
+                  (e: SyntheticEvent<HTMLTableDataCellElement>) => {
+                    e.preventDefault();
+                    console.log(`MapComponent: render: onDrop: e:`, { e: e });
+                    this.handleDrop({ dropEvent: e, cell: cell });
+                  }
+                }
+                onDragOver={
+                  (e) => {
+                    e.preventDefault();
+                    // console.log(`MapComponent: render: onDragOver: e:`, { e: e, cell: cell });
+                  }
+                }
+              >
+                &nbsp;
+                xx
+                <MapItemComponent mapItem={cell} key={this.uiIdx++} />
+                xx
+                &nbsp;
+
+              </td>
+            ))
           }
 
         </tr>
-      ;
+        ;
 
-      const result2 = 
+      const result2 =
         <div key={this.uiIdx++}>
-            mapRow result
+          mapRow result
         </div>
-      ;
+        ;
 
       return result;
 
@@ -59,7 +155,7 @@ export class MapComponent extends React.Component<props, state> {
           <tbody>
             {this.props.countryMap.map.map(row => mapRow(row))}
           </tbody>
-         </table>
+        </table>
       )
     }
 

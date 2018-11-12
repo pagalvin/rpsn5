@@ -4,11 +4,13 @@ import { Game } from '../Entities/gameEntity';
 import { GameLogic } from '../Game/GameLogic';
 import { Button } from '@material-ui/core';
 import { TickerComponent } from './TickerComponent';
+import { BuildManifestComponent } from './BuildManifestComponent';
 
 export interface state {
     isMakingStrategicChoice: boolean;
     isMakingTacticalChoice: boolean;
     isSelectingLocation: boolean;
+    isBuilding: boolean;
 }
 
 export interface props {
@@ -52,27 +54,27 @@ export class UserActionsComponent extends Component<props, state> {
         },
         {
             actionHandler: this.notYetImplemented,
-            playerChoice: "Build ABM Base"
+            playerChoice: "ABM"
         },
         {
             actionHandler: this.notYetImplemented,
-            playerChoice: "Build Air Base"
+            playerChoice: "Air"
         },
         {
             actionHandler: this.notYetImplemented,
-            playerChoice: "Build Army Base"
+            playerChoice: "Army"
         },
         {
             actionHandler: this.notYetImplemented,
-            playerChoice: "Build Missile Base"
+            playerChoice: "Missile"
         },
         {
             actionHandler: this.notYetImplemented,
-            playerChoice: "Build Navy Base"
+            playerChoice: "Navy"
         },
         {
             actionHandler: this.notYetImplemented,
-            playerChoice: "Build Radar Base"
+            playerChoice: "Radar"
         }
     ];
 
@@ -83,6 +85,7 @@ export class UserActionsComponent extends Component<props, state> {
             isSelectingLocation: false,
             isMakingStrategicChoice: true,
             isMakingTacticalChoice: false,
+            isBuilding: false
         }
     }
 
@@ -94,7 +97,6 @@ export class UserActionsComponent extends Component<props, state> {
 
     }
 
-
     render() {
 
         const strategicOptions = this.getMoveChoiceLabels().strategicOptions.map(c => this.getChoiceButtonMarkup({forChoice: c}));
@@ -102,6 +104,10 @@ export class UserActionsComponent extends Component<props, state> {
 
         if (this.state.isMakingStrategicChoice) {
             return strategicOptions;
+        }
+
+        if (this.state.isBuilding) {
+            return <BuildManifestComponent allowedBasesToBuild={this.getMoveChoiceLabels().tacticalOptions} totalAllowedToBuild={2}/>
         }
         else {
             return tacticalOptions;
@@ -125,7 +131,7 @@ export class UserActionsComponent extends Component<props, state> {
 
         return (
             <Button key={this.uiKey()} onClick={actionHandler.actionHandler.bind(this)}>
-                <TickerComponent tickerInterval={50} tickerMessage={args.forChoice}/>
+                <TickerComponent tickerInterval={50} tickerMessage={args.forChoice as string}/>
             </Button>
         )
     }
@@ -141,7 +147,8 @@ export class UserActionsComponent extends Component<props, state> {
 
         this.setState({
             isMakingTacticalChoice: true,
-            isMakingStrategicChoice: false
+            isMakingStrategicChoice: false,
+            isBuilding: true
         });
 
 
@@ -153,7 +160,8 @@ export class UserActionsComponent extends Component<props, state> {
         this.setState({
             isSelectingLocation: false,
             isMakingStrategicChoice: true,
-            isMakingTacticalChoice: false
+            isMakingTacticalChoice: false,
+            isBuilding: false
         })
     }
 
@@ -166,7 +174,8 @@ export class UserActionsComponent extends Component<props, state> {
         this.setState({
             isSelectingLocation: false,
             isMakingStrategicChoice: true,
-            isMakingTacticalChoice: false
+            isMakingTacticalChoice: false,
+            isBuilding: false
         })
     }
 }

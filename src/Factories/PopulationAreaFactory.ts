@@ -60,8 +60,7 @@ export class PopulationAreaFactory {
             
         }
 
-        return null;
-
+        return new RuralArea({name: "Error", population: -1})
     }
 
 }

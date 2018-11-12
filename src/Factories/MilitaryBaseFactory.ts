@@ -38,31 +38,39 @@ export class MilitaryBaseFactory {
 
     public createNewBase(args: {baseType: MilitaryBaseTypeLabels}) {
 
+        console.log(`MilitaryBaseFactory: createNewBase: entering with args:`, {args: args});
+        
         switch(args.baseType) {
 
             case "ABM": {
                 const newBase = new AbmBase();
                 newBase.Name = this.newName({forBase: newBase});
+                return newBase;
             }
             case "Radar": {
                 const newBase = new RadarBase();
                 newBase.Name = this.newName({forBase: newBase});
+                return newBase;
             }
             case "Navy": {
                 const newBase = new NavyBase();
                 newBase.Name = this.newName({forBase: newBase});
+                return newBase;
             }
             case "Missile": {
                 const newBase = new MissileBase();
                 newBase.Name = this.newName({forBase: newBase});
+                return newBase;
             }
             case "Air": {
                 const newBase = new AirBase();
                 newBase.Name = this.newName({forBase: newBase});
+                return newBase;
             }
             case "Army": {
                 const newBase = new ArmyBase();
                 newBase.Name = this.newName({forBase: newBase});
+                return newBase;
             }
         }
 

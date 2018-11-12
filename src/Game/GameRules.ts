@@ -1,7 +1,11 @@
 import { Game } from "../Entities/gameEntity";
+import { CountryMap } from "../Entities/WorldObjects/CountryMap";
+import { MapLocation } from "../Entities/MapObjects/MapLocation";
+import { PlaceableObject, PlaceableObjectLabels } from "../Entities/MapObjects/PlaceableObjects";
+import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 
 export type strategicMoveOptions = "Build" | "Spy" | "Declare War" | "Skip" | "Activate" | "Sue for Peace" | "Surrender";
-export type tacticalMoveOptions = "Build Army Base" | "Build Navy Base" | "Build Air Base" | "Build Missile Base" | "Build Radar Base" | "Build ABM Base" | "Activate";
+export type tacticalMoveOptions = MilitaryBaseTypeLabels | "Activate Base";
 
 export interface allowedMoves {
     strategicOptions: strategicMoveOptions[];
@@ -10,13 +14,23 @@ export interface allowedMoves {
 
 export class GameRules {
 
+    public static canPlaceItemAtMapLocation(args: {map: CountryMap, atLocation: MapLocation, itemToCheck: PlaceableObjectLabels}): boolean {
+
+        if (args.atLocation.Contents) {
+            return args.atLocation.Contents.WorldObjectLabel === "Rural";
+        }
+
+        return true;
+    }
+
+
     public static getAllowedMoves(): allowedMoves {
 
         const peacetimeStrategicOptions: strategicMoveOptions[] = ["Build", "Spy", "Declare War", "Skip"];
         const warTimeMoveOptions: strategicMoveOptions[] = ["Activate", "Sue for Peace", "Surrender"];
-        const pre1962TacticalOptions: tacticalMoveOptions[] = ["Build Army Base", "Build Navy Base", "Build Air Base", "Build Missile Base", "Build Radar Base"];
-        const post1962TacticalOptions: tacticalMoveOptions[] = pre1962TacticalOptions.concat("Build ABM Base");
-        const warTimeTacticalOptions: tacticalMoveOptions[] = ["Activate"];
+        const pre1962TacticalOptions: tacticalMoveOptions[] = ["Army", "Navy", "Air", "Missile", "Radar"];
+        const post1962TacticalOptions: tacticalMoveOptions[] = pre1962TacticalOptions.concat("ABM");
+        const warTimeTacticalOptions: tacticalMoveOptions[] = ["Activate Base"];
 
         const game = Game.getInstance();
 
