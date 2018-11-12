@@ -1,7 +1,7 @@
 import { Game } from "../Entities/gameEntity";
 import { CountryMap } from "../Entities/WorldObjects/CountryMap";
 import { MapLocation } from "../Entities/MapObjects/MapLocation";
-import { PlaceableObject, PlaceableObjectLabels } from "../Entities/MapObjects/PlaceableObjects";
+import { PlaceableObjectLabels } from "../Entities/MapObjects/PlaceableObjects";
 import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 
 export type strategicMoveOptions = "Build" | "Spy" | "Declare War" | "Skip" | "Activate" | "Sue for Peace" | "Surrender";
@@ -23,6 +23,13 @@ export class GameRules {
         return true;
     }
 
+    public static getTotalBasesAllowedToBuild(args: {basedOnStrategicChoice: strategicMoveOptions | null}): number {
+
+        if (args.basedOnStrategicChoice === "Build") return 2;
+        if (args.basedOnStrategicChoice === "Spy") return 1;
+
+        return 0;
+    }
 
     public static getAllowedMoves(): allowedMoves {
 

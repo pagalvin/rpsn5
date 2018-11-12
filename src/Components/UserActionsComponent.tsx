@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { GameRules, strategicMoveOptions, tacticalMoveOptions } from "../Game/GameRules";
 import { Game } from '../Entities/gameEntity';
-import { GameLogic } from '../Game/GameLogic';
+import { GameLogic, GamestateWatcher, gameStateChangeDetails } from '../Game/GameLogic';
 import { Button } from '@material-ui/core';
 import { TickerComponent } from './TickerComponent';
 import { BuildManifestComponent } from './BuildManifestComponent';
@@ -11,6 +11,8 @@ export interface state {
     isMakingTacticalChoice: boolean;
     isSelectingLocation: boolean;
     isBuilding: boolean;
+    tacticalChoice: tacticalMoveOptions;
+    strategicChoice: strategicMoveOptions | null;
 }
 
 export interface props {
@@ -22,7 +24,7 @@ interface actionHandlerMappings {
     actionHandler: () => void;
 }
 
-export class UserActionsComponent extends Component<props, state> {
+export class UserActionsComponent extends Component<props, state> implements GamestateWatcher {
 
     private uiIdx: number = 0;
     private readonly uiKey = () => `useractions${this.uiIdx++}`;
@@ -41,7 +43,7 @@ export class UserActionsComponent extends Component<props, state> {
             playerChoice: "Declare War"
         },
         {
-            actionHandler: this.notYetImplemented,
+            actionHandler: this.handleSpy,
             playerChoice: "Spy"
         },
         {
@@ -81,20 +83,47 @@ export class UserActionsComponent extends Component<props, state> {
     constructor(props: props, state: state) {
         super(props, state);
 
+        this.setInitialState();
+
         this.state = {
             isSelectingLocation: false,
             isMakingStrategicChoice: true,
             isMakingTacticalChoice: false,
-            isBuilding: false
-        }
+            isBuilding: false,
+            tacticalChoice: null,
+            strategicChoice: null
+        };
+
+        GameLogic.registerGamestateWatcher({watcher: this});
+
     }
 
     private getMoveChoiceLabels() {
         return GameRules.getAllowedMoves();
     }
 
+    private setInitialState() {
+        this.setState({
+            isBuilding: false,
+            isMakingStrategicChoice: true,
+            isMakingTacticalChoice: false,
+            isSelectingLocation: false,
+            tacticalChoice: null,
+            strategicChoice: null
+        });
+    }
+
     public componentDidMount() {
 
+    }
+
+    public handleGamestateChange(args: { details: gameStateChangeDetails }) {
+
+        console.log(`GameHeaderComponent: BuildManifestComponent: Got a game state change.`);
+
+        if (args.details.changeLabel === "Advance Turn") {
+            this.setInitialState();
+        }
     }
 
     render() {
@@ -107,7 +136,12 @@ export class UserActionsComponent extends Component<props, state> {
         }
 
         if (this.state.isBuilding) {
-            return <BuildManifestComponent allowedBasesToBuild={this.getMoveChoiceLabels().tacticalOptions} totalAllowedToBuild={2}/>
+            return (
+                <BuildManifestComponent 
+                    allowedBasesToBuild={this.getMoveChoiceLabels().tacticalOptions} 
+                    totalAllowedToBuild={GameRules.getTotalBasesAllowedToBuild({basedOnStrategicChoice: this.state.strategicChoice})}
+                />
+            )
         }
         else {
             return tacticalOptions;
@@ -143,16 +177,31 @@ export class UserActionsComponent extends Component<props, state> {
     }
 
     private handleBuild() {
+
         console.log(`UserActionsComponent: handleBuild: Entering.`);
 
         this.setState({
             isMakingTacticalChoice: true,
             isMakingStrategicChoice: false,
-            isBuilding: true
+            isBuilding: true,
+            strategicChoice: "Build",
+            tacticalChoice: null
         });
-
-
     }
+
+    private handleSpy() {
+
+        console.log(`UserActionsComponent: handleSpy: Entering.`);
+
+        this.setState({
+            isMakingTacticalChoice: true,
+            isMakingStrategicChoice: false,
+            isBuilding: true,
+            strategicChoice: "Spy",
+            tacticalChoice: null
+        });
+    }
+
     private handleFinishTurn() {
 
         GameLogic.advanceTurn();

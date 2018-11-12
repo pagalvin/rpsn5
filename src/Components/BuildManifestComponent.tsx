@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, SyntheticEvent } from 'react';
 import { tacticalMoveOptions } from '../Game/GameRules';
 import { MilitaryBaseTypes } from '../Entities/WorldObjects/Bases/MilitaryBaseTypes';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
@@ -6,6 +6,7 @@ import { TickerComponent } from './TickerComponent';
 import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../Game/GameLogic';
 import { Constants } from '../Game/constants';
 import { buildBaseResult } from './MapComponent';
+import { Button } from '@material-ui/core';
 
 interface props {
     allowedBasesToBuild: tacticalMoveOptions[],
@@ -89,25 +90,40 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
         console.log(`BuildManifestComponent: render: Entering with props and state:`, {props: this.props, state: this.state});
 
+        const manifestCompleteMarkup = () => {
+            return (
+                <div>
+                    All base assignments complete.
+                    <Button onClick={
+                        () => {
+                            console.log(`finish turn.`)
+                            GameLogic.advanceTurn();
+                        }}>
+                        Finish Turn</Button>
+                </div>
+            )
+        }
+
+        const dragStartMarkup = (args: {dragEvent: React.DragEvent, baseType: tacticalMoveOptions, manifiestIndex: number}) => {
+            console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragStart: e, ab:`, 
+            { 
+                e: args.dragEvent, 
+                ab: args.baseType,
+                manifestIndex: args.manifiestIndex
+            });
+
+            args.dragEvent.dataTransfer.setData("baseType", args.baseType as string);
+            args.dragEvent.dataTransfer.setData("manifestIndex", args.manifiestIndex.toString());
+            
+            (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
+        }
+
         const allowedBaseMarkup = (args: {forManifestIndex: number}) => {
             return (
                 this.props.allowedBasesToBuild.map((allowedBase, idx) => (
                     <span key={this.uiKey()}
                         draggable
-                        onDragStart={
-                            (e) => {
-                                console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragStart: e, ab:`, 
-                                { 
-                                    e: e, 
-                                    ab: allowedBase,
-                                    manifestIndex: idx
-                                })
-                                e.dataTransfer.setData("baseType", allowedBase as string);
-                                e.dataTransfer.setData("manifestIndex", args.forManifestIndex.toString());
-                                (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
-                            }
-                        }
-
+                        onDragStart={(e) => dragStartMarkup({baseType:allowedBase, dragEvent: e, manifiestIndex: args.forManifestIndex})}
                         onDragEnd={
                             (e) => {
                                 console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragEnd: e, ab:`,
@@ -149,42 +165,22 @@ export class BuildManifestComponent extends Component<props, state> implements G
             });
         }
 
-        const tacticalOptionsMarkup = () => {
-
-            const baseMarkup = this.props.allowedBasesToBuild.map(allowedBase => (
-                <span key={this.uiKey()}
-                    draggable
-                    onDragStart={
-                        (e) => {
-                            console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragStart: e, ab:`, { e: e, ab: allowedBase })
-                            e.dataTransfer.setData("baseType", allowedBase as string);
-                        }
-                    }
-                >
-                    {allowedBase} |&nbsp;
-                </span>
-            ))
-
-            return (
-                <div>
-                    Build:
-                    {baseMarkup}
-                </div>
-            )
-        }
-
         const toRender = (
             <React.Fragment>
 
                 {qtyMessage()}
 
-                {tacticalOptionsMarkup()}
-
                 {
                     <div>
-                        <h5>Build manifest:</h5>
+                        <h5><TickerComponent tickerInterval={25} tickerMessage="Build manifest:"/></h5>
                         {manifestMarkup()}
                     </div>
+                }
+
+                {
+                    this.state.buildManifest.filter(m => m.didBuild).length === this.state.buildManifest.length
+                        ? manifestCompleteMarkup()
+                        : null
                 }
 
             </React.Fragment>
