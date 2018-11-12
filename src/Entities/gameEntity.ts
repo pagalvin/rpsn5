@@ -1,3 +1,5 @@
+import { ComputerPlayer } from "../Game/ComputerPlayer";
+
 export interface GameEntity {
     gameYear: number;
 }
@@ -16,8 +18,13 @@ export class Game extends AbstractGameEntity {
     public turn: number = 0;
     public get gameYear() { return this.turn + 1944;}
     
+    public computerPlayer: ComputerPlayer;
+
     private constructor() {
         super();
+
+        this.computerPlayer = new ComputerPlayer();
+        
     }
 
     public static getInstance() {

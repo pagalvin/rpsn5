@@ -96,8 +96,8 @@ export class BuildManifestComponent extends Component<props, state> implements G
                     All base assignments complete.
                     <Button onClick={
                         () => {
-                            console.log(`finish turn.`)
-                            GameLogic.advanceTurn();
+                            console.log(`BuildManifestComponent: render: manifestCompleteMarkup: finish turn.`)
+                            GameLogic.finishHumanTurn();
                         }}>
                         Finish Turn</Button>
                 </div>

@@ -27,6 +27,19 @@ export class GameLogic {
         this.gameStateWatchers.forEach(gsw => gsw.handleGamestateChange({details: args.details}));
     }
 
+    public static playComputerTurn(): void {
+
+        const game = Game.getInstance();
+
+        game.computerPlayer.playTurn();
+
+    }
+
+    public static finishHumanTurn(): void {
+        this.playComputerTurn();
+        this.advanceTurn();
+    }
+    
     public static advanceTurn(): void {
 
         const game = Game.getInstance();

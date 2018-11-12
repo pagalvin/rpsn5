@@ -204,14 +204,15 @@ export class UserActionsComponent extends Component<props, state> implements Gam
 
     private handleFinishTurn() {
 
-        GameLogic.advanceTurn();
-
         this.setState({
             isSelectingLocation: false,
             isMakingStrategicChoice: true,
             isMakingTacticalChoice: false,
             isBuilding: false
         })
+
+        GameLogic.finishHumanTurn();
+
     }
 
     private notYetImplemented() {
