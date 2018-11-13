@@ -1,7 +1,11 @@
 
 import { Game } from "../Entities/gameEntity";
 
-export type gameStateChangeType = "Advance Turn" | "no change"
+export type gameStateChangeType = 
+    "Advance Turn" | 
+    "no change" | 
+    "Computer Playing Its Turn" |
+    "Computer Finished Its Turn" ;
 
 export interface gameStateChangeDetails {
     changeLabel: gameStateChangeType;
@@ -31,15 +35,22 @@ export class GameLogic {
 
         const game = Game.getInstance();
 
+        this.notifyGamestateChange({details: {changeLabel: "Computer Playing Its Turn"}})
+     
         game.computerPlayer.playTurn();
+
+        // this.notifyGamestateChange({details: {changeLabel: "Advance Turn"}});
 
     }
 
     public static finishHumanTurn(): void {
         this.playComputerTurn();
-        this.advanceTurn();
     }
     
+    public static finishComputerTurn(): void {
+        this.notifyGamestateChange({details: {changeLabel: "Advance Turn"}});
+    }
+
     public static advanceTurn(): void {
 
         const game = Game.getInstance();

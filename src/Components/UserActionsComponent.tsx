@@ -13,6 +13,7 @@ export interface state {
     isBuilding: boolean;
     tacticalChoice: tacticalMoveOptions;
     strategicChoice: strategicMoveOptions | null;
+    isWaitingForMyTurn: boolean;
 }
 
 export interface props {
@@ -91,7 +92,8 @@ export class UserActionsComponent extends Component<props, state> implements Gam
             isMakingTacticalChoice: false,
             isBuilding: false,
             tacticalChoice: null,
-            strategicChoice: null
+            strategicChoice: null,
+            isWaitingForMyTurn: false
         };
 
         GameLogic.registerGamestateWatcher({watcher: this});
@@ -109,7 +111,8 @@ export class UserActionsComponent extends Component<props, state> implements Gam
             isMakingTacticalChoice: false,
             isSelectingLocation: false,
             tacticalChoice: null,
-            strategicChoice: null
+            strategicChoice: null,
+            isWaitingForMyTurn: false
         });
     }
 
@@ -124,12 +127,22 @@ export class UserActionsComponent extends Component<props, state> implements Gam
         if (args.details.changeLabel === "Advance Turn") {
             this.setInitialState();
         }
+
+        if (args.details.changeLabel === "Computer Playing Its Turn") {
+            this.setState({isWaitingForMyTurn: true});
+        }
     }
 
     render() {
 
         const strategicOptions = this.getMoveChoiceLabels().strategicOptions.map(c => this.getChoiceButtonMarkup({forChoice: c}));
         const tacticalOptions = this.getMoveChoiceLabels().tacticalOptions.map(c => this.getChoiceButtonMarkup({forChoice: c}));
+
+        const waitingMarkup = () => (
+            <TickerComponent tickerInterval={25} tickerMessage="Waiting for the computer to finish its move..."/>
+        )
+
+        if (this.state.isWaitingForMyTurn) { return waitingMarkup()}
 
         if (this.state.isMakingStrategicChoice) {
             return strategicOptions;

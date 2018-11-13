@@ -43,10 +43,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
     }
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
-        // const game: Game = Game.getInstance();
-
-        console.log(`GameHeaderComponent: BuildManifestComponent: Got a game state change.`);
-
+        console.log(`BuildManifestComponent.ts: handleGamestateChange: Got a game state change:`, {details: args.details});
     }
 
     componentDidMount() {
