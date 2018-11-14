@@ -4,5 +4,6 @@ export abstract class AbstractPlayer {
 
     abstract Name: string;
     abstract map: CountryMap;
+    abstract declaredWar: boolean;
     
 }

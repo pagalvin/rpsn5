@@ -5,10 +5,20 @@ import { MapComponent } from "./MapComponent";
 import { CountryMap } from "../Entities/WorldObjects/CountryMap";
 import { GameLogComponent } from "./GameLogComponent";
 import { Grid } from '@material-ui/core';
+import { Game } from '../Entities/gameEntity';
 
 export class GameComponent extends Component {
 
+    componentDidMount() {
+
+        const gameEntity = Game.getInstance();
+
+        gameEntity.startGame();
+    }
+
     render() {
+
+        const gameEntity = Game.getInstance();
 
         return (
             <React.Fragment>
@@ -17,14 +27,18 @@ export class GameComponent extends Component {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <UserActionsComponent />
+                    <UserActionsComponent player={gameEntity.humanPlayer}/>
                 </Grid>
 
                 <Grid item xs={8}>
-                    <MapComponent countryMap={new CountryMap({ sizeX: 10, sizeY: 10 })} />
+                    Human<br/>
+                    <MapComponent countryMap={gameEntity.humanPlayer.map}/>
                 </Grid>
                 <Grid item xs={4}>
-                    <MapComponent countryMap={new CountryMap({ sizeX: 10, sizeY: 10 })} />
+                    <div className="computerMapContainer">
+                        Computer<br/>
+                        <MapComponent countryMap={gameEntity.computerPlayer.map}/>
+                    </div>
                     <GameLogComponent />
                 </Grid>
             </React.Fragment>

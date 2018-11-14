@@ -1,9 +1,11 @@
 
 import { Game } from "../Entities/gameEntity";
+import { AbstractPlayer } from "./AbstractPlayer";
 
 export type gameStateChangeType = 
     "Advance Turn" | 
     "no change" | 
+    "War Declared" |
     "Computer Playing Its Turn" |
     "Computer Finished Its Turn" ;
 
@@ -42,6 +44,17 @@ export class GameLogic {
         // this.notifyGamestateChange({details: {changeLabel: "Advance Turn"}});
 
     }
+
+    public static declareWar(args: {declaringPlayer: AbstractPlayer}) {
+        console.log(`GameLogic.ts: declareWar: A player declared war:`, {declaringPlayer: args.declaringPlayer});
+        args.declaringPlayer.declaredWar = true; // Gives a first-strike bonus but world opinion takes a huge hit
+
+        Game.getInstance().isPeacetime = false;
+        Game.getInstance().isWartime = false;
+
+        this.notifyGamestateChange({details: {changeLabel: "War Declared"}});
+    }
+
 
     public static finishHumanTurn(): void {
         this.playComputerTurn();

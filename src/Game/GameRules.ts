@@ -3,6 +3,7 @@ import { CountryMap } from "../Entities/WorldObjects/CountryMap";
 import { MapLocation } from "../Entities/MapObjects/MapLocation";
 import { PlaceableObjectLabels } from "../Entities/MapObjects/PlaceableObjects";
 import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
+import { AbstractPlayer } from "./AbstractPlayer";
 
 export type strategicMoveOptions = "Build" | "Spy" | "Declare War" | "Skip" | "Activate" | "Sue for Peace" | "Surrender";
 export type tacticalMoveOptions = MilitaryBaseTypeLabels | "Activate Base";

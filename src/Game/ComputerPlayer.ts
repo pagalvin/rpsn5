@@ -6,17 +6,20 @@ import { Rng } from "../Utils/Rng";
 import { MilitaryBaseFactory } from "../Factories/MilitaryBaseFactory";
 
 export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
-
+    
+    public declaredWar: boolean;
     public Name: string;
     public map: CountryMap;
 
     constructor() {
         super();
+
         GameLogic.registerGamestateWatcher({watcher: this});
 
-        this.map = new CountryMap({sizeX: 10, sizeY: 10});
+        this.map = new CountryMap({sizeX: 10, sizeY: 10, owner: "Computer"});
         this.Name = "Computer";
-
+        this.declaredWar = false;
+        
     }
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {

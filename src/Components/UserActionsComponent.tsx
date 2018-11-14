@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { GameRules, strategicMoveOptions, tacticalMoveOptions } from "../Game/GameRules";
-import { Game } from '../Entities/gameEntity';
 import { GameLogic, GamestateWatcher, gameStateChangeDetails } from '../Game/GameLogic';
 import { Button } from '@material-ui/core';
 import { TickerComponent } from './TickerComponent';
 import { BuildManifestComponent } from './BuildManifestComponent';
+import { HumanPlayer } from '../Game/HumanPlayer';
+import { BaseActivatorComponent } from './BaseActivatorComponent';
 
 export interface state {
     isMakingStrategicChoice: boolean;
@@ -14,10 +15,11 @@ export interface state {
     tacticalChoice: tacticalMoveOptions;
     strategicChoice: strategicMoveOptions | null;
     isWaitingForMyTurn: boolean;
+    isActivating: boolean;
 }
 
 export interface props {
-
+    player: HumanPlayer;
 }
 
 interface actionHandlerMappings {
@@ -42,6 +44,14 @@ export class UserActionsComponent extends Component<props, state> implements Gam
         {
             actionHandler: this.handleDeclareWar,
             playerChoice: "Declare War"
+        },
+        {
+            actionHandler: this.handleActivate,
+            playerChoice: "Activate"
+        },
+        {
+            actionHandler: this.handleActivate,
+            playerChoice: "Activate Base"
         },
         {
             actionHandler: this.handleSpy,
@@ -93,7 +103,8 @@ export class UserActionsComponent extends Component<props, state> implements Gam
             isBuilding: false,
             tacticalChoice: null,
             strategicChoice: null,
-            isWaitingForMyTurn: false
+            isWaitingForMyTurn: false,
+            isActivating: false
         };
 
         GameLogic.registerGamestateWatcher({watcher: this});
@@ -156,6 +167,13 @@ export class UserActionsComponent extends Component<props, state> implements Gam
                 />
             )
         }
+
+        if (this.state.isActivating) {
+            return (
+                <BaseActivatorComponent/>
+            );
+        }
+
         else {
             return tacticalOptions;
         }
@@ -187,6 +205,10 @@ export class UserActionsComponent extends Component<props, state> implements Gam
         
         console.log(`UserActionsComponent: handleDeclareWar: Entering.`);
 
+        GameLogic.declareWar({declaringPlayer: this.props.player});
+
+        this.handleFinishTurn();
+
     }
 
     private handleBuild() {
@@ -200,6 +222,16 @@ export class UserActionsComponent extends Component<props, state> implements Gam
             strategicChoice: "Build",
             tacticalChoice: null
         });
+    }
+
+    private handleActivate() {
+        console.log(`handleActivate: Entering.`);
+        this.setState(
+            {
+                isActivating: true,
+                isMakingStrategicChoice: false,
+                isMakingTacticalChoice: true
+            });
     }
 
     private handleSpy() {

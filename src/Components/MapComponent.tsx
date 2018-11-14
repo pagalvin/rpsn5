@@ -7,6 +7,7 @@ import { GameRules } from '../Game/GameRules';
 import { Constants } from '../Game/constants';
 import { MilitaryBaseFactory } from '../Factories/MilitaryBaseFactory';
 import { MilitaryBaseTypeLabels } from '../Entities/WorldObjects/Bases/MilitaryBaseTypes';
+import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../Game/GameLogic';
 
 export interface buildBaseResult {
   manifestIndex: number;
@@ -22,19 +23,33 @@ export interface props {
   countryMap: CountryMap;
 }
 
-export class MapComponent extends React.Component<props, state> {
+export class MapComponent extends React.Component<props, state> implements GamestateWatcher {
 
   private uiIdx: number = 0;
 
   constructor(props: props, state: state) {
     super(props, state);
+    
     this.state = {};
+    
     console.log(`MapComponent: Entering with props and state:`, { props: props, state: state });
+
+    GameLogic.registerGamestateWatcher({watcher: this});
+    
   }
 
   componentDidMount() {
 
   }
+
+  public handleGamestateChange(args: { details: gameStateChangeDetails }) {
+
+    console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
+
+    if (args.details.changeLabel === "Advance Turn") {
+      this.forceUpdate();
+    }
+}
 
   private handleDrop(args: { dropEvent: any /* SyntheticEvent<HTMLTableCellElement>*/, cell: MapLocation }) {
 
@@ -52,7 +67,7 @@ export class MapComponent extends React.Component<props, state> {
       {
         atLocation: args.cell,
         itemToCheck: args.cell.Contents.WorldObjectLabel,
-        map: new CountryMap({ sizeX: 10, sizeY: 10 })
+        map: this.props.countryMap
       });
 
     if (isOK) {
@@ -102,6 +117,8 @@ export class MapComponent extends React.Component<props, state> {
 
   render() {
 
+    console.log(`MapComponent.tsx: rendering a map:`, this.props.countryMap);
+
     const mapRow = (mapRow: MapLocation[]) => {
 
       // console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
@@ -126,9 +143,9 @@ export class MapComponent extends React.Component<props, state> {
                 }
               >
                 &nbsp;
-                xx
+                _
                 <MapItemComponent mapItem={cell} key={this.uiIdx++} />
-                xx
+                _
                 &nbsp;
 
               </td>

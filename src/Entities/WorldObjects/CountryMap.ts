@@ -7,17 +7,17 @@ export class CountryMap {
 
     private sizeX: number;
     private sizeY: number;
-
+    private owner: string; // mostly for debug purposes
     public map: MapLocation[][]
 
     private readonly newRuralArea = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Rural"});
 
-    constructor(args: {sizeX: number, sizeY: number}) {
+    constructor(args: {sizeX: number, sizeY: number, owner: string}) {
 
         this.sizeX = args.sizeX;
         this.sizeY = args.sizeY;
         this.map = [[]];
-
+        this.owner = args.owner;
         this.initializeMap();
     }
 
