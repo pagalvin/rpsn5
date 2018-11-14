@@ -21,6 +21,7 @@ export interface state {}
 
 export interface props {
   countryMap: CountryMap;
+  playerMapClickListener?: (args: {location: MapLocation}) => void
 }
 
 export class MapComponent extends React.Component<props, state> implements GamestateWatcher {
@@ -128,6 +129,13 @@ export class MapComponent extends React.Component<props, state> implements Games
           {
             mapRow.map(cell => (
               <td key={this.uiIdx++}
+
+                onClick={ () => 
+                  { 
+                    if (this.props.playerMapClickListener) this.props.playerMapClickListener({location: cell});
+                  }
+                }
+
                 onDrop={
                   (e: SyntheticEvent<HTMLTableDataCellElement>) => {
                     e.preventDefault();

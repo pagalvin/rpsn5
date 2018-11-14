@@ -3,6 +3,7 @@ import { PlaceableObject } from "./PlaceableObjects";
 import { AbstractMilitaryBase } from "../WorldObjects/Bases/AbstractMilitaryBase";
 import { AbstractPopulationArea } from "../WorldObjects/PopulationCenters/AbstractPopulationArea";
 import { RuralArea } from "../WorldObjects/PopulationCenters/Rural";
+import { MilitaryBaseTypeLabels } from "../WorldObjects/Bases/MilitaryBaseTypes";
 
 export class MapLocation extends AbstractMapLocation {
 
@@ -21,4 +22,12 @@ export class MapLocation extends AbstractMapLocation {
         this.Contents = args.itemToPlace;
     }
     
+    public isMilitaryBase() {
+
+        const militaryLabels: MilitaryBaseTypeLabels[] = [
+            "ABM", "Air", "Army", "Missile", "Navy", "Radar"
+        ];
+
+        return militaryLabels.filter(ml => ml === this.Contents.WorldObjectLabel).length > 0;
+    }
 }

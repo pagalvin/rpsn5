@@ -6,6 +6,8 @@ import { TickerComponent } from './TickerComponent';
 import { BuildManifestComponent } from './BuildManifestComponent';
 import { HumanPlayer } from '../Game/HumanPlayer';
 import { BaseActivatorComponent } from './BaseActivatorComponent';
+import { playerMapClickListener } from './Game';
+import { MapLocation } from '../Entities/MapObjects/MapLocation';
 
 export interface state {
     isMakingStrategicChoice: boolean;
@@ -20,6 +22,8 @@ export interface state {
 
 export interface props {
     player: HumanPlayer;
+    mapClickListener: playerMapClickListener;
+    registerMapListener: (args: {forUserComponent: UserActionsComponent}) => void;
 }
 
 interface actionHandlerMappings {
@@ -27,10 +31,12 @@ interface actionHandlerMappings {
     actionHandler: () => void;
 }
 
-export class UserActionsComponent extends Component<props, state> implements GamestateWatcher {
+export class UserActionsComponent extends Component<props, state> implements GamestateWatcher, playerMapClickListener {
 
     private uiIdx: number = 0;
     private readonly uiKey = () => `useractions${this.uiIdx++}`;
+
+    private baseActivatorComponent: BaseActivatorComponent | null = null;
 
     private readonly actionHandlers: actionHandlerMappings[] = [
         {
@@ -111,6 +117,12 @@ export class UserActionsComponent extends Component<props, state> implements Gam
 
     }
 
+    public handlePlayerMapClick(args: {location: MapLocation}) {
+        console.log(`UserActionsComponent: handlePlayerMapClick: Got a click! args:`, {args: args});
+
+        if (this.baseActivatorComponent) this.baseActivatorComponent.handlePlayerMapClick(args);
+    }
+
     private getMoveChoiceLabels() {
         return GameRules.getAllowedMoves();
     }
@@ -128,7 +140,7 @@ export class UserActionsComponent extends Component<props, state> implements Gam
     }
 
     public componentDidMount() {
-
+        this.props.registerMapListener({forUserComponent: this});
     }
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
@@ -170,7 +182,10 @@ export class UserActionsComponent extends Component<props, state> implements Gam
 
         if (this.state.isActivating) {
             return (
-                <BaseActivatorComponent/>
+                <BaseActivatorComponent 
+                    player={this.props.player} 
+                    registerForHumanPlayerMapClicks={(
+                        args: {ui: BaseActivatorComponent}) => this.baseActivatorComponent = args.ui}/>
             );
         }
 

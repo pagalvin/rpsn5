@@ -1,6 +1,7 @@
 import { ComputerPlayer } from "../Game/ComputerPlayer";
 import { HumanPlayer } from "../Game/HumanPlayer";
 import { CountryMap } from "./WorldObjects/CountryMap";
+import { GameLogic } from "../Game/GameLogic";
 
 export interface GameEntity {
     gameYear: number;
@@ -39,6 +40,9 @@ export class Game extends AbstractGameEntity {
     }
 
     public startGame() {
+        
+        GameLogic.startClock();
+        
         // this.computerPlayer.map = new CountryMap({sizeY: 10, sizeX: 10, owner: "Computer"});
         // this.humanPlayer.map = new CountryMap({sizeX: 10, sizeY: 10, owner: "Human"});
     }

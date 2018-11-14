@@ -2,6 +2,7 @@ import { AbstractMapLocation } from "../MapObjects/AbstractMapLocation";
 import { RuralArea } from "./PopulationCenters/Rural";
 import { PopulationAreaFactory } from "../../Factories/PopulationAreaFactory";
 import { MapLocation } from "../MapObjects/MapLocation";
+import { MilitaryBaseTypes } from "./Bases/MilitaryBaseTypes";
 
 export class CountryMap {
 
@@ -47,4 +48,15 @@ export class CountryMap {
         }
     }
 
+    public getAllMilitaryBases(): Exclude<MilitaryBaseTypes, null>[] {
+        
+        const baseLocationsInRow = (mapRow: MapLocation[]) => mapRow.filter(mapCell => mapCell.isMilitaryBase());
+
+        const bases = this.map.map(mapRow => baseLocationsInRow(mapRow).map(mapRow => mapRow.Contents) as MilitaryBaseTypes[]);
+
+        var flattendedBases = [].concat.apply([], bases) as Exclude<MilitaryBaseTypes, null>[];
+
+        return flattendedBases;
+
+    }
 }
