@@ -6,7 +6,6 @@ export interface PopulationAreaProperties {
     WorldObjectLabel: PopulationAreaTypeLabels;
 }
 
-
 export abstract class AbstractPopulationArea implements PopulationAreaProperties {
 
     public Name: string;

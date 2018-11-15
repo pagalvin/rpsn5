@@ -6,4 +6,7 @@ export abstract class AbstractPlayer {
     abstract map: CountryMap;
     abstract declaredWar: boolean;
     
+    abstract totalFunctionalPassiveRadarStations: number;
+    abstract totalFunctionalActiveRadarStations: number;
+    
 }

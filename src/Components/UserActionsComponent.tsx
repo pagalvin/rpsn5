@@ -100,8 +100,6 @@ export class UserActionsComponent extends Component<props, state> implements Gam
     constructor(props: props, state: state) {
         super(props, state);
 
-        this.setInitialState();
-
         this.state = {
             isSelectingLocation: false,
             isMakingStrategicChoice: true,
@@ -145,7 +143,7 @@ export class UserActionsComponent extends Component<props, state> implements Gam
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
 
-        console.log(`GameHeaderComponent: BuildManifestComponent: Got a game state change.`);
+        // console.log(`GameHeaderComponent: BuildManifestComponent: Got a game state change.`);
 
         if (args.details.changeLabel === "Advance Turn") {
             this.setInitialState();
@@ -162,7 +160,7 @@ export class UserActionsComponent extends Component<props, state> implements Gam
         const tacticalOptions = this.getMoveChoiceLabels().tacticalOptions.map(c => this.getChoiceButtonMarkup({forChoice: c}));
 
         const waitingMarkup = () => (
-            <TickerComponent tickerInterval={25} tickerMessage="Waiting for the computer to finish its move..."/>
+            <TickerComponent tickerInterval={10} tickerMessage="Waiting for the computer to finish its move..."/>
         )
 
         if (this.state.isWaitingForMyTurn) { return waitingMarkup()}

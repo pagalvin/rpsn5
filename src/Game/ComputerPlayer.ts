@@ -6,6 +6,9 @@ import { Rng } from "../Utils/Rng";
 import { MilitaryBaseFactory } from "../Factories/MilitaryBaseFactory";
 
 export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
+
+    public totalFunctionalPassiveRadarStations: number;
+    public totalFunctionalActiveRadarStations: number;
     
     public declaredWar: boolean;
     public Name: string;
@@ -19,12 +22,13 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         this.map = new CountryMap({sizeX: 10, sizeY: 10, owner: "Computer"});
         this.Name = "Computer";
         this.declaredWar = false;
-        
+        this.totalFunctionalActiveRadarStations = 0;
+        this.totalFunctionalPassiveRadarStations = 0;        
     }
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
 
-        console.log(`ComputerPlayer.ts: handleGamestateChange: Got a game state change:`, {details: args.details});
+        // console.log(`ComputerPlayer.ts: handleGamestateChange: Got a game state change:`, {details: args.details});
 
     }
 
@@ -56,7 +60,7 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
 
         setTimeout(() => {
             GameLogic.advanceTurn();
-        }, 2000);
+        }, 500);
 
     }
 

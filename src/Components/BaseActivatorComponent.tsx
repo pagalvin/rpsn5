@@ -3,6 +3,18 @@ import { HumanPlayer } from '../Game/HumanPlayer';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
 import { MilitaryBaseTypes } from '../Entities/WorldObjects/Bases/MilitaryBaseTypes';
 import { GamestateWatcher, GameLogic, gameStateChangeDetails } from '../Game/GameLogic';
+import { AbmBaseComponent } from './MilitaryBaseComponents/AbmBaseComponent';
+import { RadarBaseComponent } from './MilitaryBaseComponents/RadarBaseComponent';
+import { NavyBaseComponent } from './MilitaryBaseComponents/NavyBaseComponent';
+import { MissileBaseComponent } from './MilitaryBaseComponents/MissileBaseComponent';
+import { AirBaseComponent } from './MilitaryBaseComponents/AirBaseComponent';
+import { ArmyBaseComponent } from './MilitaryBaseComponents/ArmyBaseComponent';
+import { RadarBase } from '../Entities/WorldObjects/Bases/RadarBase';
+import { AirBase } from '../Entities/WorldObjects/Bases/AirBase';
+import { AbmBase } from '../Entities/WorldObjects/Bases/AbmBase';
+import { ArmyBase } from '../Entities/WorldObjects/Bases/ArmyBase';
+import { MissileBase } from '../Entities/WorldObjects/Bases/MissleBase';
+import { NavyBase } from '../Entities/WorldObjects/Bases/NavyBase';
 
 interface props {
     player: HumanPlayer;
@@ -33,9 +45,12 @@ export class BaseActivatorComponent extends Component<props, state> implements G
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
         
         if (args.details.changeLabel === "Tick") {
-            console.log(`BaseActivatorComponent: handleGameStateChange: Got a tick.`);
+            // console.log(`BaseActivatorComponent: handleGameStateChange: Got a tick.`);
 
             if (this.state.inactiveBases.length > 0) {
+
+                this.state.inactiveBases[0].activate();
+                
                 this.setState({
                     activeBases: this.state.activeBases.concat(this.state.inactiveBases[0]),
                     inactiveBases: this.state.inactiveBases.slice(1)
@@ -71,11 +86,27 @@ export class BaseActivatorComponent extends Component<props, state> implements G
 
         console.log(`BaseActivatorComponent: render: Entering with props and state:`, {props: this.props, state: this.state});
 
+        const baseActivationOptions = (args: {forBase: Exclude<MilitaryBaseTypes, null>}) => {
+
+            if (args.forBase.WorldObjectLabel === "ABM") return <AbmBaseComponent base={args.forBase as AbmBase}/>;
+            if (args.forBase.WorldObjectLabel === "Army") return <ArmyBaseComponent base={args.forBase as ArmyBase}/>;
+            if (args.forBase.WorldObjectLabel === "Air") return <AirBaseComponent base={args.forBase as AirBase}/>;
+            if (args.forBase.WorldObjectLabel === "Missile") return <MissileBaseComponent base={args.forBase as MissileBase}/>;
+            if (args.forBase.WorldObjectLabel === "Navy") return <NavyBaseComponent base={args.forBase as NavyBase}/>;
+            if (args.forBase.WorldObjectLabel === "Radar") return <RadarBaseComponent base={args.forBase as RadarBase}/>;
+
+        };
+
         const baseDetails = (args: {forBase: Exclude<MilitaryBaseTypes,null>}) => {
             return(
-                <div>Name: {args.forBase.Name}, Type: {args.forBase.WorldObjectLabel}</div>
+                <div>
+                    Name: {args.forBase.Name}, 
+                    Type: {args.forBase.WorldObjectLabel}, 
+                    {baseActivationOptions(args)}
+                </div>
             )
         }
+
         const toRender = (
             <React.Fragment>
 

@@ -1,6 +1,13 @@
 
 import { Game } from "../Entities/gameEntity";
 import { AbstractPlayer } from "./AbstractPlayer";
+import { AbmBase } from "../Entities/WorldObjects/Bases/AbmBase";
+import { GameRules } from "./GameRules";
+import { Rng } from "../Utils/Rng";
+import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
+import { MissileBase } from "../Entities/WorldObjects/Bases/MissleBase";
+import { Constants } from "./constants";
+import { NavyBase } from "../Entities/WorldObjects/Bases/NavyBase";
 
 export type gameStateChangeType =
     "Advance Turn" |
@@ -30,7 +37,7 @@ export class GameLogic {
 
     private static notifyGamestateChange(args: { details: gameStateChangeDetails }) {
 
-        console.log(`GameLogic: notifyGamestateChange(): notifying watchers:`, { watchers: this.gameStateWatchers });
+        // console.log(`GameLogic: notifyGamestateChange(): notifying watchers:`, { watchers: this.gameStateWatchers });
 
         this.gameStateWatchers.forEach(gsw => gsw.handleGamestateChange({ details: args.details }));
     }
@@ -44,6 +51,34 @@ export class GameLogic {
         game.computerPlayer.playTurn();
 
         // this.notifyGamestateChange({details: {changeLabel: "Advance Turn"}});
+
+    }
+
+    public static activateAbmBase(args: {forBase: AbmBase}) {
+
+        args.forBase.totalMissiles = Rng.throwDice({hiNumberMinus1: 5}) + 1;
+        args.forBase.isTracking = true;
+
+        return;
+
+    }
+
+    public static activateMissileBase(args: {forBase: MissileBase}) {
+        args.forBase.isReceivingOrders = true;
+        args.forBase.totalMissiles = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
+    }
+
+    public static activateNavyBase(args: {forBase: NavyBase}) {
+
+        args.forBase.isReceivingOrders = true;
+        args.forBase.didLaunchMissles = true; // temporary shim, real logic to come later
+    }
+
+    public static activateArmyBase(args: {forBase: ArmyBase}) {
+
+        args.forBase.isDecamped = true;
+
+        return;
 
     }
 
@@ -64,7 +99,7 @@ export class GameLogic {
                 isSleeping = true;
 
                 setTimeout(() => {
-                    console.log(`GameLogic.ts: startClock: broadcasting a game tick.`);
+                    // console.log(`GameLogic.ts: startClock: broadcasting a game tick.`);
                     GameLogic.pulseClock();
                     isSleeping = false;
                 }, timeout);

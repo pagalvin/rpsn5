@@ -7,12 +7,15 @@ export class AbmBase extends AbstractMilitaryBase {
 
     public gameYear: number = 1;
 
+    public totalMissiles: number;
+    public isTracking: boolean;
+
     constructor() {
         super();
-    }
 
-    public activate(): void {
-        throw ("Not yet implemented.");
+        this.totalMissiles = 0;
+        this.isTracking = false;
+        this.isReceivingOrders = false;
     }
 
 }

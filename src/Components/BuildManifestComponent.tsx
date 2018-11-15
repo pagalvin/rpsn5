@@ -43,7 +43,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
     }
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
-        console.log(`BuildManifestComponent.ts: handleGamestateChange: Got a game state change:`, {details: args.details});
+        // console.log(`BuildManifestComponent.ts: handleGamestateChange: Got a game state change:`, {details: args.details});
     }
 
     componentDidMount() {
@@ -109,6 +109,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
                 manifestIndex: args.manifiestIndex
             });
 
+            args.dragEvent.dataTransfer.setData("dropType", Constants.BUILD_DROP);
             args.dragEvent.dataTransfer.setData("baseType", args.baseType as string);
             args.dragEvent.dataTransfer.setData("manifestIndex", args.manifiestIndex.toString());
             

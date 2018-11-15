@@ -36,7 +36,7 @@ export class GameRules {
 
         const peacetimeStrategicOptions: strategicMoveOptions[] = ["Build", "Spy", "Declare War", "Skip"];
         const warTimeMoveOptions: strategicMoveOptions[] = ["Activate", "Sue for Peace", "Surrender"];
-        const pre1962TacticalOptions: tacticalMoveOptions[] = ["Army", "Navy", "Air", "Missile", "Radar"];
+        const pre1962TacticalOptions: tacticalMoveOptions[] = ["Army", "Navy", "Air", "Missile", "Radar", "ABM"];
         const post1962TacticalOptions: tacticalMoveOptions[] = pre1962TacticalOptions.concat("ABM");
         const warTimeTacticalOptions: tacticalMoveOptions[] = ["Activate Base"];
 

@@ -25,9 +25,8 @@ export class GameHeaderComponent extends Component<props, state> implements Game
     }
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
-        const game: Game = Game.getInstance();
 
-        console.log(`GameHeaderComponent: handleGamestateChange: Got a game state change.`);
+        // console.log(`GameHeaderComponent: handleGamestateChange: Got a game state change.`);
 
         if (args.details.changeLabel === "Advance Turn") {
             this.forceUpdate();

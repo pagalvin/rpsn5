@@ -17,11 +17,11 @@ export interface buildBaseResult {
 
 export type notifyBuildDragResult = (args: { result: buildBaseResult }) => void;
 
-export interface state {}
+export interface state { }
 
 export interface props {
   countryMap: CountryMap;
-  playerMapClickListener?: (args: {location: MapLocation}) => void
+  playerMapClickListener?: (args: { location: MapLocation }) => void
 }
 
 export class MapComponent extends React.Component<props, state> implements GamestateWatcher {
@@ -30,13 +30,13 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   constructor(props: props, state: state) {
     super(props, state);
-    
+
     this.state = {};
-    
+
     console.log(`MapComponent: Entering with props and state:`, { props: props, state: state });
 
-    GameLogic.registerGamestateWatcher({watcher: this});
-    
+    GameLogic.registerGamestateWatcher({ watcher: this });
+
   }
 
   componentDidMount() {
@@ -45,18 +45,43 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   public handleGamestateChange(args: { details: gameStateChangeDetails }) {
 
-    console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
+    // console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
 
     if (args.details.changeLabel === "Advance Turn") {
       this.forceUpdate();
     }
-}
+  }
 
   private handleDrop(args: { dropEvent: any /* SyntheticEvent<HTMLTableCellElement>*/, cell: MapLocation }) {
 
-    const notifyDragResult: notifyBuildDragResult = (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME];
-
     console.log(`MapComponent.tsx: handleDrop: Got a drop event on a cell:`, {
+      event: args.dropEvent,
+      cell: args.cell,
+      baseType: args.dropEvent.dataTransfer.getData("baseType"),
+      manifestIndex: args.dropEvent.dataTransfer.getData("manifestIndex"),
+      dropType: args.dropEvent.dataTransfer.getData("dropType")
+    }
+    );
+
+    if (args.dropEvent.dataTransfer.getData("dropType") === Constants.BUILD_DROP) {
+      this.handleBuildDrop(args);
+      this.forceUpdate();
+    }
+    else if (args.dropEvent.dataTransfer.getData("dropType") === Constants.TARGET_MISSILE_DROP) {
+      this.handleTargetDrop(args);
+    }
+    else {
+      console.log(`MapComponent: handleDrop: got an unknown drop type:`, args.dropEvent.dataTransfer.getData("dropType"));
+    }
+
+  }
+
+  private handleTargetDrop(args: { dropEvent: any, cell: MapLocation }) {
+
+    const notifyDragResultCallack: notifyBuildDragResult = (window as any)[Constants.NOTIFY_TARGET_RESULT_CALLBACK_NAME];
+
+    
+    console.log(`MapComponent.tsx: handleTargetDrop: Got a drop event on a cell:`, {
       event: args.dropEvent,
       cell: args.cell,
       baseType: args.dropEvent.dataTransfer.getData("baseType"),
@@ -64,7 +89,30 @@ export class MapComponent extends React.Component<props, state> implements Games
     }
     );
 
-    const isOK = GameRules.canPlaceItemAtMapLocation(
+    notifyDragResultCallack(
+      {
+        result: {
+          didSucceed: true,
+          manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
+          message: `Successfully targeted enemy sector ${args.cell.uniqueID}.`
+        }
+      });
+
+  }
+
+  private handleBuildDrop(args: { dropEvent: any, cell: MapLocation }) {
+
+    const notifyDragResultCallack: notifyBuildDragResult = (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME];
+
+    console.log(`MapComponent.tsx: handleBuildDrop: Got a drop event on a cell:`, {
+      event: args.dropEvent,
+      cell: args.cell,
+      baseType: args.dropEvent.dataTransfer.getData("baseType"),
+      manifestIndex: args.dropEvent.dataTransfer.getData("manifestIndex")
+    }
+    );
+
+    const isOK = args.cell.Contents !== null && GameRules.canPlaceItemAtMapLocation(
       {
         atLocation: args.cell,
         itemToCheck: args.cell.Contents.WorldObjectLabel,
@@ -73,12 +121,12 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     if (isOK) {
 
-      const newBase = MilitaryBaseFactory.getInstance().createNewBase({baseType: (args.dropEvent.dataTransfer.getData("baseType") as MilitaryBaseTypeLabels)});
+      const newBase = MilitaryBaseFactory.getInstance().createNewBase({ baseType: (args.dropEvent.dataTransfer.getData("baseType") as MilitaryBaseTypeLabels) });
 
       if (newBase) {
         args.cell.placeItem({ itemToPlace: newBase });
 
-        notifyDragResult(
+        notifyDragResultCallack(
           {
             result: {
               didSucceed: true,
@@ -86,21 +134,21 @@ export class MapComponent extends React.Component<props, state> implements Games
               message: `Successfully built a base, type=${newBase.WorldObjectLabel} named ${newBase.Name}.`
             }
           });
-        }
-        else {
-          notifyDragResult(
-            {
-              result: {
-                didSucceed: true,
-                manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
-                message: `unknown base type!.`
-              }
-            });
-          }
+      }
+      else {
+        notifyDragResultCallack(
+          {
+            result: {
+              didSucceed: true,
+              manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
+              message: `unknown base type!.`
+            }
+          });
+      }
     }
     else {
-      console.log(`You can't place an object there because of rules or it's not an empty location.`);
-      notifyDragResult(
+      console.log(`MapComponent: handleBuildDrop: You can't place an object there because of rules or it's not an empty location.`);
+      notifyDragResultCallack(
         {
           result: {
             didSucceed: false,
@@ -109,10 +157,6 @@ export class MapComponent extends React.Component<props, state> implements Games
           }
         });
     }
-
-    console.log(`MapComponent.tsx: handleDrop: this.notifyDragResult:`, { notifyDragResult: notifyDragResult });
-
-    this.forceUpdate();
 
   }
 
@@ -130,10 +174,9 @@ export class MapComponent extends React.Component<props, state> implements Games
             mapRow.map(cell => (
               <td key={this.uiIdx++}
 
-                onClick={ () => 
-                  { 
-                    if (this.props.playerMapClickListener) this.props.playerMapClickListener({location: cell});
-                  }
+                onClick={() => {
+                  if (this.props.playerMapClickListener) this.props.playerMapClickListener({ location: cell });
+                }
                 }
 
                 onDrop={
