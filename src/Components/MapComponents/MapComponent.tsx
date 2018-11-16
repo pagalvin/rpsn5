@@ -1,13 +1,14 @@
 
 import React, { Component, SyntheticEvent } from 'react';
-import { CountryMap } from '../Entities/WorldObjects/CountryMap';
-import { MapLocation } from '../Entities/MapObjects/MapLocation';
+import { CountryMap } from '../../Entities/WorldObjects/CountryMap';
+import { MapLocation } from '../../Entities/MapObjects/MapLocation';
+import { GameRules } from '../../Game/GameRules';
+import { Constants } from '../../Game/constants';
+import { MilitaryBaseFactory } from '../../Factories/MilitaryBaseFactory';
+import { MilitaryBaseTypeLabels } from '../../Entities/WorldObjects/Bases/MilitaryBaseTypes';
+import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../../Game/GameLogic';
 import { MapItemComponent } from './MapItemComponent';
-import { GameRules } from '../Game/GameRules';
-import { Constants } from '../Game/constants';
-import { MilitaryBaseFactory } from '../Factories/MilitaryBaseFactory';
-import { MilitaryBaseTypeLabels } from '../Entities/WorldObjects/Bases/MilitaryBaseTypes';
-import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../Game/GameLogic';
+import { MapSummaryComponent } from './MapSummaryComponent';
 
 export interface buildBaseResult {
   manifestIndex: number;
@@ -15,7 +16,15 @@ export interface buildBaseResult {
   message: string;
 }
 
+export interface targetMissileResult {
+  missileIndex: number;
+  didSucceed: boolean;
+  message: string;
+  targetedLocation: MapLocation;
+}
+
 export type notifyBuildDragResult = (args: { result: buildBaseResult }) => void;
+export type notifyTargetDragResult = (args: { result: targetMissileResult }) => void;
 
 export interface state { }
 
@@ -47,7 +56,7 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     // console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
 
-    if (args.details.changeLabel === "Advance Turn") {
+    if (args.details.changeLabel === "Advance Turn" || args.details.changeLabel === "Map Location Targeted") {
       this.forceUpdate();
     }
   }
@@ -78,8 +87,7 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   private handleTargetDrop(args: { dropEvent: any, cell: MapLocation }) {
 
-    const notifyDragResultCallack: notifyBuildDragResult = (window as any)[Constants.NOTIFY_TARGET_RESULT_CALLBACK_NAME];
-
+    const notifyDragResultCallack: notifyTargetDragResult = (window as any)[Constants.NOTIFY_TARGET_RESULT_CALLBACK_NAME];
     
     console.log(`MapComponent.tsx: handleTargetDrop: Got a drop event on a cell:`, {
       event: args.dropEvent,
@@ -93,8 +101,9 @@ export class MapComponent extends React.Component<props, state> implements Games
       {
         result: {
           didSucceed: true,
-          manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
-          message: `Successfully targeted enemy sector ${args.cell.uniqueID}.`
+          missileIndex: parseInt(args.dropEvent.dataTransfer.getData("missileIndex")),
+          message: `Successfully targeted enemy sector ${args.cell.uniqueID}.`,
+          targetedLocation: args.cell
         }
       });
 
@@ -196,6 +205,7 @@ export class MapComponent extends React.Component<props, state> implements Games
                 &nbsp;
                 _
                 <MapItemComponent mapItem={cell} key={this.uiIdx++} />
+                {cell.isTargeted ? <span>[T]</span> : null}
                 _
                 &nbsp;
 
@@ -229,7 +239,8 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     return (
       <div>
-        <h1>Country map</h1>
+        <h1>Country map</h1> 
+        <MapSummaryComponent  mapToSummary={this.props.countryMap} />
         {mapTable()}
         <h4>end of country map</h4>
       </div>

@@ -4,7 +4,9 @@ import { PopulationAreaTypes } from "../WorldObjects/PopulationCenters/Populatio
 export abstract class AbstractMapLocation {
     
     abstract Contents: MilitaryBaseTypes | PopulationAreaTypes;
-     
+    
+    public isTargeted: boolean = false;
+    
     constructor() {
         // this.Contents = null;
     }

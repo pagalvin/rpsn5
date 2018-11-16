@@ -13,7 +13,7 @@ import { RadarBase } from '../Entities/WorldObjects/Bases/RadarBase';
 import { AirBase } from '../Entities/WorldObjects/Bases/AirBase';
 import { AbmBase } from '../Entities/WorldObjects/Bases/AbmBase';
 import { ArmyBase } from '../Entities/WorldObjects/Bases/ArmyBase';
-import { MissileBase } from '../Entities/WorldObjects/Bases/MissleBase';
+import { MissileBase } from '../Entities/WorldObjects/Bases/MissileBase';
 import { NavyBase } from '../Entities/WorldObjects/Bases/NavyBase';
 
 interface props {
@@ -29,6 +29,8 @@ interface state {
 
 export class BaseActivatorComponent extends Component<props, state> implements GamestateWatcher {
 
+    private uiKeyNbr: number = 0;
+    
     constructor(props: props, state: state) {
         super(props, state);
 
@@ -78,6 +80,9 @@ export class BaseActivatorComponent extends Component<props, state> implements G
         })
     }
 
+    private uiKey() { return `BaseActivatorComponent_${this.uiKeyNbr++}`}
+
+
     public handlePlayerMapClick(args: {location: MapLocation}) {
         console.log(`BaseActivatorComponent: handlePlayerMapClick: Got a click! args:`, {args: args});
     }
@@ -99,7 +104,7 @@ export class BaseActivatorComponent extends Component<props, state> implements G
 
         const baseDetails = (args: {forBase: Exclude<MilitaryBaseTypes,null>}) => {
             return(
-                <div>
+                <div key={this.uiKey()}>
                     Name: {args.forBase.Name}, 
                     Type: {args.forBase.WorldObjectLabel}, 
                     {baseActivationOptions(args)}

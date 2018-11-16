@@ -5,9 +5,11 @@ import { AbmBase } from "../Entities/WorldObjects/Bases/AbmBase";
 import { GameRules } from "./GameRules";
 import { Rng } from "../Utils/Rng";
 import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
-import { MissileBase } from "../Entities/WorldObjects/Bases/MissleBase";
+import { MissileBase } from "../Entities/WorldObjects/Bases/MissileBase";
 import { Constants } from "./constants";
 import { NavyBase } from "../Entities/WorldObjects/Bases/NavyBase";
+import { Missile } from "../Entities/Missile";
+import { MapLocation } from "../Entities/MapObjects/MapLocation";
 
 export type gameStateChangeType =
     "Advance Turn" |
@@ -15,6 +17,7 @@ export type gameStateChangeType =
     "War Declared" |
     "Computer Playing Its Turn" |
     "Computer Finished Its Turn" |
+    "Map Location Targeted" |
     "Tick";
 
 export interface gameStateChangeDetails {
@@ -63,9 +66,19 @@ export class GameLogic {
 
     }
 
+    public static handleMissileTargeted(args: {atMapLocation: MapLocation, targetingMissile: Missile}) {
+        args.atMapLocation.isTargeted = true;
+
+        this.notifyGamestateChange({details: {changeLabel: "Map Location Targeted"}})
+    }
+
     public static activateMissileBase(args: {forBase: MissileBase}) {
         args.forBase.isReceivingOrders = true;
-        args.forBase.totalMissiles = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
+        const totalMissiles = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
+
+        for (let i = 0; i < totalMissiles; i++) {
+            args.forBase.missiles = args.forBase.missiles.concat(new Missile({parentBase: args.forBase}));
+        }
     }
 
     public static activateNavyBase(args: {forBase: NavyBase}) {

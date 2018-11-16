@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { GameHeaderComponent } from "./GameHeaderComponent";
 import { UserActionsComponent } from "./UserActionsComponent";
-import { MapComponent } from "./MapComponent";
 import { GameLogComponent } from "./GameLogComponent";
 import { Grid } from '@material-ui/core';
 import { Game } from '../Entities/gameEntity';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
+import { MapComponent } from './MapComponents/MapComponent';
 
 export interface playerMapClickListener {
     handlePlayerMapClick: (args: { location: MapLocation }) => void;

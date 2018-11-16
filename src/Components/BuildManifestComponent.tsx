@@ -5,8 +5,8 @@ import { MapLocation } from '../Entities/MapObjects/MapLocation';
 import { TickerComponent } from './TickerComponent';
 import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../Game/GameLogic';
 import { Constants } from '../Game/constants';
-import { buildBaseResult } from './MapComponent';
 import { Button } from '@material-ui/core';
+import { buildBaseResult } from './MapComponents/MapComponent';
 
 interface props {
     allowedBasesToBuild: tacticalMoveOptions[],

@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import { MapUtil } from '../Utils/MapUtils';
-import { MapLocation } from '../Entities/MapObjects/MapLocation';
+import { MapLocation } from '../../Entities/MapObjects/MapLocation';
+import { MapUtil } from '../../Utils/MapUtils';
 
 export interface state {
 

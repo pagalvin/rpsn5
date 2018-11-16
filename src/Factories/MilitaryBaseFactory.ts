@@ -1,7 +1,7 @@
 import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 import { AbmBase } from "../Entities/WorldObjects/Bases/AbmBase";
 import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
-import { MissileBase } from "../Entities/WorldObjects/Bases/MissleBase";
+import { MissileBase } from "../Entities/WorldObjects/Bases/MissileBase";
 import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
 import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
 import { AbstractMilitaryBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";

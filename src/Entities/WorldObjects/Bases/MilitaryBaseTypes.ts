@@ -1,7 +1,7 @@
 import { NavyBase } from "./NavyBase";
 import { ArmyBase } from "./ArmyBase";
 import { RadarBase } from "./RadarBase";
-import { MissileBase } from "./MissleBase";
+import { MissileBase } from "./MissileBase";
 import { AirBase } from "./AirBase";
 import { AbmBase } from "./AbmBase";
 

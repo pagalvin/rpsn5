@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { GameLogic } from '../../Game/GameLogic';
-import { MissileBase } from '../../Entities/WorldObjects/Bases/MissleBase';
+import { MissileBase } from '../../Entities/WorldObjects/Bases/MissileBase';
 import { Button } from '@material-ui/core';
 import { MissileTargetingComponent } from '../MissileTargetingComponent';
 
@@ -10,6 +10,7 @@ interface props {
 }
 
 interface state {
+    isTargetingMissiles: boolean;
 }
 
 export class MissileBaseComponent extends Component<props, state> {
@@ -18,6 +19,7 @@ export class MissileBaseComponent extends Component<props, state> {
         super(props, state);
 
         this.state = {
+            isTargetingMissiles: false
         }
 
     }
@@ -32,24 +34,29 @@ export class MissileBaseComponent extends Component<props, state> {
     private activateMissileBase() {
         console.log(`MissileBaseComponent: activateMissileBase: entering.`);
         GameLogic.activateMissileBase({forBase: this.props.base});
-        this.forceUpdate();
+        this.setState({isTargetingMissiles: true});
     }
 
     render() {
 
+        const isTargetingMarkup = 
+            <React.Fragment>
+                <span>{`Targeting ${this.props.base.missiles.length} missiles.`}<br/></span>
+                <MissileTargetingComponent parentBase={this.props.base}/>                
+            </React.Fragment>;
+
         const readyToActivateMarkup =
             <React.Fragment>
                 <Button onClick={() => this.activateMissileBase()}>
-                    {`Target ${this.props.base.totalMissiles} Missiles`}
+                    {`Target ${this.props.base.missiles.length} Missiles`}
                 </Button>
-                <MissileTargetingComponent/>                
             </React.Fragment>;
 
         const allTargetedMarkup =
             <React.Fragment>
                 <span>
                     {
-                        `${this.props.base.totalMissiles} en route.`
+                        `${this.props.base.missiles.length} en route.`
                     }
                 </span>
             </React.Fragment>;
@@ -60,15 +67,11 @@ export class MissileBaseComponent extends Component<props, state> {
                 <span>Fueling missiles...</span>
             </React.Fragment>;
 
-        return (
-            this.props.base.isReceivingOrders
-                ? (
-                    this.props.base.totalMissiles > 0 && this.props.base.missileTargets.length === this.props.base.totalMissiles 
-                        ? allTargetedMarkup 
-                        : readyToActivateMarkup
-                )
-                : isNotReceivingOrdersMarkup
-        );
+        if (this.state.isTargetingMissiles) { return isTargetingMarkup; }
+        if (! this.props.base.isReceivingOrders) { return isNotReceivingOrdersMarkup; }
+        if (this.props.base.areAllMissilesTargeted() ) { return allTargetedMarkup; }
+
+        return readyToActivateMarkup;
 
     };
 
