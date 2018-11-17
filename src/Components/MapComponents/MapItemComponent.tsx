@@ -23,8 +23,10 @@ export class MapItemComponent extends React.Component<props, state> {
 
     render() {
 
+        const { mapItem } = this.props;
+
         return (
-            MapUtil.GetMapLocationSingleCharacterCode({forMapLocation: this.props.mapItem})
+            MapUtil.GetMapLocationSingleCharacterCode({forMapLocation: mapItem})
         );
 
     }

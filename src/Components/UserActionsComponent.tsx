@@ -152,6 +152,15 @@ export class UserActionsComponent extends Component<props, state> implements Gam
         if (args.details.changeLabel === "Computer Playing Its Turn") {
             this.setState({isWaitingForMyTurn: true});
         }
+
+        if (args.details.changeLabel === "War Declared") {
+            this.setState(
+                {
+                    isActivating: true,
+                    isMakingStrategicChoice: false,
+                    isMakingTacticalChoice: true
+                });
+        }
     }
 
     render() {
@@ -220,7 +229,12 @@ export class UserActionsComponent extends Component<props, state> implements Gam
 
         GameLogic.declareWar({declaringPlayer: this.props.player});
 
-        this.handleFinishTurn();
+        this.setState(
+            {
+                isActivating: true,
+                isMakingStrategicChoice: false,
+                isMakingTacticalChoice: true
+            });
 
     }
 
