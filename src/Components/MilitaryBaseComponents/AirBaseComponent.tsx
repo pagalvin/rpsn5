@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { AirBase } from '../../Entities/WorldObjects/Bases/AirBase';
 import { Button } from '@material-ui/core';
+import { GameLogic } from '../../Game/GameLogic';
+import { OrdnanceTargetingComponent } from '../OrdnanceTargetingComponent';
 
 interface props {
     base: AirBase;
 }
 
 interface state {
+    isTargetingBombers: boolean;
 }
 
 export class AirBaseComponent extends Component<props, state> {
@@ -15,6 +18,7 @@ export class AirBaseComponent extends Component<props, state> {
         super(props, state);
 
         this.state = {
+            isTargetingBombers: false
         }
 
     }
@@ -26,18 +30,36 @@ export class AirBaseComponent extends Component<props, state> {
 
     }
 
-    private scramble() {
-        console.log(`AirbaseComponent: scramble: entering.`);
-        this.props.base.isFlying = true;
-        this.forceUpdate();
+    private activateAirBase() {
+        console.log(`AirbaseComponent: activateAirBase: entering.`);
+        GameLogic.activateAirBase({ forBase: this.props.base });
+        this.setState({ isTargetingBombers: true });
+    }
+
+    private handleAllOrdnanceTargeted() {
+        this.setState({
+            isTargetingBombers: false
+        })
     }
 
     render() {
 
+        console.log(`AirBaseComponent: render: entering with state and props:`, {state: this.state, props: this.props});
+
+        const isTargetingMarkup =
+            <React.Fragment>
+                <span>{`Targeting ${this.props.base.ordnance.length} bombers.`}<br /></span>
+                <OrdnanceTargetingComponent 
+                    ordnanceLabel={"Bomber"} 
+                    parentBase={this.props.base} 
+                    targetingCompleteCallback={() => this.setState({isTargetingBombers: false})}
+                    />
+            </React.Fragment>;
+
         const readyToActivateMarkup =
             <React.Fragment>
-                <Button onClick={() => this.scramble()}>
-                    {`Scramble ${this.props.base.totalFighters} fighters and ${this.props.base.totalBombers} bombers.`}
+                <Button onClick={() => this.activateAirBase()}>
+                    {`Scramble ${this.props.base.totalFighters} fighters and ${this.props.base.ordnance} bombers.`}
                 </Button>
             </React.Fragment>;
 
@@ -45,7 +67,7 @@ export class AirBaseComponent extends Component<props, state> {
             <React.Fragment>
                 <span>
                     {
-                        `${this.props.base.totalFighters} on patrol. ${this.props.base.totalBombers} en route to their target.`
+                        `${this.props.base.totalFighters} on patrol. ${this.props.base.ordnance} en route to their target.`
                     }
                 </span>
             </React.Fragment>;
@@ -56,13 +78,11 @@ export class AirBaseComponent extends Component<props, state> {
                 <span>Flight crews prepping...</span>
             </React.Fragment>;
 
-        return (
-            this.props.base.isReceivingOrders
-                ? (
-                    this.props.base.isFlying ? isFlyingMarkup : readyToActivateMarkup 
-                )
-                : isNotReceivingOrdersMarkup
-        );
+        if (this.state.isTargetingBombers) { return isTargetingMarkup; }
+        if (!this.props.base.isReceivingOrders) { return isNotReceivingOrdersMarkup; }
+        if (this.props.base.isAllOrdnanceTargeted()) { return isFlyingMarkup; }
+
+        return readyToActivateMarkup;
 
     };
 

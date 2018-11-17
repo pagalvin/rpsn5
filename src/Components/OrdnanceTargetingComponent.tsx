@@ -3,11 +3,18 @@ import { Constants } from '../Game/constants';
 import { MissileBase } from '../Entities/WorldObjects/Bases/MissileBase';
 import { GameLogic } from '../Game/GameLogic';
 import { targetMissileResult } from './MapComponents/MapComponent';
+import { NavyBase } from '../Entities/WorldObjects/Bases/NavyBase';
+import { AirBase } from '../Entities/WorldObjects/Bases/AirBase';
 
-export interface props { parentBase: MissileBase }
+export interface props { 
+    parentBase: MissileBase | NavyBase | AirBase;
+    ordnanceLabel: string;
+    targetingCompleteCallback: () => void;
+}
+
 export interface state { }
 
-export class MissileTargetingComponent extends React.Component<props, state> {
+export class OrdnanceTargetingComponent extends React.Component<props, state> {
 
     private nextUIKey: number = 0;
 
@@ -15,12 +22,14 @@ export class MissileTargetingComponent extends React.Component<props, state> {
         super(props, state);
     }
 
-    private uiKey() { return `MissileTargetingComponent_${this.nextUIKey++}` }
+    private uiKey() { return `OrdnanceTargetingComponent_${this.nextUIKey++}` }
 
     render() {
 
+        const {ordnanceLabel } = this.props;
+
         const dragStartMarkup = (args: { dragEvent: React.DragEvent, missileIndex: number }) => {
-            console.log(`MissileTargetingComponent: tacticalOptionsMarkup: onDragStart: e, index:`,
+            console.log(`OrdnanceTargetingComponent: tacticalOptionsMarkup: onDragStart: e, index:`,
                 {
                     e: args.dragEvent,
                     manifestIndex: args.missileIndex
@@ -30,12 +39,14 @@ export class MissileTargetingComponent extends React.Component<props, state> {
             args.dragEvent.dataTransfer.setData("missileIndex", args.missileIndex.toString());
 
             (window as any)[Constants.NOTIFY_TARGET_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
+
+
         }
 
         const targetedMarkup = (args: { forMissileIndex: number}) => {
             return (
                 <div key={this.uiKey()}>
-                    {`Missile ${args.forMissileIndex} is targeted.`}
+                    {`${ordnanceLabel} ${args.forMissileIndex} is targeted.`}
                 </div>
             )
         }
@@ -46,15 +57,17 @@ export class MissileTargetingComponent extends React.Component<props, state> {
                         draggable
                         onDragStart={(e) => dragStartMarkup({ dragEvent: e, missileIndex: args.forMissileIndex })}
                     >
-                        {`Missile ${args.forMissileIndex}.`}
+                        {`${ordnanceLabel} ${args.forMissileIndex}.`}
                 </div>
             )
         };
 
         return (
-            this.props.parentBase.missiles.map( (m, idx) => {
+            this.props.parentBase.ordnance.map( (m, idx) => {
 
-                if (m.myTarget) {
+                console.log(`OrdnanceTargetComponent: mapping ordnance for render:`, {currentMissile: m});
+
+                if (m.myTarget !== null) {
                     return targetedMarkup({forMissileIndex: idx});
                 }
 
@@ -65,15 +78,21 @@ export class MissileTargetingComponent extends React.Component<props, state> {
     }
 
     private handleDropResult(args: { result: targetMissileResult }) {
-        console.log(`MissileTargetingComponent: handleDropResult: drop finished, result:`, args.result);
+        console.log(`OrdnanceTargetingComponent: handleDropResult: drop finished, result:`, args.result);
 
-
-        GameLogic.handleMissileTargeted({atMapLocation: args.result.targetedLocation, targetingMissile: this.props.parentBase.missiles[args.result.missileIndex]});
-
-        // this.props.parentBase.missiles[args.result.missileIndex].myTarget = args.result.targetedLocation;
-
+        GameLogic.handleMissileTargeted(
+            {
+                atMapLocation: args.result.targetedLocation, 
+                targetingMissile: this.props.parentBase.ordnance[args.result.missileIndex]
+            });
+        
+        if (this.props.parentBase.isAllOrdnanceTargeted()) {
+            this.props.targetingCompleteCallback();
+        }
+        else {
         this.forceUpdate();
-
+        }
+        
     }
 
 }

@@ -11,6 +11,9 @@ export class Constants {
     public static readonly MIN_ICBMS = 1;
     public static readonly MAX_ICBMS = 4;
 
+    public static readonly MIN_SUB_MISSILES = 1;
+    public static readonly MAX_SUB_MISSILES = 3;
+
     public static readonly BUILD_DROP = "build";
     public static readonly TARGET_MISSILE_DROP = "target";
 

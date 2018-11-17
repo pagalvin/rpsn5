@@ -1,21 +1,28 @@
 import { AbstractMilitaryBase } from "./AbstractMilitaryBase";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
+import { GameLogic } from "../../../Game/GameLogic";
+import { Ordnance } from "../../Ordnance";
 
 export class NavyBase extends AbstractMilitaryBase {
 
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "Navy";
     public gameYear: number = 1;
 
-    public totalSubMissiles: number;
-    public didLaunchMissles: boolean;
+    public ordnance: Ordnance[];
 
     constructor() {
         super();
-        this.totalSubMissiles = 0;
-        this.didLaunchMissles = false;
         this.isReceivingOrders = false;
+        this.ordnance = [];
     }
 
-    public activate(){}
+    public isAllOrdnanceTargeted(): boolean {
+        return ! this.ordnance.some(m => m.myTarget === null);
+    }
+ 
+    public activate() {
+        GameLogic.activateNavyBase({forBase: this});
+    }
+    
 
 }

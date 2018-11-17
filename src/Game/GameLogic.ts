@@ -8,8 +8,9 @@ import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
 import { MissileBase } from "../Entities/WorldObjects/Bases/MissileBase";
 import { Constants } from "./constants";
 import { NavyBase } from "../Entities/WorldObjects/Bases/NavyBase";
-import { Missile } from "../Entities/Missile";
+import { Ordnance } from "../Entities/Ordnance";
 import { MapLocation } from "../Entities/MapObjects/MapLocation";
+import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
 
 export type gameStateChangeType =
     "Advance Turn" |
@@ -66,25 +67,51 @@ export class GameLogic {
 
     }
 
-    public static handleMissileTargeted(args: {atMapLocation: MapLocation, targetingMissile: Missile}) {
+    public static handleMissileTargeted(args: {atMapLocation: MapLocation, targetingMissile: Ordnance}) {
         args.atMapLocation.isTargeted = true;
+
+        args.targetingMissile.myTarget = args.atMapLocation;
 
         this.notifyGamestateChange({details: {changeLabel: "Map Location Targeted"}})
     }
 
     public static activateMissileBase(args: {forBase: MissileBase}) {
         args.forBase.isReceivingOrders = true;
-        const totalMissiles = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
 
-        for (let i = 0; i < totalMissiles; i++) {
-            args.forBase.missiles = args.forBase.missiles.concat(new Missile({parentBase: args.forBase}));
+        const totalBombers = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
+
+        for (let i = 0; i < totalBombers; i++) {
+            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({parentBase: args.forBase}));
         }
     }
+
+
+    public static activateAirBase(args: {forBase: AirBase}) {
+        
+        console.log(`GameLogic: activateAirBase: Entering:`, args);
+
+        args.forBase.isReceivingOrders = true;
+
+        const totalFighters = Constants.MAX_INITIAL_FIGHTERS + Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_FIGHTERS -1});
+        args.forBase.totalFighters = totalFighters;
+        
+        const totalBombers = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
+
+        for (let i = 0; i < totalBombers; i++) {
+            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({parentBase: args.forBase}));
+        }
+    }
+
 
     public static activateNavyBase(args: {forBase: NavyBase}) {
 
         args.forBase.isReceivingOrders = true;
-        args.forBase.didLaunchMissles = true; // temporary shim, real logic to come later
+
+        const totalMissiles = Rng.throwDice({hiNumberMinus1: Constants.MIN_SUB_MISSILES -1}) + Constants.MAX_SUB_MISSILES;
+
+        for (let i = 0; i < totalMissiles; i++) {
+            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({parentBase: args.forBase}));
+        }
     }
 
     public static activateArmyBase(args: {forBase: ArmyBase}) {
