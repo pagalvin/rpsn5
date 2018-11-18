@@ -3,7 +3,7 @@ import { CountryMap } from "../Entities/WorldObjects/CountryMap";
 import { MapLocation } from "../Entities/MapObjects/MapLocation";
 import { PlaceableObjectLabels } from "../Entities/MapObjects/PlaceableObjects";
 import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
-import { AbstractPlayer } from "./AbstractPlayer";
+import { Ordnance } from "../Entities/Ordnance";
 
 export type strategicMoveOptions = "Build" | "Spy" | "Declare War" | "Skip" | "Activate" | "Sue for Peace" | "Surrender";
 export type tacticalMoveOptions = MilitaryBaseTypeLabels | "Activate Base";
@@ -62,4 +62,9 @@ export class GameRules {
 
     }
 
+    public static getLocationDamage(args: {attackedBy: Ordnance, locationAttacked: MapLocation}) {
+
+        return args.locationAttacked.nuclearDamage < 3 ? args.locationAttacked.nuclearDamage +=1 : 3;
+
+    }
 }

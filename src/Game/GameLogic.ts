@@ -20,6 +20,7 @@ export type gameStateChangeType =
     "Computer Playing Its Turn" |
     "Computer Finished Its Turn" |
     "Map Location Targeted" |
+    "Location Nuked" |
     "Tick";
 
 export interface gameStateChangeDetails {
@@ -53,68 +54,73 @@ export class GameLogic {
 
         this.notifyGamestateChange({ details: { changeLabel: "Computer Playing Its Turn" } })
 
+        game.currentPlayer = game.computerPlayer;
+
         game.computerPlayer.playTurn();
 
-        // this.notifyGamestateChange({details: {changeLabel: "Advance Turn"}});
+        game.currentPlayer = game.humanPlayer;
 
     }
 
-    public static activateAbmBase(args: {forBase: AbmBase}) {
+    public static activateAbmBase(args: { forBase: AbmBase }) {
 
-        args.forBase.totalMissiles = Rng.throwDice({hiNumberMinus1: 5}) + 1;
+        args.forBase.totalMissiles = Rng.throwDice({ hiNumberMinus1: 5 }) + 1;
         args.forBase.isTracking = true;
 
         return;
 
     }
 
-    public static handleMissileTargeted(args: {atMapLocation: MapLocation, targetingMissile: Ordnance}) {
+    public static handleMissileTargeted(args: { atMapLocation: MapLocation, targetingMissile: Ordnance }) {
+
+        const game = Game.getInstance();
         args.atMapLocation.isTargeted = true;
 
         args.targetingMissile.myTarget = args.atMapLocation;
 
-        this.notifyGamestateChange({details: {changeLabel: "Map Location Targeted"}})
+        game.currentPlayer.targetedOrdnanceItems = game.currentPlayer.targetedOrdnanceItems.concat(args.targetingMissile);
+
+        this.notifyGamestateChange({ details: { changeLabel: "Map Location Targeted" } })
     }
 
-    public static activateMissileBase(args: {forBase: MissileBase}) {
+    public static activateMissileBase(args: { forBase: MissileBase }) {
         args.forBase.isReceivingOrders = true;
 
-        const totalBombers = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
+        const totalBombers = Rng.throwDice({ hiNumberMinus1: Constants.MAX_ICBMS - 1 }) + Constants.MIN_ICBMS;
 
         for (let i = 0; i < totalBombers; i++) {
-            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({parentBase: args.forBase}));
+            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({ parentBase: args.forBase }));
         }
     }
 
+    public static activateAirBase(args: { forBase: AirBase }) {
 
-    public static activateAirBase(args: {forBase: AirBase}) {
-        
         console.log(`GameLogic: activateAirBase: Entering:`, args);
 
         args.forBase.isReceivingOrders = true;
 
-        const totalFighters = Constants.MAX_INITIAL_FIGHTERS + Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_FIGHTERS -1});
+        const totalFighters = Constants.MAX_INITIAL_FIGHTERS + Rng.throwDice({ hiNumberMinus1: Constants.MAX_INITIAL_FIGHTERS - 1 });
         args.forBase.totalFighters = totalFighters;
 
-        const totalBombers = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
+        const totalBombers = Rng.throwDice({ hiNumberMinus1: Constants.MAX_ICBMS - 1 }) + Constants.MIN_ICBMS;
 
         for (let i = 0; i < totalBombers; i++) {
-            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({parentBase: args.forBase}));
+            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({ parentBase: args.forBase }));
         }
     }
 
-    public static activateNavyBase(args: {forBase: NavyBase}) {
+    public static activateNavyBase(args: { forBase: NavyBase }) {
 
         args.forBase.isReceivingOrders = true;
 
-        const totalMissiles = Rng.throwDice({hiNumberMinus1: Constants.MIN_SUB_MISSILES -1}) + Constants.MAX_SUB_MISSILES;
+        const totalMissiles = Rng.throwDice({ hiNumberMinus1: Constants.MIN_SUB_MISSILES - 1 }) + Constants.MAX_SUB_MISSILES;
 
         for (let i = 0; i < totalMissiles; i++) {
-            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({parentBase: args.forBase}));
+            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({ parentBase: args.forBase }));
         }
     }
 
-    public static activateArmyBase(args: {forBase: ArmyBase}) {
+    public static activateArmyBase(args: { forBase: ArmyBase }) {
 
         args.forBase.isDecamped = true;
 
@@ -151,38 +157,72 @@ export class GameLogic {
 
     private static pulseClock() {
         this.notifyGamestateChange({ details: { changeLabel: "Tick" } });
-    }
 
+        if (Game.getInstance().isWartime) { this.resolveWartimeAttacks(); }
+
+    }
 
     private static resolveWartimeAttacks() {
 
-        const resolveAttacksOnPlayer = (args: {player: AbstractPlayer}) => {
+        const resolveAttack = (args: { attackingPlayer: AbstractPlayer, defendingPlayer: AbstractPlayer, locationUnderAttack: MapLocation }) => {
 
-            const {map} = args.player;
+            console.log(`resolveWartimeAttack: resolveAttack: entering, args:`, {args: args});
 
-            const locationsUnderAttacked = MapUtil.getMapSummary({forMap: map});
+            const attackingOrdnance = args.attackingPlayer.targetedOrdnanceItems.filter((ao) => {
+                if (ao.myTarget === null) return false;
+                if (ao.wasConsumed) return false;
+                return (ao.myTarget.uniqueID === args.locationUnderAttack.uniqueID);
+            })[0];
 
+            console.log(`resolveWartimeAttack: resolveAttack: found ordnance:`, {foundAttackingOrdnance: attackingOrdnance});
 
+            if (attackingOrdnance) {
+                const nukeDamage = GameRules.getLocationDamage(
+                    { 
+                        attackedBy: attackingOrdnance, 
+                        locationAttacked: args.locationUnderAttack 
+                    });
+
+                args.locationUnderAttack.nuclearDamage = nukeDamage;
+                attackingOrdnance.wasConsumed = true;
+            }
+        }
+
+        const resolveAttacksOnPlayer = (args: { attackingPlayer: AbstractPlayer, defendingPlayer: AbstractPlayer }) => {
+
+            const { map } = args.defendingPlayer;
+
+            const locationsUnderAttack = MapUtil.getMapSummary({ forMap: map }).targetedMapLocations;
+
+            for (let i = 0; i < locationsUnderAttack.length; i++) {
+                resolveAttack({ attackingPlayer: args.attackingPlayer, defendingPlayer: args.defendingPlayer, locationUnderAttack: locationsUnderAttack[i] });
+                this.notifyGamestateChange({ details: { changeLabel: "Location Nuked" } });
+            }
         };
-    
-        const game: Game = Game.getInstance();
 
+        console.log(`GameLogic: resolveWartimeAttacks: Entering.`);
 
+        const game = Game.getInstance();
+
+        const attacker = game.currentPlayer;
+
+        const defender = game.currentPlayer.isHuman ? game.computerPlayer : game.humanPlayer;
+
+        resolveAttacksOnPlayer({ attackingPlayer: attacker, defendingPlayer: defender });
 
     }
 
     public static declareWar(args: { declaringPlayer: AbstractPlayer }) {
-        
+
         console.log(`GameLogic.ts: declareWar: A player declared war:`, { declaringPlayer: args.declaringPlayer });
-        
+
         args.declaringPlayer.declaredWar = true; // Gives a first-strike bonus but world opinion takes a  hit
 
         Game.getInstance().isPeacetime = false;
-        Game.getInstance().isWartime = false;
+        Game.getInstance().isWartime = true;
 
         this.notifyGamestateChange({ details: { changeLabel: "War Declared" } });
     }
-
 
     public static finishHumanTurn(): void {
         this.playComputerTurn();

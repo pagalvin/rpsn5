@@ -15,7 +15,7 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
     public map: CountryMap;
 
     constructor() {
-        super();
+        super({isHuman: false});
 
         GameLogic.registerGamestateWatcher({watcher: this});
 

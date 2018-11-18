@@ -1,7 +1,7 @@
 import React from 'react';
 import { Constants } from '../Game/constants';
 import { MissileBase } from '../Entities/WorldObjects/Bases/MissileBase';
-import { GameLogic } from '../Game/GameLogic';
+import { GameLogic, GamestateWatcher, gameStateChangeDetails } from '../Game/GameLogic';
 import { targetMissileResult } from './MapComponents/MapComponent';
 import { NavyBase } from '../Entities/WorldObjects/Bases/NavyBase';
 import { AirBase } from '../Entities/WorldObjects/Bases/AirBase';
@@ -14,16 +14,30 @@ export interface props {
 
 export interface state { }
 
-export class OrdnanceTargetingComponent extends React.Component<props, state> {
+export class OrdnanceTargetingComponent extends React.Component<props, state> implements GamestateWatcher{
 
     private nextUIKey: number = 0;
 
     constructor(props: props, state: state) {
         super(props, state);
+
     }
 
     private uiKey() { return `OrdnanceTargetingComponent_${this.nextUIKey++}` }
 
+    componentDidMount() {
+        GameLogic.registerGamestateWatcher({ watcher: this });
+    }
+
+    public handleGamestateChange(args: { details: gameStateChangeDetails }) {
+
+        // console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
+    
+        if (args.details.changeLabel === "Location Nuked") {
+          this.forceUpdate();
+        }
+      }
+    
     render() {
 
         const {ordnanceLabel } = this.props;
@@ -51,6 +65,14 @@ export class OrdnanceTargetingComponent extends React.Component<props, state> {
             )
         }
 
+        const consumedMarkup = (args: { forMissileIndex: number}) => {
+            return (
+                <div key={this.uiKey()}>
+                    {`${ordnanceLabel} ${args.forMissileIndex} hit its target.`}
+                </div>
+            )
+        }
+
         const toTargetMarkup = (args: { forMissileIndex: number }) => {
             return (
                     <div key={this.uiKey()}
@@ -66,6 +88,8 @@ export class OrdnanceTargetingComponent extends React.Component<props, state> {
             this.props.parentBase.ordnance.map( (m, idx) => {
 
                 console.log(`OrdnanceTargetComponent: mapping ordnance for render:`, {currentMissile: m});
+
+                if (m.wasConsumed) { return consumedMarkup({forMissileIndex: idx}) }
 
                 if (m.myTarget !== null) {
                     return targetedMarkup({forMissileIndex: idx});

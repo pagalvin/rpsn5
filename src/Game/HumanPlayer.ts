@@ -11,7 +11,7 @@ export class HumanPlayer extends AbstractPlayer  {
     public map: CountryMap;
 
     constructor() {
-        super();
+        super({isHuman: true});
 
         this.map = new CountryMap({sizeX: 10, sizeY: 10, owner: "Human"});
         this.Name = "Human";

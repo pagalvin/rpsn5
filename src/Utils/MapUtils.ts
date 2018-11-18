@@ -83,7 +83,7 @@ export class MapUtil {
             (prev, curr) => addTwoSummaries(prev, mapRowSummary(curr)), this.initialSummary
         );
 
-        console.log(`MapUtils: getMapSummary: allIn:`, { allIn2: allIn });
+        // console.log(`MapUtils: getMapSummary: allIn:`, { allIn2: allIn });
 
         return allIn;
     }

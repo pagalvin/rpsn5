@@ -8,7 +8,7 @@ export class Ordnance {
     public myTarget: MapLocation | null;
 
     public remainingTicksBeforeStriking: number;
-
+    public wasConsumed: boolean; 
     public static nextOrdnanceID: number = 0;
     public myID: number;
     public myBase: MissileBase | NavyBase | AirBase;
@@ -17,7 +17,7 @@ export class Ordnance {
 
         this.myTarget = null;
         this.remainingTicksBeforeStriking = 0;
-
+        this.wasConsumed = false;
         this.myID = Ordnance.nextOrdnanceID++;
         this.myBase = args.parentBase;
     }

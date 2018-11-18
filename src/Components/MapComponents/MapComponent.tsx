@@ -56,7 +56,10 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     // console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
 
-    if (args.details.changeLabel === "Advance Turn" || args.details.changeLabel === "Map Location Targeted") {
+    if (args.details.changeLabel === "Advance Turn" ||
+      args.details.changeLabel === "Map Location Targeted" ||
+      args.details.changeLabel === "Location Nuked"
+    ) {
       this.forceUpdate();
     }
   }
@@ -88,7 +91,7 @@ export class MapComponent extends React.Component<props, state> implements Games
   private handleTargetDrop(args: { dropEvent: any, cell: MapLocation }) {
 
     const notifyDragResultCallack: notifyTargetDragResult = (window as any)[Constants.NOTIFY_TARGET_RESULT_CALLBACK_NAME];
-    
+
     console.log(`MapComponent.tsx: handleTargetDrop: Got a drop event on a cell:`, {
       event: args.dropEvent,
       cell: args.cell,
@@ -171,7 +174,7 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   render() {
 
-    console.log(`MapComponent.tsx: rendering a map:`, this.props.countryMap);
+    // console.log(`MapComponent.tsx: rendering a map:`, this.props.countryMap);
 
     const mapRow = (mapRow: MapLocation[]) => {
 
@@ -239,8 +242,8 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     return (
       <div>
-        <h1>Country map</h1> 
-        <MapSummaryComponent  mapToSummarize={this.props.countryMap} />
+        <h1>Country map</h1>
+        <MapSummaryComponent mapToSummarize={this.props.countryMap} />
         {mapTable()}
         <h4>end of country map</h4>
       </div>

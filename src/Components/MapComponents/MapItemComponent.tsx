@@ -25,8 +25,23 @@ export class MapItemComponent extends React.Component<props, state> {
 
         const { mapItem } = this.props;
 
+        const nuclearDamageIndicator = () => {
+            const {nuclearDamage} = this.props.mapItem;
+
+            if (nuclearDamage === 1) return "*";
+            if (nuclearDamage === 2) return "**";
+            if (nuclearDamage === 3) return "***";
+
+            return "";
+
+        }
         return (
-            MapUtil.GetMapLocationSingleCharacterCode({forMapLocation: mapItem})
+            <React.Fragment>
+
+                {MapUtil.GetMapLocationSingleCharacterCode({forMapLocation: mapItem})}
+                {nuclearDamageIndicator()}
+                
+            </React.Fragment>
         );
 
     }
