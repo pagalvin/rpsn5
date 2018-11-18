@@ -240,7 +240,7 @@ export class MapComponent extends React.Component<props, state> implements Games
     return (
       <div>
         <h1>Country map</h1> 
-        <MapSummaryComponent  mapToSummary={this.props.countryMap} />
+        <MapSummaryComponent  mapToSummarize={this.props.countryMap} />
         {mapTable()}
         <h4>end of country map</h4>
       </div>

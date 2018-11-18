@@ -8,19 +8,21 @@ export class MapLocation extends AbstractMapLocation {
 
     public Contents: MilitaryBaseTypes | PopulationAreaTypes;
     public uniqueID: number = 0;
-
+    
     private static nextID: number = 1;
 
     constructor() {
         super();
         this.Contents = new RuralArea({name: "Empty", population: 0});
         this.uniqueID = MapLocation.nextID++;
+        this.isTargeted = false;
     }
 
     public placeItem(args: {itemToPlace: PlaceableObject}): void {
         this.Contents = args.itemToPlace;
     }
     
+
     public isMilitaryBase() {
 
         const militaryLabels: MilitaryBaseTypeLabels[] = [

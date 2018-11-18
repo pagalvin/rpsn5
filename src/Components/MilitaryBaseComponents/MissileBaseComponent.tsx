@@ -24,7 +24,6 @@ export class MissileBaseComponent extends Component<props, state> {
 
     }
 
-
     componentDidMount() {
 
         console.log(`MissileBaseComponent: componentDidMount: state and props:`, { state: this.state, props: this.props });
@@ -33,20 +32,20 @@ export class MissileBaseComponent extends Component<props, state> {
 
     private activateMissileBase() {
         console.log(`MissileBaseComponent: activateMissileBase: entering.`);
-        GameLogic.activateMissileBase({forBase: this.props.base});
-        this.setState({isTargetingMissiles: true});
+        GameLogic.activateMissileBase({ forBase: this.props.base });
+        this.setState({ isTargetingMissiles: true });
     }
 
     render() {
 
-        const isTargetingMarkup = 
+        const isTargetingMarkup =
             <React.Fragment>
-                <span>{`Targeting ${this.props.base.ordnance.length} missiles.`}<br/></span>
-                <OrdnanceTargetingComponent 
-                    ordnanceLabel={"ICBM"} 
+                <span>{`Targeting ${this.props.base.ordnance.length} missiles.`}<br /></span>
+                <OrdnanceTargetingComponent
+                    ordnanceLabel={"ICBM"}
                     parentBase={this.props.base}
-                    targetingCompleteCallback={() => this.setState({isTargetingMissiles: false})}
-                    />                
+                    targetingCompleteCallback={() => this.setState({ isTargetingMissiles: false })}
+                />
             </React.Fragment>;
 
         const readyToActivateMarkup =
@@ -70,12 +69,21 @@ export class MissileBaseComponent extends Component<props, state> {
             <React.Fragment>
                 <span>Fueling missiles...</span>
             </React.Fragment>;
- 
-        if (this.state.isTargetingMissiles) { return isTargetingMarkup; }
-        if (! this.props.base.isReceivingOrders) { return isNotReceivingOrdersMarkup; }
-        if (this.props.base.isAllOrdnanceTargeted() ) { return allTargetedMarkup; }
 
-        return readyToActivateMarkup;
+        const wrapper = (toWrap: JSX.Element) => {
+            return (
+                <div>
+                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    {toWrap}
+                </div>
+            )
+        };
+
+        if (this.state.isTargetingMissiles) { return wrapper(isTargetingMarkup); }
+        if (!this.props.base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
+        if (this.props.base.isAllOrdnanceTargeted()) { return wrapper(allTargetedMarkup); }
+
+        return wrapper(readyToActivateMarkup);
 
     };
 

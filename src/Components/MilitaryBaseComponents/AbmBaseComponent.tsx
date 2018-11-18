@@ -28,7 +28,7 @@ export class AbmBaseComponent extends Component<props, state> {
     }
 
     private activateAbmBase() {
-        GameLogic.activateAbmBase({forBase: this.props.base});
+        GameLogic.activateAbmBase({ forBase: this.props.base });
         this.forceUpdate();
     }
 
@@ -56,14 +56,25 @@ export class AbmBaseComponent extends Component<props, state> {
                 <span>Spinning up...</span>
             </React.Fragment>;
 
+        const wrapper = (toWrap: JSX.Element) => {
+            return (
+                <div>
+                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    {toWrap}
+                </div>
+            )
+        };
+
+
         return (
             this.props.base.isReceivingOrders
                 ? (
-                    this.props.base.isTracking ? isTrackingMarkup : readyToActivateMarkup
+                    this.props.base.isTracking ? wrapper(isTrackingMarkup) : wrapper(readyToActivateMarkup)
                 )
-                : isNotReceivingOrdersMarkup
+                : wrapper(isNotReceivingOrdersMarkup)
         );
 
     };
+
 
 }

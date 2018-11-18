@@ -44,22 +44,22 @@ export class AirBaseComponent extends Component<props, state> {
 
     render() {
 
-        console.log(`AirBaseComponent: render: entering with state and props:`, {state: this.state, props: this.props});
+        console.log(`AirBaseComponent: render: entering with state and props:`, { state: this.state, props: this.props });
 
         const isTargetingMarkup =
             <React.Fragment>
                 <span>{`Targeting ${this.props.base.ordnance.length} bombers.`}<br /></span>
-                <OrdnanceTargetingComponent 
-                    ordnanceLabel={"Bomber"} 
-                    parentBase={this.props.base} 
-                    targetingCompleteCallback={() => this.setState({isTargetingBombers: false})}
-                    />
+                <OrdnanceTargetingComponent
+                    ordnanceLabel={"Bomber"}
+                    parentBase={this.props.base}
+                    targetingCompleteCallback={() => this.setState({ isTargetingBombers: false })}
+                />
             </React.Fragment>;
 
         const readyToActivateMarkup =
             <React.Fragment>
                 <Button onClick={() => this.activateAirBase()}>
-                    {`Scramble ${this.props.base.totalFighters} fighters and ${this.props.base.ordnance} bombers.`}
+                    {`Scramble ${this.props.base.totalFighters} fighters and ${this.props.base.ordnance.length} bombers.`}
                 </Button>
             </React.Fragment>;
 
@@ -67,7 +67,7 @@ export class AirBaseComponent extends Component<props, state> {
             <React.Fragment>
                 <span>
                     {
-                        `${this.props.base.totalFighters} on patrol. ${this.props.base.ordnance} en route to their target.`
+                        `${this.props.base.totalFighters} on patrol. ${this.props.base.ordnance.length} bombers en route to their target.`
                     }
                 </span>
             </React.Fragment>;
@@ -78,11 +78,20 @@ export class AirBaseComponent extends Component<props, state> {
                 <span>Flight crews prepping...</span>
             </React.Fragment>;
 
-        if (this.state.isTargetingBombers) { return isTargetingMarkup; }
-        if (!this.props.base.isReceivingOrders) { return isNotReceivingOrdersMarkup; }
-        if (this.props.base.isAllOrdnanceTargeted()) { return isFlyingMarkup; }
+        const wrapper = (toWrap: JSX.Element) => {
+            return (
+                <div>
+                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    {toWrap}
+                </div>
+            )
+        };
 
-        return readyToActivateMarkup;
+        if (this.state.isTargetingBombers) { return wrapper(isTargetingMarkup); }
+        if (!this.props.base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
+        if (this.props.base.isAllOrdnanceTargeted()) { return wrapper(isFlyingMarkup); }
+
+        return wrapper(readyToActivateMarkup);
 
     };
 

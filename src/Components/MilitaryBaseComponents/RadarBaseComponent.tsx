@@ -27,33 +27,43 @@ export class RadarBaseComponent extends Component<props, state> {
 
     render() {
 
-        const setMode = (args: {mode:  "Active" | "Passive"}) => {
+        const setMode = (args: { mode: "Active" | "Passive" }) => {
             this.props.base.setModeOfOperation(args);
             this.forceUpdate();
         }
 
         const readyToActivateMarkup =
             <React.Fragment>
-                <Button onClick={() => setMode({mode: "Active" })}>Go Active</Button>
-                <Button onClick={() => setMode({mode: "Passive" })}>Go Passive</Button>
+                <Button onClick={() => setMode({ mode: "Active" })}>Go Active</Button>
+                <Button onClick={() => setMode({ mode: "Passive" })}>Go Passive</Button>
             </React.Fragment>;
 
-        const isActivatedMarkup = 
+        const isActivatedMarkup =
             <React.Fragment>
                 <span>Mode: {this.props.base.modeOfOperaton} Tracking</span>
             </React.Fragment>
 
-        const isNotReceivingOrdersMarkup = 
+        const isNotReceivingOrdersMarkup =
             <React.Fragment>
                 <span>Warming up...</span>
             </React.Fragment>;
 
+        const wrapper = (toWrap: JSX.Element) => {
+            return (
+                <div>
+                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    {toWrap}
+                </div>
+            )
+        };
+
+
         return (
-            this.props.base.isReceivingOrders 
+            this.props.base.isReceivingOrders
                 ? (
-                    this.props.base.modeOfOperaton === "Inactive" ? readyToActivateMarkup : isActivatedMarkup
-                  )
-                : isNotReceivingOrdersMarkup
+                    this.props.base.modeOfOperaton === "Inactive" ? wrapper(readyToActivateMarkup) : wrapper(isActivatedMarkup)
+                )
+                : wrapper(isNotReceivingOrdersMarkup)
         );
     };
 

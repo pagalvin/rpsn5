@@ -143,8 +143,6 @@ export class UserActionsComponent extends Component<props, state> implements Gam
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
 
-        // console.log(`GameHeaderComponent: BuildManifestComponent: Got a game state change.`);
-
         if (args.details.changeLabel === "Advance Turn") {
             this.setInitialState();
         }

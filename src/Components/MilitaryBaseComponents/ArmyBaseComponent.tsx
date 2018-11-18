@@ -28,7 +28,7 @@ export class ArmyBaseComponent extends Component<props, state> {
     }
 
     private decampArmy() {
-        GameLogic.activateArmyBase({forBase: this.props.base});
+        GameLogic.activateArmyBase({ forBase: this.props.base });
         this.forceUpdate();
     }
 
@@ -56,12 +56,22 @@ export class ArmyBaseComponent extends Component<props, state> {
                 <span>Organizing...</span>
             </React.Fragment>;
 
+        const wrapper = (toWrap: JSX.Element) => {
+            return (
+                <div>
+                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    {toWrap}
+                </div>
+            )
+        };
+
+
         return (
             this.props.base.isReceivingOrders
                 ? (
-                    this.props.base.isDecamped ? isDecampedMarkup : readyToActivateMarkup
+                    this.props.base.isDecamped ? wrapper(isDecampedMarkup) : wrapper(readyToActivateMarkup)
                 )
-                : isNotReceivingOrdersMarkup
+                : wrapper(isNotReceivingOrdersMarkup)
         );
 
     };

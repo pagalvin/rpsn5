@@ -11,6 +11,7 @@ import { NavyBase } from "../Entities/WorldObjects/Bases/NavyBase";
 import { Ordnance } from "../Entities/Ordnance";
 import { MapLocation } from "../Entities/MapObjects/MapLocation";
 import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
+import { MapUtil } from "../Utils/MapUtils";
 
 export type gameStateChangeType =
     "Advance Turn" |
@@ -94,14 +95,13 @@ export class GameLogic {
 
         const totalFighters = Constants.MAX_INITIAL_FIGHTERS + Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_FIGHTERS -1});
         args.forBase.totalFighters = totalFighters;
-        
+
         const totalBombers = Rng.throwDice({hiNumberMinus1: Constants.MAX_ICBMS -1}) + Constants.MIN_ICBMS;
 
         for (let i = 0; i < totalBombers; i++) {
             args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({parentBase: args.forBase}));
         }
     }
-
 
     public static activateNavyBase(args: {forBase: NavyBase}) {
 
@@ -153,9 +153,29 @@ export class GameLogic {
         this.notifyGamestateChange({ details: { changeLabel: "Tick" } });
     }
 
+
+    private static resolveWartimeAttacks() {
+
+        const resolveAttacksOnPlayer = (args: {player: AbstractPlayer}) => {
+
+            const {map} = args.player;
+
+            const locationsUnderAttacked = MapUtil.getMapSummary({forMap: map});
+
+
+        };
+    
+        const game: Game = Game.getInstance();
+
+
+
+    }
+
     public static declareWar(args: { declaringPlayer: AbstractPlayer }) {
+        
         console.log(`GameLogic.ts: declareWar: A player declared war:`, { declaringPlayer: args.declaringPlayer });
-        args.declaringPlayer.declaredWar = true; // Gives a first-strike bonus but world opinion takes a huge hit
+        
+        args.declaringPlayer.declaredWar = true; // Gives a first-strike bonus but world opinion takes a  hit
 
         Game.getInstance().isPeacetime = false;
         Game.getInstance().isWartime = false;
