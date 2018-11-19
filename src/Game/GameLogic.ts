@@ -15,13 +15,14 @@ import { MapUtil } from "../Utils/MapUtils";
 
 export type gameStateChangeType =
     "Advance Turn" |
-    "no change" |
-    "War Declared" |
-    "Computer Playing Its Turn" |
+    "Base Activated" |
     "Computer Finished Its Turn" |
-    "Map Location Targeted" |
+    "Computer Playing Its Turn" |
     "Location Nuked" |
-    "Tick";
+    "Map Location Targeted" |
+    "no change" |
+    "Tick" |
+    "War Declared";
 
 export interface gameStateChangeDetails {
     changeLabel: gameStateChangeType;
@@ -67,6 +68,8 @@ export class GameLogic {
 
         args.forBase.totalMissiles = Rng.throwDice({ hiNumberMinus1: 5 }) + 1;
         args.forBase.isTracking = true;
+
+        this.notifyGamestateChange({details: {changeLabel: "Base Activated"}});
 
         return;
 

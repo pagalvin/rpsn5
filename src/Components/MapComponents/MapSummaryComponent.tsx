@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { MapLocation } from '../../Entities/MapObjects/MapLocation';
 import { CountryMap } from '../../Entities/WorldObjects/CountryMap';
 import { countrySummary, MapUtil } from '../../Utils/MapUtils';
+import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../../Game/GameLogic';
 
 
 export interface state {
@@ -13,7 +14,7 @@ export interface props {
     mapToSummarize: CountryMap;
 }
 
-export class MapSummaryComponent extends React.Component<props, state> {
+export class MapSummaryComponent extends React.Component<props, state> implements GamestateWatcher {
 
     constructor(props: props, state: state) {
         super(props, state);
@@ -21,7 +22,7 @@ export class MapSummaryComponent extends React.Component<props, state> {
     }
 
     componentDidMount() {
-
+        GameLogic.registerGamestateWatcher({ watcher: this });
     }
 
     render() {
@@ -34,16 +35,34 @@ export class MapSummaryComponent extends React.Component<props, state> {
                     Summary
                 </div>
                 <div>
-                    {`Bases: ABMs: ${summarizedMap.totalAbmBases} | Radar: ${summarizedMap.totalRadarBases} | Air: ${summarizedMap.totalAirBases}`} 
+                    {`Bases: A: ${summarizedMap.totalAbmBases} | R: ${summarizedMap.totalRadarBases} | B: ${summarizedMap.totalAirBases}`} 
                     &nbsp;
-                    {`Army: ${summarizedMap.totalArmyBases} | Missile: ${summarizedMap.totalMissileBases} | Navy: ${summarizedMap.totalNavyBases}`}
+                    {`I: ${summarizedMap.totalArmyBases} | M: ${summarizedMap.totalMissileBases} | N: ${summarizedMap.totalNavyBases}`}
                 </div>
                 <div>
-                    {`Ordnance: ABM Missiles: ${summarizedMap.totalAbmMissilesOnLine}`}
+                    {
+                        `Ordnance: ` +
+                        `A: ${summarizedMap.totalAbmMissilesOnLine} | ` +
+                        `B: ${summarizedMap.totalBombersInFlight} | ` +
+                        `S: ${summarizedMap.totalSubMissilesOnLine} | ` +
+                        `F: ${summarizedMap.totalFightersOnPatrol} | ` +
+                        `M: ${summarizedMap.totalICBMsOnLine}`
+                    }
                 </div>
             </React.Fragment>
         );
 
     }
+
+    
+  public handleGamestateChange(args: { details: gameStateChangeDetails }) {
+
+    if (args.details.changeLabel === "Base Activated") {
+        console.log(`MapSummaryComponent: handleGameStateChange: got a game state change, Base Activated.`);
+        this.forceUpdate();
+    }
+
+  }
+
 }
 
