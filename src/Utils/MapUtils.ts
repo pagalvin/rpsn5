@@ -6,6 +6,7 @@ import { NavyBase } from "../Entities/WorldObjects/Bases/NavyBase";
 import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
 import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
+import { OrdnanceCarryingBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";
 
 export interface countrySummary {
     totalAbmBases: number;
@@ -78,6 +79,10 @@ export class MapUtil {
         const isPassiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperaton === "Passive";
         const isActiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperaton === "Active";
 
+        // function to,  = "allTO" = "all tageted ordnance"
+        const allTO = (base: OrdnanceCarryingBase) => base.ordnance.filter(o => o.myTarget);
+        const ttlTtO = (base: OrdnanceCarryingBase) => allTO(base).length;
+
         const addLocationToSummary = (l: MapLocation, s: countrySummary) =>
             l.Contents
                 ? (
@@ -89,12 +94,12 @@ export class MapUtil {
                         totalActiveRadarStationsOnLine: isActiveRader(l) ? s.totalActiveRadarStationsOnLine += 1 : s.totalActiveRadarStationsOnLine,
                         totalArmyBases: MapUtil.isArmyBase(l) ? s.totalArmyBases += 1 : s.totalArmyBases,
                         totalAirBases: MapUtil.isAirBase(l) ? s.totalAirBases += 1 : s.totalAirBases,
-                        totalBombersInFlight: MapUtil.isAirBase(l) ? s.totalBombersInFlight += (l.Contents as AirBase).ordnance.length : s.totalBombersInFlight,
+                        totalBombersInFlight: MapUtil.isAirBase(l) ? s.totalBombersInFlight += ttlTtO(l.Contents as AirBase) : s.totalBombersInFlight,
                         totalFightersOnPatrol: MapUtil.isAirBase(l) ? s.totalFightersOnPatrol += (l.Contents as AirBase).totalFighters : s.totalFightersOnPatrol,
                         totalMissileBases: MapUtil.isMissileBase(l) ? s.totalMissileBases += 1 : s.totalMissileBases,
-                        totalICBMsOnLine: MapUtil.isMissileBase(l) ? s.totalICBMsOnLine += (l.Contents as MissileBase).ordnance.length : s.totalICBMsOnLine,
+                        totalICBMsOnLine: MapUtil.isMissileBase(l) ? s.totalICBMsOnLine += ttlTtO(l.Contents as MissileBase) : s.totalICBMsOnLine,
                         totalNavyBases: MapUtil.isNavyBase(l) ? s.totalNavyBases += 1 : s.totalNavyBases,
-                        totalSubMissilesOnLine: MapUtil.isNavyBase(l) ? s.totalSubMissilesOnLine += (l.Contents as NavyBase).ordnance.length : s.totalSubMissilesOnLine,
+                        totalSubMissilesOnLine: MapUtil.isNavyBase(l) ? s.totalSubMissilesOnLine += ttlTtO(l.Contents as NavyBase) : s.totalSubMissilesOnLine,
                         targetedMapLocations: l.isTargeted ? s.targetedMapLocations.concat(l) : s.targetedMapLocations
                     } as countrySummary
                 )
