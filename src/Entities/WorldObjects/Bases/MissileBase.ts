@@ -1,9 +1,9 @@
-import { AbstractMilitaryBase } from "./AbstractMilitaryBase";
+import { AbstractMilitaryBase, OrdnanceCarryingBase } from "./AbstractMilitaryBase";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
 import { GameLogic } from "../../../Game/GameLogic";
 import { Ordnance } from "../../Ordnance";
 
-export class MissileBase extends AbstractMilitaryBase {
+export class MissileBase extends AbstractMilitaryBase implements OrdnanceCarryingBase {
 
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "Missile";
     public gameYear: number = 1;

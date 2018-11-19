@@ -1,7 +1,5 @@
 import { MapLocation } from "./MapObjects/MapLocation";
-import { MissileBase } from "./WorldObjects/Bases/MissileBase";
-import { NavyBase } from "./WorldObjects/Bases/NavyBase";
-import { AirBase } from "./WorldObjects/Bases/AirBase";
+import { OrdnanceCarryingBase } from "./WorldObjects/Bases/AbstractMilitaryBase";
 
 export class Ordnance {
 
@@ -11,9 +9,9 @@ export class Ordnance {
     public wasConsumed: boolean; 
     public static nextOrdnanceID: number = 0;
     public myID: number;
-    public myBase: MissileBase | NavyBase | AirBase;
+    public myBase: OrdnanceCarryingBase;
 
-    constructor(args: {parentBase: MissileBase | NavyBase | AirBase}) {
+    constructor(args: {parentBase: OrdnanceCarryingBase}) {
 
         this.myTarget = null;
         this.remainingTicksBeforeStriking = 0;

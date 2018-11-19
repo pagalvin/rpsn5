@@ -1,5 +1,6 @@
 
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
+import { Ordnance } from "../../Ordnance";
 
 export interface MilitaryBaseProperties {
     Name: string;
@@ -10,6 +11,10 @@ export interface MilitaryBaseProperties {
 
 export interface MilitaryBaseActions {
     activate: () => void;
+}
+
+export interface OrdnanceCarryingBase {
+    ordnance: Ordnance[];
 }
 
 export abstract class AbstractMilitaryBase implements MilitaryBaseProperties, MilitaryBaseActions
