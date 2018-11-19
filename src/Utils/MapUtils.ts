@@ -1,5 +1,6 @@
 import { MapLocation } from "../Entities/MapObjects/MapLocation";
 import { CountryMap } from "../Entities/WorldObjects/CountryMap";
+import { AbmBase } from "../Entities/WorldObjects/Bases/AbmBase";
 
 export interface countrySummary {
     totalAbmBases: number;
@@ -9,6 +10,7 @@ export interface countrySummary {
     totalAirBases: number;
     totalMissileBases: number;
     targetedMapLocations: MapLocation[];
+    totalAbmMissilesOnLine: number;
 }
 
 export class MapUtil {
@@ -20,7 +22,8 @@ export class MapUtil {
         totalArmyBases: 0,
         totalNavyBases: 0,
         totalMissileBases: 0,
-        targetedMapLocations: []
+        targetedMapLocations: [],
+        totalAbmMissilesOnLine: 0
     }
 
 
@@ -53,6 +56,7 @@ export class MapUtil {
                 ? (
                     {
                         totalAbmBases: l.Contents.WorldObjectLabel === "ABM" ? s.totalAbmBases += 1 : s.totalAbmBases,
+                        totalAbmMissilesOnLine: l.Contents.WorldObjectLabel === "ABM" ? s.totalAbmMissilesOnLine += 1 : (l.Contents as AbmBase).totalMissiles,
                         totalRadarBases: l.Contents.WorldObjectLabel === "Radar" ? s.totalRadarBases += 1 : s.totalRadarBases,
                         totalArmyBases: l.Contents.WorldObjectLabel === "Army" ? s.totalArmyBases += 1 : s.totalArmyBases,
                         totalAirBases: l.Contents.WorldObjectLabel === "Air" ? s.totalAirBases += 1 : s.totalAirBases,
@@ -70,6 +74,7 @@ export class MapUtil {
         const addTwoSummaries = (s1: countrySummary, s2: countrySummary) => (
             {
                 totalAbmBases: s1.totalAbmBases + s2.totalAbmBases,
+                totalAbmMissilesOnLine: s1.totalAbmMissilesOnLine + s2.totalAbmMissilesOnLine,
                 totalRadarBases: s1.totalRadarBases + s2.totalRadarBases,
                 totalAirBases: s1.totalAirBases + s2.totalAirBases,
                 totalArmyBases: s1.totalArmyBases + s2.totalArmyBases,

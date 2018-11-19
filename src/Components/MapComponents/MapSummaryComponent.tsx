@@ -34,9 +34,12 @@ export class MapSummaryComponent extends React.Component<props, state> {
                     Summary
                 </div>
                 <div>
-                    {`Totals: ABMs: ${summarizedMap.totalAbmBases} | Radar: ${summarizedMap.totalRadarBases} | Air: ${summarizedMap.totalAirBases}`} 
+                    {`Bases: ABMs: ${summarizedMap.totalAbmBases} | Radar: ${summarizedMap.totalRadarBases} | Air: ${summarizedMap.totalAirBases}`} 
                     &nbsp;
                     {`Army: ${summarizedMap.totalArmyBases} | Missile: ${summarizedMap.totalMissileBases} | Navy: ${summarizedMap.totalNavyBases}`}
+                </div>
+                <div>
+                    {`Ordnance: ABM Missiles: ${summarizedMap.totalAbmMissilesOnLine}`}
                 </div>
             </React.Fragment>
         );
