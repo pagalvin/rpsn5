@@ -6,6 +6,21 @@
     transform:scale(0.8);
 }
 
+.nukedOnce {
+  transition: background-color 2.0s ease;
+  background-color: pink;
+}
+
+.nukedTwice {
+  transition: background-color 3.0s ease;
+  background-color: palevioletred;
+}
+
+.nukedThrice {
+  transition: background-color 5.0s ease;
+  background-color: red;
+}
+
 .App {
   text-align: center;
 }

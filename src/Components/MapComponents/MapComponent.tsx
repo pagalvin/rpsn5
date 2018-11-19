@@ -57,10 +57,23 @@ export class MapComponent extends React.Component<props, state> implements Games
     // console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
 
     if (args.details.changeLabel === "Advance Turn" ||
-      args.details.changeLabel === "Map Location Targeted" ||
-      args.details.changeLabel === "Location Nuked"
-    ) {
+      args.details.changeLabel === "Map Location Targeted")
+    {
       this.forceUpdate();
+    }
+
+    if (args.details.changeLabel === "Location Nuked") {
+
+      if (args.details.relatedLocation) {
+        const mapLocID = this.getMapLocationHtmlID(args.details.relatedLocation);
+        const xxx = document.getElementById(mapLocID);
+        if (xxx) {
+          if (args.details.relatedLocation.nuclearDamage === 1) { xxx.classList.add("nukedOnce"); }
+          if (args.details.relatedLocation.nuclearDamage === 2) { xxx.classList.add("nukedTwice"); }
+          if (args.details.relatedLocation.nuclearDamage === 3) { xxx.classList.add("nukedThrice"); }
+          
+        }
+      }
     }
   }
 
@@ -172,6 +185,10 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   }
 
+  private getMapLocationHtmlID(forMapLocation: MapLocation) {
+    return `MapLocation_${forMapLocation.uniqueID}`;
+  }
+
   render() {
 
     // console.log(`MapComponent.tsx: rendering a map:`, this.props.countryMap);
@@ -180,11 +197,25 @@ export class MapComponent extends React.Component<props, state> implements Games
 
       // console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
 
+      const nuclearDamageIndicator = (args: {ml: MapLocation}) => {
+        const {nuclearDamage} = args.ml;
+
+        if (nuclearDamage === 1) return "nukedOnce";
+        if (nuclearDamage === 2) return "nukedTwice"
+        if (nuclearDamage === 3) return "nukedThrice";
+
+        return "";
+
+    }
+
       const result =
         <tr key={this.uiIdx++}>
           {
+
             mapRow.map(cell => (
-              <td key={this.uiIdx++}
+              <td key={this.uiIdx++} 
+                id={`${this.getMapLocationHtmlID(cell)}`}
+                className={nuclearDamageIndicator({ml: cell})}
 
                 onClick={() => {
                   if (this.props.playerMapClickListener) this.props.playerMapClickListener({ location: cell });

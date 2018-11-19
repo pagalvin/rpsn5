@@ -25,6 +25,7 @@ export type gameStateChangeType =
 
 export interface gameStateChangeDetails {
     changeLabel: gameStateChangeType;
+    relatedLocation?: MapLocation;
 }
 
 export interface GamestateWatcher {
@@ -196,7 +197,7 @@ export class GameLogic {
 
             for (let i = 0; i < locationsUnderAttack.length; i++) {
                 resolveAttack({ attackingPlayer: args.attackingPlayer, defendingPlayer: args.defendingPlayer, locationUnderAttack: locationsUnderAttack[i] });
-                this.notifyGamestateChange({ details: { changeLabel: "Location Nuked" } });
+                this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: locationsUnderAttack[i] } });
             }
         };
 
