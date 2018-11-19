@@ -15,6 +15,7 @@ export interface MilitaryBaseActions {
 
 export interface OrdnanceCarryingBase {
     ordnance: Ordnance[];
+    WorldObjectLabel: MilitaryBaseTypeLabels;
 }
 
 export abstract class AbstractMilitaryBase implements MilitaryBaseProperties, MilitaryBaseActions

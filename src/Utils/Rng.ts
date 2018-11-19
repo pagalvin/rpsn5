@@ -14,7 +14,8 @@ export class Rng {
         if (! args.sourceArray) throw "Rng.ts: pickRandomFromArray: error, source array is null or undefined.";
         if (args.sourceArray.length === 0) throw "Rng.ts: pickRandomFromArray: error, source array is empty.";
 
-        return (args.sourceArray[this.throwDice({hiNumberMinus1: args.sourceArray.length - 1})]);
+
+        return (args.sourceArray[this.throwDice({hiNumberMinus1: args.sourceArray.length})]);
         
     }
 }

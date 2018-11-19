@@ -7,14 +7,15 @@ import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
 import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
 import { OrdnanceCarryingBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";
+import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
 
 export interface countrySummary {
-    totalAbmBases: number;
-    totalRadarBases: number;
-    totalArmyBases: number;
-    totalNavyBases: number;
-    totalAirBases: number;
-    totalMissileBases: number;
+    allAbmBases: AbmBase[];
+    allRadarBases: RadarBase[];
+    allArmyBases: ArmyBase[];
+    allNavyBases: NavyBase[];
+    allAirBases: AirBase[];
+    allMissileBases: MissileBase[];
     targetedMapLocations: MapLocation[];
     totalAbmMissilesOnLine: number;
     totalICBMsOnLine: number;
@@ -28,12 +29,12 @@ export interface countrySummary {
 export class MapUtil {
 
     private static readonly initialSummary: countrySummary = {
-        totalAbmBases: 0,
-        totalRadarBases: 0,
-        totalAirBases: 0,
-        totalArmyBases: 0,
-        totalNavyBases: 0,
-        totalMissileBases: 0,
+        allAbmBases: [],
+        allRadarBases: [],
+        allAirBases: [],
+        allArmyBases: [],
+        allNavyBases: [],
+        allMissileBases: [],
         targetedMapLocations: [],
         totalAbmMissilesOnLine: 0,
         totalICBMsOnLine: 0,
@@ -87,18 +88,18 @@ export class MapUtil {
             l.Contents
                 ? (
                     {
-                        totalAbmBases: MapUtil.isAbmBase(l) ? s.totalAbmBases += 1 : s.totalAbmBases,
+                        allAbmBases: MapUtil.isAbmBase(l) ? s.allAbmBases.concat(l.Contents as AbmBase) : s.allAbmBases,
                         totalAbmMissilesOnLine: MapUtil.isAbmBase(l) ? s.totalAbmMissilesOnLine += (l.Contents as AbmBase).totalMissiles : s.totalAbmMissilesOnLine,
-                        totalRadarBases: MapUtil.isRadarBase(l) ? s.totalRadarBases += 1 : s.totalRadarBases,
+                        allRadarBases: MapUtil.isRadarBase(l) ? s.allRadarBases.concat(l.Contents as RadarBase) : s.allRadarBases,
                         totalPassiveRadarStationsOnLine: isPassiveRader(l) ? s.totalPassiveRadarStationsOnLine += 1 : s.totalPassiveRadarStationsOnLine,
                         totalActiveRadarStationsOnLine: isActiveRader(l) ? s.totalActiveRadarStationsOnLine += 1 : s.totalActiveRadarStationsOnLine,
-                        totalArmyBases: MapUtil.isArmyBase(l) ? s.totalArmyBases += 1 : s.totalArmyBases,
-                        totalAirBases: MapUtil.isAirBase(l) ? s.totalAirBases += 1 : s.totalAirBases,
+                        allArmyBases: MapUtil.isArmyBase(l) ? s.allArmyBases.concat(l.Contents as ArmyBase) : s.allArmyBases,
+                        allAirBases: MapUtil.isAirBase(l) ? s.allAirBases.concat(l.Contents as AirBase) : s.allAirBases,
                         totalBombersInFlight: MapUtil.isAirBase(l) ? s.totalBombersInFlight += ttlTtO(l.Contents as AirBase) : s.totalBombersInFlight,
                         totalFightersOnPatrol: MapUtil.isAirBase(l) ? s.totalFightersOnPatrol += (l.Contents as AirBase).totalFighters : s.totalFightersOnPatrol,
-                        totalMissileBases: MapUtil.isMissileBase(l) ? s.totalMissileBases += 1 : s.totalMissileBases,
+                        allMissileBases: MapUtil.isMissileBase(l) ? s.allMissileBases.concat(l.Contents as MissileBase) : s.allMissileBases,
                         totalICBMsOnLine: MapUtil.isMissileBase(l) ? s.totalICBMsOnLine += ttlTtO(l.Contents as MissileBase) : s.totalICBMsOnLine,
-                        totalNavyBases: MapUtil.isNavyBase(l) ? s.totalNavyBases += 1 : s.totalNavyBases,
+                        allNavyBases: MapUtil.isNavyBase(l) ? s.allNavyBases.concat(l.Contents as NavyBase) : s.allNavyBases,
                         totalSubMissilesOnLine: MapUtil.isNavyBase(l) ? s.totalSubMissilesOnLine += ttlTtO(l.Contents as NavyBase) : s.totalSubMissilesOnLine,
                         targetedMapLocations: l.isTargeted ? s.targetedMapLocations.concat(l) : s.targetedMapLocations
                     } as countrySummary
@@ -111,13 +112,13 @@ export class MapUtil {
 
         const addTwoSummaries = (s1: countrySummary, s2: countrySummary) => (
             {
-                totalAbmBases: s1.totalAbmBases + s2.totalAbmBases,
+                allAbmBases: s1.allAbmBases.concat(s2.allAbmBases),
                 totalAbmMissilesOnLine: s1.totalAbmMissilesOnLine + s2.totalAbmMissilesOnLine,
-                totalRadarBases: s1.totalRadarBases + s2.totalRadarBases,
-                totalAirBases: s1.totalAirBases + s2.totalAirBases,
-                totalArmyBases: s1.totalArmyBases + s2.totalArmyBases,
-                totalMissileBases: s1.totalMissileBases + s2.totalMissileBases,
-                totalNavyBases: s1.totalNavyBases + s2.totalNavyBases,
+                allRadarBases: s1.allRadarBases.concat(s2.allRadarBases),
+                allAirBases: s1.allAirBases.concat(s2.allAirBases),
+                allArmyBases: s1.allArmyBases.concat(s2.allArmyBases),
+                allMissileBases: s1.allMissileBases.concat(s2.allMissileBases),
+                allNavyBases: s1.allNavyBases.concat(s2.allNavyBases),
                 targetedMapLocations: s1.targetedMapLocations.concat(s2.targetedMapLocations),
                 totalICBMsOnLine: s1.totalICBMsOnLine + s2.totalICBMsOnLine,
                 totalSubMissilesOnLine: s1.totalSubMissilesOnLine + s2.totalSubMissilesOnLine,
@@ -132,7 +133,7 @@ export class MapUtil {
             (prev, curr) => addTwoSummaries(prev, mapRowSummary(curr)), this.initialSummary
         );
 
-        console.log(`MapUtils: getMapSummary: allIn:`, { allIn2: allIn });
+        // console.log(`MapUtils: getMapSummary: allIn:`, { allIn2: allIn });
 
         return allIn;
     }

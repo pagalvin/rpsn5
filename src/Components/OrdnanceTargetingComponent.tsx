@@ -65,6 +65,14 @@ export class OrdnanceTargetingComponent extends React.Component<props, state> im
             )
         }
 
+        const wasInterceptedMarkup = (args: {forMissileIndex: number}) => {
+            return (
+                <div key={this.uiKey()}>
+                    {`${ordnanceLabel} ${args.forMissileIndex} was shot down.`}
+                </div>
+            )
+        }
+
         const consumedMarkup = (args: { forMissileIndex: number}) => {
             return (
                 <div key={this.uiKey()}>
@@ -87,8 +95,10 @@ export class OrdnanceTargetingComponent extends React.Component<props, state> im
         return (
             this.props.parentBase.ordnance.map( (m, idx) => {
 
-                console.log(`OrdnanceTargetComponent: mapping ordnance for render:`, {currentMissile: m});
+                // console.log(`OrdnanceTargetComponent: mapping ordnance for render:`, {currentMissile: m});
 
+                if (m.wasIntercepted) { return wasInterceptedMarkup({forMissileIndex: idx})}
+                
                 if (m.wasConsumed) { return consumedMarkup({forMissileIndex: idx}) }
 
                 if (m.myTarget !== null) {
