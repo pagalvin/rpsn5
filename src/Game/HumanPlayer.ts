@@ -1,5 +1,6 @@
 import { AbstractPlayer } from "./AbstractPlayer";
 import { CountryMap } from "../Entities/WorldObjects/CountryMap";
+import { MapUtil } from "../Utils/MapUtils";
 
 export class HumanPlayer extends AbstractPlayer  {
     
@@ -18,6 +19,8 @@ export class HumanPlayer extends AbstractPlayer  {
         this.declaredWar = false;
         this.totalFunctionalActiveRadarStations = 0;
         this.totalFunctionalPassiveRadarStations = 0;
+
+        MapUtil.createTestBases({onMap: this.map});
     }
 
 }

@@ -169,9 +169,13 @@ export class GameLogic {
     }
 
     private static pulseClock() {
+
         this.notifyGamestateChange({ details: { changeLabel: "Tick" } });
 
-        if (Game.getInstance().isWartime) { this.resolveWartimeAttacks(); }
+        if (Game.getInstance().isWartime) { 
+            this.resolveWartimeAttacks(); 
+            Game.getInstance().computerPlayer.playTurn();
+        }
 
     }
 
