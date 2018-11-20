@@ -49,7 +49,7 @@ export class MapUtil {
 
     public static createTestBases(args: {onMap: CountryMap}) {
 
-        const mLoc = args.onMap.map[0][0];
+        const mLoc = args.onMap.map[0][7];
         const m = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Missile", atLocation: mLoc});
         const rLoc = args.onMap.map[0][1];
         const r = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Radar", atLocation: rLoc});
