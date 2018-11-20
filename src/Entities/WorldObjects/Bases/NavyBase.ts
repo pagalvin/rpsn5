@@ -2,6 +2,7 @@ import { AbstractMilitaryBase, OrdnanceCarryingBase } from "./AbstractMilitaryBa
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
 import { GameLogic } from "../../../Game/GameLogic";
 import { Ordnance } from "../../Ordnance";
+import { MapLocation } from "../../MapObjects/MapLocation";
 
 export class NavyBase extends AbstractMilitaryBase implements OrdnanceCarryingBase {
 
@@ -10,8 +11,8 @@ export class NavyBase extends AbstractMilitaryBase implements OrdnanceCarryingBa
 
     public ordnance: Ordnance[];
 
-    constructor() {
-        super();
+    constructor(args: {atLocation: MapLocation}) {
+        super(args);
         this.isReceivingOrders = false;
         this.ordnance = [];
     }

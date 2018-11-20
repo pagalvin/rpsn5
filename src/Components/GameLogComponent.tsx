@@ -1,10 +1,15 @@
 
-import { Component } from "react";
+import React, { Component } from 'react';
+import { Paper } from "@material-ui/core";
 
 export class GameLogComponent extends Component {
 
     render() {
-        return "<div>Game Log Component</div>";
+        return (
+            <Paper>
+            Game Log Component
+            </Paper>
+        )
         
     }
 }

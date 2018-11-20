@@ -4,6 +4,7 @@ import { GamestateWatcher, gameStateChangeDetails, GameLogic } from "./GameLogic
 import { CountryMap } from "../Entities/WorldObjects/CountryMap";
 import { Rng } from "../Utils/Rng";
 import { MilitaryBaseFactory } from "../Factories/MilitaryBaseFactory";
+import { MilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 
 export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
 
@@ -73,14 +74,14 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
             const toBuild = Rng.pickRandomFromArray({sourceArray: args.allowedBases});
             console.log(`ComputerPlayer.ts: buildBases: Entering, will build base:`, toBuild);
 
-            const base = MilitaryBaseFactory.getInstance().createNewBase({baseType: toBuild});
-
             const randX = Rng.throwDice({hiNumberMinus1: 9});
             const randY = Rng.throwDice({hiNumberMinus1: 9});
 
-            if (base) {
-                this.map.map[randX][randY].placeItem({itemToPlace: base});
-            }
+            const mapLoc = this.map.map[randX][randY];
+
+            const base = MilitaryBaseFactory.getInstance().createNewBase({baseType: toBuild, atLocation: mapLoc});
+            
+            if (base) { mapLoc.placeItem({itemToPlace: base}); }
         }
         
         this.map.logDetailedMapToConsole();

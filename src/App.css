@@ -1,4 +1,29 @@
+.mapContainer {
+  align-content: center;
+  margin: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
 
+.mapCell {
+  padding: 8px;
+  margin: auto;
+  border: 1px solid;
+  border-color: whitesmoke;
+}
+
+.mapCell:hover {
+  border-color: lightslategray;
+}
+
+.targetedMapLocation {
+  transition: border-color 2.0s ease;
+  border-color: red;
+}
+
+.mapLocationDraggedOver {
+  transition: border-color 0.25s ease;
+  background-color: lightskyblue;
+}
 .computerMapContainer {
     -webkit-transform:scale(0.8);
     -moz-transform:scale(0.8);
@@ -19,6 +44,31 @@
 .nukedThrice {
   transition: background-color 5.0s ease;
   background-color: red;
+}
+
+.activatedBase {
+  transition: background-color 2.0s ease;
+  background-color: greenyellow;
+}
+
+.passiveRadarPulseUp {
+  transition: background-color 4.0s ease;
+  background-color: gainsboro;
+}
+
+.passiveRadarPulseDown {
+  transition: background-color 4.0s ease;
+  background-color: white;
+}
+
+.activeRadarPulseUp {
+  transition: background-color 4.0s ease;
+  background-color: aqua;
+}
+
+.activeRadarPulseDown {
+  transition: background-color 4.0s ease;
+  background-color: white;
 }
 
 .App {

@@ -4,6 +4,7 @@ import { Constants } from "../../../Game/constants";
 import { Rng } from "../../../Utils/Rng";
 import { Ordnance } from "../../Ordnance";
 import { GameLogic } from "../../../Game/GameLogic";
+import { MapLocation } from "../../MapObjects/MapLocation";
 
 export class AirBase extends AbstractMilitaryBase implements OrdnanceCarryingBase{
 
@@ -15,8 +16,8 @@ export class AirBase extends AbstractMilitaryBase implements OrdnanceCarryingBas
 
     public isFlying: boolean;
 
-    constructor() {
-        super();
+    constructor(args: {atLocation: MapLocation}) {
+        super(args);
 
         this.ordnance = [];
         this.totalFighters = 0;

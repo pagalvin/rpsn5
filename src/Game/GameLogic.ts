@@ -12,6 +12,8 @@ import { Ordnance } from "../Entities/Ordnance";
 import { MapLocation } from "../Entities/MapObjects/MapLocation";
 import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
 import { MapUtil } from "../Utils/MapUtils";
+import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
+import { MilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 
 export type gameStateChangeType =
     "Advance Turn" |
@@ -27,6 +29,7 @@ export type gameStateChangeType =
 export interface gameStateChangeDetails {
     changeLabel: gameStateChangeType;
     relatedLocation?: MapLocation;
+    relatedBase?: MilitaryBaseTypes; 
 }
 
 export interface GamestateWatcher {
@@ -84,7 +87,7 @@ export class GameLogic {
 
         game.currentPlayer.targetedOrdnanceItems = game.currentPlayer.targetedOrdnanceItems.concat(args.targetingMissile);
 
-        this.notifyGamestateChange({ details: { changeLabel: "Map Location Targeted" } })
+        this.notifyGamestateChange({ details: { changeLabel: "Map Location Targeted", relatedLocation: args.atMapLocation } })
     }
 
     public static activateMissileBase(args: { forBase: MissileBase }) {
@@ -129,6 +132,12 @@ export class GameLogic {
         args.forBase.isDecamped = true;
 
         return;
+
+    }
+
+    public static activateRadarBase(args: { forBase: RadarBase}) {
+
+        this.notifyGamestateChange({details: {relatedBase: args.forBase, changeLabel: "Base Activated"}});
 
     }
 
@@ -273,7 +282,7 @@ export class GameLogic {
                         locationAttacked: args.locationUnderAttack
                     });
 
-                args.locationUnderAttack.nuclearDamage = nukeDamage;
+                args.locationUnderAttack.nuclearStrikes = nukeDamage;
                 
                 return true;
             }

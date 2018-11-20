@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { GameHeaderComponent } from "./GameHeaderComponent";
 import { UserActionsComponent } from "./UserActionsComponent";
 import { GameLogComponent } from "./GameLogComponent";
-import { Grid } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import { Game } from '../Entities/gameEntity';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
 import { MapComponent } from './MapComponents/MapComponent';
@@ -36,7 +36,7 @@ export class GameComponent extends Component {
 
         const gameEntity = Game.getInstance();
 
-        return (
+        const format1 = () => (
             <React.Fragment>
                 <Grid item xs={12}>
                     <GameHeaderComponent />
@@ -50,19 +50,60 @@ export class GameComponent extends Component {
                     />
                 </Grid>
 
-                <Grid item xs={8}>
-                    Human<br />
-                    <MapComponent countryMap={gameEntity.humanPlayer.map} playerMapClickListener={this.playerMapClickListener.bind(this)} />
+                <Grid item xs={6}>
+                    <Paper>
+                        Human<br />
+                        <MapComponent countryMap={gameEntity.humanPlayer.map} playerMapClickListener={this.playerMapClickListener.bind(this)} />
+                    </Paper>
                 </Grid>
-                <Grid item xs={4}>
-                    <div className="computerMapContainer">
-                        Computer<br />
-                        <MapComponent countryMap={gameEntity.computerPlayer.map} />
+                <Grid item xs={6}>
+                    <div className="xcomputerMapContainer">
+                        <Paper>
+                            Computer<br />
+                            <MapComponent countryMap={gameEntity.computerPlayer.map} />
+                        </Paper>
                     </div>
+                </Grid>
+                <Grid item xs={12}>
                     <GameLogComponent />
                 </Grid>
             </React.Fragment>
 
         );
+
+        const format2 = () => (
+            <React.Fragment>
+                <Grid item xs={12}>
+                    <GameHeaderComponent />
+                </Grid>
+
+                <Grid item xs={4}>
+                    <Paper>
+                        Human<br />
+                        <MapComponent countryMap={gameEntity.humanPlayer.map} playerMapClickListener={this.playerMapClickListener.bind(this)} />
+                    </Paper>
+                </Grid>
+                <Grid item xs={4}>
+                    <UserActionsComponent
+                        player={gameEntity.humanPlayer}
+                        mapClickListener={this.playerMapClickListener.bind(this)}
+                        registerMapListener={this.registerMapListener.bind(this)}
+                    />
+                </Grid>
+
+                <Grid item xs={4}>
+                    <Paper>
+                        Computer<br />
+                        <MapComponent countryMap={gameEntity.computerPlayer.map} />
+                    </Paper>
+                </Grid>
+                <Grid item xs={12}>
+                    <GameLogComponent />
+                </Grid>
+            </React.Fragment>
+
+        );
+
+        return format2();
     }
 }

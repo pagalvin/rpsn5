@@ -64,7 +64,7 @@ export class GameRules {
 
     public static getLocationDamage(args: {attackedBy: Ordnance, locationAttacked: MapLocation}) {
 
-        return args.locationAttacked.nuclearDamage < 3 ? args.locationAttacked.nuclearDamage +=1 : 3;
+        return args.locationAttacked.nuclearStrikes < 3 ? args.locationAttacked.nuclearStrikes +=1 : 3;
 
     }
 }

@@ -1,5 +1,6 @@
 import { AbstractMilitaryBase } from "./AbstractMilitaryBase";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
+import { MapLocation } from "../../MapObjects/MapLocation";
 
 export class ArmyBase extends AbstractMilitaryBase {
 
@@ -7,11 +8,13 @@ export class ArmyBase extends AbstractMilitaryBase {
     public gameYear: number = 1;
     public isDecamped: boolean;
 
-    constructor() {
-        super();
+    constructor(args: {atLocation: MapLocation}) {
+    
+        super(args);
 
         this.isReceivingOrders = false;
         this.isDecamped = false;
+    
     }
 
     // public activate(): void {

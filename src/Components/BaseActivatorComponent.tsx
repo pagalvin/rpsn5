@@ -15,6 +15,8 @@ import { AbmBase } from '../Entities/WorldObjects/Bases/AbmBase';
 import { ArmyBase } from '../Entities/WorldObjects/Bases/ArmyBase';
 import { MissileBase } from '../Entities/WorldObjects/Bases/MissileBase';
 import { NavyBase } from '../Entities/WorldObjects/Bases/NavyBase';
+import { AbstractMilitaryBase } from '../Entities/WorldObjects/Bases/AbstractMilitaryBase';
+import { MapUtil } from '../Utils/MapUtils';
 
 interface props {
     player: HumanPlayer;
@@ -37,7 +39,6 @@ interface state {
     isWaitingForSelection: boolean;
     activeBases: initializedBase[];
     inactiveBases: initializedBase[];
-    // inactiveBases: Exclude<MilitaryBaseTypes, null>[];
 }
 
 export class BaseActivatorComponent extends Component<props, state> implements GamestateWatcher {
@@ -63,17 +64,13 @@ export class BaseActivatorComponent extends Component<props, state> implements G
 
             if (this.state.inactiveBases.length > 0) {
 
-                console.log(`BaseActivatorComponent: handleGameStateChange: Got a tick, activatig a base:`,
-                    {
-                        base: this.state.inactiveBases[0]
-                    });
+                // console.log(`BaseActivatorComponent: handleGameStateChange: Got a tick, activatig a base:`,
+                //     {
+                //         base: this.state.inactiveBases[0]
+                //     });
 
                 this.state.inactiveBases[0].baseEntity.activate();
-
-                // const baseToActivate: initializedBase = {
-                //     baseEntity: this.state.inactiveBases[0].baseEntity,
-                //     ui: this.getBaseUI({ forBase: this.state.inactiveBases[0].baseEntity }) as any
-                // }
+                this.handleBaseActivatedAnimation({forBase: this.state.inactiveBases[0]});
 
                 this.setState({
                     activeBases: this.state.activeBases.concat(this.state.inactiveBases[0]),
@@ -84,16 +81,22 @@ export class BaseActivatorComponent extends Component<props, state> implements G
 
     }
 
+    private handleBaseActivatedAnimation(args: {forBase: initializedBase}) {
+        const mapLocElement = document.getElementById(MapUtil.getMapLocationHtmlID(args.forBase.baseEntity.myMapLocation));
+        if (mapLocElement) {
+            mapLocElement.classList.remove("activatedBase");
+            mapLocElement.classList.add("activatedBase");
+        }
+
+    }
+
     componentDidMount() {
 
-        console.log(`BaseActivatorComponent: componentDidMount: state and props:`, { state: this.state, props: this.props });
+        // console.log(`BaseActivatorComponent: componentDidMount: state and props:`, { state: this.state, props: this.props });
 
         this.props.registerForHumanPlayerMapClicks({ ui: this });
 
-        // need to get active and inactive bases
-        // who holds onto that? Player? the map? this thing here? how about this thing here...
-
-        console.log(`BaseActivatorComponent: componentDidMount: Got all the available military bases: `, { bases: this.props.player.map.getAllMilitaryBases() });
+        // console.log(`BaseActivatorComponent: componentDidMount: Got all the available military bases: `, { bases: this.props.player.map.getAllMilitaryBases() });
 
         const getIB = (base: Exclude<MilitaryBaseTypes,null>) => { 
             return ( 
@@ -134,16 +137,6 @@ export class BaseActivatorComponent extends Component<props, state> implements G
             if (args.forBase.WorldObjectLabel === "Radar") return <RadarBaseComponent key={this.uiKey()} base={args.forBase as RadarBase} />;
 
         };
-
-        const baseDetails = (args: { forInitializedBase: initializedBase }) => {
-            return (
-                <div key={this.uiKey()}>
-                    Name: {args.forInitializedBase.baseEntity.Name},
-                    Type: {args.forInitializedBase.baseEntity.WorldObjectLabel},
-                    {args.forInitializedBase.ui}
-                </div>
-            )
-        }
 
         const toRender = (
             <React.Fragment>

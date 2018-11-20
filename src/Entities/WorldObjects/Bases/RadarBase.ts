@@ -1,21 +1,21 @@
 import { AbstractMilitaryBase } from "./AbstractMilitaryBase";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
+import { MapLocation } from "../../MapObjects/MapLocation";
 
 export class RadarBase extends AbstractMilitaryBase {
-
+ 
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "Radar";
     public gameYear: number = 1;
 
-    public modeOfOperaton: "Inactive" | "Active" | "Passive";
+    public modeOfOperation: "Inactive" | "Active" | "Passive";
 
-    constructor() {
-        super();
+    constructor(args: {atLocation: MapLocation}) {
+        super(args);
 
-        this.modeOfOperaton = "Inactive";
-
+        this.modeOfOperation = "Inactive";
     }
 
     public setModeOfOperation(args: {mode: "Active" | "Passive"}) {
-        this.modeOfOperaton = args.mode;
+        this.modeOfOperation = args.mode;
     }
 }

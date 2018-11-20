@@ -1,5 +1,6 @@
 import { AbstractMilitaryBase } from "./AbstractMilitaryBase";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
+import { MapLocation } from "../../MapObjects/MapLocation";
 
 export class AbmBase extends AbstractMilitaryBase {
 
@@ -10,8 +11,8 @@ export class AbmBase extends AbstractMilitaryBase {
     public totalMissiles: number;
     public isTracking: boolean;
 
-    constructor() {
-        super();
+    constructor(args: {atLocation: MapLocation}) {
+        super(args);
 
         this.totalMissiles = 0;
         this.isTracking = false;

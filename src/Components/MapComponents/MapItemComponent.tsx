@@ -26,11 +26,11 @@ export class MapItemComponent extends React.Component<props, state> {
         const { mapItem } = this.props;
 
         const nuclearDamageIndicator = () => {
-            const {nuclearDamage} = this.props.mapItem;
+            const {nuclearStrikes} = this.props.mapItem;
 
-            if (nuclearDamage === 1) return "*";
-            if (nuclearDamage === 2) return "**";
-            if (nuclearDamage === 3) return "***";
+            if (nuclearStrikes === 1) return "*";
+            if (nuclearStrikes === 2) return "**";
+            if (nuclearStrikes === 3) return "***";
 
             return "";
 

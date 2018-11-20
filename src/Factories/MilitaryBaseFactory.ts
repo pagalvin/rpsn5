@@ -6,6 +6,7 @@ import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
 import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
 import { AbstractMilitaryBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";
 import { NavyBase } from "../Entities/WorldObjects/Bases/NavyBase";
+import { MapLocation } from "../Entities/MapObjects/MapLocation";
 
 export interface MilitaryBaseProperties {
 
@@ -36,39 +37,39 @@ export class MilitaryBaseFactory {
         return 'xyzzy';
     }
 
-    public createNewBase(args: {baseType: MilitaryBaseTypeLabels}) {
+    public createNewBase(args: {baseType: MilitaryBaseTypeLabels, atLocation: MapLocation}) {
 
         console.log(`MilitaryBaseFactory: createNewBase: entering with args:`, {args: args});
         
         switch(args.baseType) {
 
             case "ABM": {
-                const newBase = new AbmBase();
+                const newBase = new AbmBase({atLocation: args.atLocation});
                 newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Radar": {
-                const newBase = new RadarBase();
+                const newBase = new RadarBase({atLocation: args.atLocation});
                 newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Navy": {
-                const newBase = new NavyBase();
+                const newBase = new NavyBase({atLocation: args.atLocation});
                 newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Missile": {
-                const newBase = new MissileBase();
+                const newBase = new MissileBase({atLocation: args.atLocation});
                 newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Air": {
-                const newBase = new AirBase();
+                const newBase = new AirBase({atLocation: args.atLocation});
                 newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Army": {
-                const newBase = new ArmyBase();
+                const newBase = new ArmyBase({atLocation: args.atLocation});
                 newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }

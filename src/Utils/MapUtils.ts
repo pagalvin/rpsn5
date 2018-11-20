@@ -53,15 +53,15 @@ export class MapUtil {
         }
 
         switch (args.forMapLocation.Contents.WorldObjectLabel) {
-            case "ABM": return "ABM";
-            case "Air": return "Air";
-            case "Army": return "Army";
+            case "ABM": return "A";
+            case "Air": return "B";
+            case "Army": return "I";
             case "City": return "City";
-            case "Missile": return "Msl";
-            case "Navy": return "Nvy";
-            case "Radar": return "Rdr";
+            case "Missile": return "M";
+            case "Navy": return "S";
+            case "Radar": return "R";
             case "Rural": return ".";
-            case "Town": return "Town";
+            case "Town": return "T";
         }
 
         return "empty";
@@ -77,8 +77,8 @@ export class MapUtil {
 
     public static getMapSummary(args: { forMap: CountryMap }) {
 
-        const isPassiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperaton === "Passive";
-        const isActiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperaton === "Active";
+        const isPassiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperation === "Passive";
+        const isActiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperation === "Active";
 
         // function to,  = "allTO" = "all tageted ordnance"
         const allTO = (base: OrdnanceCarryingBase) => base.ordnance.filter(o => o.myTarget);
@@ -138,4 +138,8 @@ export class MapUtil {
         return allIn;
     }
 
+    public static getMapLocationHtmlID(forMapLocation: MapLocation) {
+        return `MapLocation_${forMapLocation.uniqueID}`;
+    }
+    
 }

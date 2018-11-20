@@ -9,7 +9,7 @@ export class MapLocation extends AbstractMapLocation {
     public Contents: MilitaryBaseTypes | PopulationAreaTypes;
     public uniqueID: number = 0;
     
-    public nuclearDamage: number;
+    public nuclearStrikes: number;
 
     private static nextID: number = 1;
 
@@ -18,7 +18,7 @@ export class MapLocation extends AbstractMapLocation {
         this.Contents = new RuralArea({name: "Empty", population: 0});
         this.uniqueID = MapLocation.nextID++;
         this.isTargeted = false;
-        this.nuclearDamage = 0;
+        this.nuclearStrikes = 0;
         
     }
 

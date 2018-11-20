@@ -9,6 +9,8 @@ import { MilitaryBaseTypeLabels } from '../../Entities/WorldObjects/Bases/Milita
 import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../../Game/GameLogic';
 import { MapItemComponent } from './MapItemComponent';
 import { MapSummaryComponent } from './MapSummaryComponent';
+import { MapUtil } from '../../Utils/MapUtils';
+import { Table, TableBody, TableCell } from '@material-ui/core';
 
 export interface buildBaseResult {
   manifestIndex: number;
@@ -56,23 +58,93 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     // console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
 
-    if (args.details.changeLabel === "Advance Turn" ||
-      args.details.changeLabel === "Map Location Targeted")
-    {
+    const { changeLabel } = args.details;
+
+    if (changeLabel === "Advance Turn") {
       this.forceUpdate();
     }
 
-    if (args.details.changeLabel === "Location Nuked") {
+    else if (changeLabel === "Map Location Targeted") {
+      this.handleLocationTargeted({ targetedLocation: args.details.relatedLocation });
+    }
 
-      if (args.details.relatedLocation) {
-        const mapLocID = this.getMapLocationHtmlID(args.details.relatedLocation);
-        const xxx = document.getElementById(mapLocID);
-        if (xxx) {
-          if (args.details.relatedLocation.nuclearDamage === 1) { xxx.classList.add("nukedOnce"); }
-          if (args.details.relatedLocation.nuclearDamage === 2) { xxx.classList.add("nukedTwice"); }
-          if (args.details.relatedLocation.nuclearDamage === 3) { xxx.classList.add("nukedThrice"); }
-          
+    else if (changeLabel === "Base Activated") {
+
+      console.log(`MapComponent.tsx: handleGameStateChange: got a Base Activate updated, details:`, args);
+
+      const { relatedBase } = args.details;
+
+      if (relatedBase) {
+        this.handleBaseActivated({ nukedLocation: relatedBase.myMapLocation })
+      }
+    }
+    else if (args.details.changeLabel === "Location Nuked") {
+      this.handleLocationNuked({ nukedLocation: args.details.relatedLocation });
+    }
+
+  }
+
+  private handleBaseActivated(args: { nukedLocation: MapLocation | undefined }) {
+    if (args.nukedLocation) {
+      const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.nukedLocation));
+
+      if (mapLocElement) {
+        mapLocElement.classList.add("activatedBase");
+      }
+    }
+  }
+
+  private handleLocationTargeted(args: { targetedLocation: MapLocation | undefined }) {
+    if (args.targetedLocation) {
+      const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.targetedLocation));
+
+      if (mapLocElement) {
+        mapLocElement.classList.add("targetedMapLocation");
+      }
+    }
+  }
+
+  private handleLocationNuked(args: { nukedLocation: MapLocation | undefined }) {
+
+    console.log(`MapComponent.ts: handleLocationNuked: Entering, args:`, args);
+
+    if (args.nukedLocation) {
+
+      console.log(`MapComponent.ts: handleLocationNuked: Got a nuked location OK.`);
+
+      const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.nukedLocation));
+
+      if (mapLocElement) {
+        console.log(`MapComponent.ts: handleLocationNuked: fiddling with nuke classes.`);
+
+        const nukeClasses = ["nukedOnce", "nukedTwice", "nukedThrice"];
+        const { nukedLocation } = args;
+
+        mapLocElement.classList.add(nukeClasses[nukedLocation.nuclearStrikes >= 3 ? 2 : nukedLocation.nuclearStrikes - 1]);
+      }
+    }
+  }
+
+  private handleLocationDragEvent(args: { doLoc: MapLocation, eventType: "over" | "leave" }) {
+
+    console.log(`MapComponent.ts: handleLocationDraggedOver: Entering, args:`, args);
+
+    if (args.doLoc) {
+
+      console.log(`MapComponent.ts: handleLocationDraggedOver: Got a nuked location OK.`);
+
+      const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.doLoc));
+
+      if (mapLocElement) {
+        console.log(`MapComponent.ts: handleLocationDraggedOver: fiddling with nuke classes.`);
+
+        if (args.eventType === "over") {
+          mapLocElement.classList.add("mapLocationDraggedOver");
         }
+        else {
+          mapLocElement.classList.remove("mapLocationDraggedOver");
+        }
+
       }
     }
   }
@@ -113,6 +185,8 @@ export class MapComponent extends React.Component<props, state> implements Games
     }
     );
 
+    this.handleLocationDragEvent({doLoc: args.cell, eventType: "leave"}); // clears any class artifact.
+    
     notifyDragResultCallack(
       {
         result: {
@@ -146,7 +220,11 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     if (isOK) {
 
-      const newBase = MilitaryBaseFactory.getInstance().createNewBase({ baseType: (args.dropEvent.dataTransfer.getData("baseType") as MilitaryBaseTypeLabels) });
+      const newBase = MilitaryBaseFactory.getInstance().createNewBase(
+        {
+          baseType: (args.dropEvent.dataTransfer.getData("baseType") as MilitaryBaseTypeLabels),
+          atLocation: args.cell
+        });
 
       if (newBase) {
         args.cell.placeItem({ itemToPlace: newBase });
@@ -186,7 +264,7 @@ export class MapComponent extends React.Component<props, state> implements Games
   }
 
   private getMapLocationHtmlID(forMapLocation: MapLocation) {
-    return `MapLocation_${forMapLocation.uniqueID}`;
+    return MapUtil.getMapLocationHtmlID(forMapLocation);
   }
 
   render() {
@@ -197,25 +275,26 @@ export class MapComponent extends React.Component<props, state> implements Games
 
       // console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
 
-      const nuclearDamageIndicator = (args: {ml: MapLocation}) => {
-        const {nuclearDamage} = args.ml;
+      //   const nuclearDamageIndicator = (args: {ml: MapLocation}) => {
+      //     const {nuclearStrikes} = args.ml;
 
-        if (nuclearDamage === 1) return "nukedOnce";
-        if (nuclearDamage === 2) return "nukedTwice"
-        if (nuclearDamage === 3) return "nukedThrice";
+      //     if (nuclearStrikes === 1) return "nukedOnce";
+      //     if (nuclearStrikes === 2) return "nukedTwice"
+      //     if (nuclearStrikes === 3) return "nukedThrice";
 
-        return "";
+      //     return "";
 
-    }
+      // }
 
       const result =
         <tr key={this.uiIdx++}>
           {
 
             mapRow.map(cell => (
-              <td key={this.uiIdx++} 
+              <td key={this.uiIdx++}
+                className="mapCell"
                 id={`${this.getMapLocationHtmlID(cell)}`}
-                className={nuclearDamageIndicator({ml: cell})}
+                // className={nuclearDamageIndicator({ml: cell})}
 
                 onClick={() => {
                   if (this.props.playerMapClickListener) this.props.playerMapClickListener({ location: cell });
@@ -229,20 +308,25 @@ export class MapComponent extends React.Component<props, state> implements Games
                     this.handleDrop({ dropEvent: e, cell: cell });
                   }
                 }
+
+                onDragLeave={
+                  (e: any) => {
+                    this.handleLocationDragEvent({ doLoc: cell, eventType: "leave" });
+                    e.preventDefault();
+                  }
+                }
+
                 onDragOver={
-                  (e) => {
+                  (e: any) => {
+                    this.handleLocationDragEvent({ doLoc: cell, eventType: "over" });
                     e.preventDefault();
                     // console.log(`MapComponent: render: onDragOver: e:`, { e: e, cell: cell });
                   }
                 }
               >
-                &nbsp;
-                _
+
                 <MapItemComponent mapItem={cell} key={this.uiIdx++} />
                 {cell.isTargeted ? <span>[T]</span> : null}
-                _
-                &nbsp;
-
               </td>
             ))
           }
@@ -250,20 +334,24 @@ export class MapComponent extends React.Component<props, state> implements Games
         </tr>
         ;
 
-      const result2 =
-        <div key={this.uiIdx++}>
-          mapRow result
-        </div>
-        ;
-
       return result;
 
     }
 
-    const mapTable = () => {
+    const mapAsMaterialUITable = () => {
+      return (
+        <Table className="mapContainer" padding="dense">
+          <TableBody>
+            {this.props.countryMap.map.map(row => mapRow(row))}
+          </TableBody>
+        </Table>
+      )
+    }
+
+    const mapAsHtmlTable = () => {
 
       return (
-        <table>
+        <table className="mapContainer">
           <tbody>
             {this.props.countryMap.map.map(row => mapRow(row))}
           </tbody>
@@ -273,10 +361,9 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     return (
       <div>
-        <h1>Country map</h1>
         <MapSummaryComponent mapToSummarize={this.props.countryMap} />
-        {mapTable()}
-        <h4>end of country map</h4>
+        {mapAsHtmlTable()}
+        {/* {mapAsMaterialUITable()} */}
       </div>
     );
   }
