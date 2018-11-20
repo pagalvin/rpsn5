@@ -93,11 +93,17 @@ export class GameLogic {
     public static activateMissileBase(args: { forBase: MissileBase }) {
         args.forBase.isReceivingOrders = true;
 
+        this.notifyGamestateChange({details: {relatedBase: args.forBase, changeLabel: "Base Activated"}});
+
         const totalBombers = Rng.throwDice({ hiNumberMinus1: Constants.MAX_ICBMS - 1 }) + Constants.MIN_ICBMS;
+
+        args.forBase.ordnance = [];
 
         for (let i = 0; i < totalBombers; i++) {
             args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({ parentBase: args.forBase }));
         }
+
+
     }
 
     public static activateAirBase(args: { forBase: AirBase }) {
@@ -105,6 +111,8 @@ export class GameLogic {
         console.log(`GameLogic: activateAirBase: Entering:`, args);
 
         args.forBase.isReceivingOrders = true;
+
+        this.notifyGamestateChange({details: {relatedBase: args.forBase, changeLabel: "Base Activated"}});
 
         const totalFighters = Constants.MAX_INITIAL_FIGHTERS + Rng.throwDice({ hiNumberMinus1: Constants.MAX_INITIAL_FIGHTERS - 1 });
         args.forBase.totalFighters = totalFighters;
@@ -120,6 +128,8 @@ export class GameLogic {
 
         args.forBase.isReceivingOrders = true;
 
+        this.notifyGamestateChange({details: {relatedBase: args.forBase, changeLabel: "Base Activated"}});
+
         const totalMissiles = Rng.throwDice({ hiNumberMinus1: Constants.MIN_SUB_MISSILES - 1 }) + Constants.MAX_SUB_MISSILES;
 
         for (let i = 0; i < totalMissiles; i++) {
@@ -128,6 +138,8 @@ export class GameLogic {
     }
 
     public static activateArmyBase(args: { forBase: ArmyBase }) {
+
+        this.notifyGamestateChange({details: {relatedBase: args.forBase, changeLabel: "Base Activated"}});
 
         args.forBase.isDecamped = true;
 
@@ -313,6 +325,7 @@ export class GameLogic {
         const defender = game.currentPlayer.isHuman ? game.computerPlayer : game.humanPlayer;
 
         resolveAttacksOnPlayer({ attackingPlayer: attacker, defendingPlayer: defender });
+        resolveAttacksOnPlayer({ attackingPlayer: defender, defendingPlayer: attacker });
 
     }
 
