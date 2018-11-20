@@ -8,6 +8,7 @@ import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryB
 import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
 import { OrdnanceCarryingBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";
 import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
+import { MilitaryBaseFactory } from "../Factories/MilitaryBaseFactory";
 
 export interface countrySummary {
     allAbmBases: AbmBase[];
@@ -46,6 +47,33 @@ export class MapUtil {
         }
 
 
+    public static createTestBases(args: {onMap: CountryMap}) {
+
+        const mLoc = args.onMap.map[0][0];
+        const m = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Missile", atLocation: mLoc});
+        const rLoc = args.onMap.map[0][1];
+        const r = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Radar", atLocation: rLoc});
+        const rLoc2 = args.onMap.map[0][2];
+        const r2 = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Radar", atLocation: rLoc2});
+        const bLoc = args.onMap.map[0][3];
+        const b = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Air", atLocation: bLoc});
+        const nLoc = args.onMap.map[0][4];
+        const n = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Navy", atLocation: nLoc});
+        const aLoc = args.onMap.map[0][5];
+        const a = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Army", atLocation: aLoc});
+        const abmLoc = args.onMap.map[0][6];
+        const abm = MilitaryBaseFactory.getInstance().createNewBase({baseType: "ABM", atLocation: abmLoc});
+
+        if (m) {mLoc.placeItem({itemToPlace: m});}
+        if (r) {rLoc.placeItem({itemToPlace: r});}
+        if (r2) {rLoc2.placeItem({itemToPlace: r2});}
+        if (b) {bLoc.placeItem({itemToPlace: b});}
+        if (n) {nLoc.placeItem({itemToPlace: n});}
+        if (a) {aLoc.placeItem({itemToPlace: a});}
+        if (abm) {abmLoc.placeItem({itemToPlace: abm});}
+
+
+    }
     public static GetMapLocationSingleCharacterCode(args: { forMapLocation: MapLocation }) {
 
         if (args.forMapLocation.Contents === null) {
