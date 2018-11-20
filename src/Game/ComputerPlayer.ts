@@ -68,7 +68,9 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         // tests
         this.radarTest();
 
-        this.missileTest();
+       this.missileTest();
+       
+       this.airBaseTest();
 
     }
 
@@ -92,6 +94,26 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         })
     }
 
+    private airBaseTest() {
+        const myMapSummary = MapUtil.getMapSummary({ forMap: this.map });
+
+        if (myMapSummary.allAirBases.length < 1) { return; }
+
+        const airBase = myMapSummary.allAirBases[0];
+
+        GameLogic.activateAirBase({ forBase: airBase });
+
+        console.log(`ComputerPlayer.ts: airBaseTest: Activated an air base:`, { base: airBase });
+
+        airBase.ordnance.forEach((o) => {
+            GameLogic.handleMissileTargeted(
+                {
+                    atMapLocation: this.getRandomLocation({ fromMap: Game.getInstance().humanPlayer.map }),
+                    targetingMissile: o
+                });
+        })
+    }
+
     private radarTest() {
 
         console.log(`ComputerPlayer.ts: radarTest: entering.`);
@@ -100,15 +122,19 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
 
         if (myMapSummary.allRadarBases.length < 1) { return; }
 
+        console.log(`ComputerPlayer.ts: radarTest: testing radar1.`);
+
         const radar1 = myMapSummary.allRadarBases[0];
         radar1.setModeOfOperation({ mode: "Active" });
         GameLogic.activateRadarBase({ forBase: radar1 });
 
         if (myMapSummary.allRadarBases.length < 2) { return; }
 
-        const radar2 = myMapSummary.allRadarBases[0];
+        console.log(`ComputerPlayer.ts: radarTest: testing radar2.`);
+
+        const radar2 = myMapSummary.allRadarBases[1];
         radar2.setModeOfOperation({ mode: "Passive" });
-        GameLogic.activateRadarBase({ forBase: radar1 });
+        GameLogic.activateRadarBase({ forBase: radar2 });
 
     }
 
