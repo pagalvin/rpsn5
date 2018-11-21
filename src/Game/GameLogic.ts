@@ -78,14 +78,13 @@ export class GameLogic {
 
     }
 
-    public static handleMissileTargeted(args: { atMapLocation: MapLocation, targetingMissile: Ordnance }) {
+    public static handleMissileTargeted(args: {attackingPlayer: AbstractPlayer, atMapLocation: MapLocation, targetingOrdnance: Ordnance }) {
 
-        const game = Game.getInstance();
         args.atMapLocation.isTargeted = true;
 
-        args.targetingMissile.myTarget = args.atMapLocation;
+        args.targetingOrdnance.myTarget = args.atMapLocation;
 
-        game.currentPlayer.targetedOrdnanceItems = game.currentPlayer.targetedOrdnanceItems.concat(args.targetingMissile);
+        args.attackingPlayer.targetedOrdnanceItems = args.attackingPlayer.targetedOrdnanceItems.concat(args.targetingOrdnance);
 
         this.notifyGamestateChange({ details: { changeLabel: "Map Location Targeted", relatedLocation: args.atMapLocation } })
     }
@@ -244,7 +243,7 @@ export class GameLogic {
 
         const tryAttack = (args: { attackingPlayer: AbstractPlayer, defendingPlayer: AbstractPlayer, locationUnderAttack: MapLocation }) => {
 
-            // console.log(`resolveWartimeAttack: resolveAttack: entering, args:`, { args: args });
+            console.log(`resolveWartimeAttack: resolveAttack: entering, args:`, { args: args });
 
             const attackingOrdnance = args.attackingPlayer.targetedOrdnanceItems.filter((ao) => {
                 if (ao.myTarget === null) return false;
@@ -252,7 +251,7 @@ export class GameLogic {
                 return (ao.myTarget.uniqueID === args.locationUnderAttack.uniqueID);
             })[0];
 
-            // console.log(`resolveWartimeAttack: resolveAttack: found ordnance:`, { foundAttackingOrdnance: attackingOrdnance });
+            console.log(`resolveWartimeAttack: resolveAttack: found ordnance:`, { foundAttackingOrdnance: attackingOrdnance });
 
             if (attackingOrdnance) {
 
@@ -302,6 +301,9 @@ export class GameLogic {
                 
                 return true;
             }
+            else {
+                console.log(`resolveWartimeAttack: resolveAttack: there was no ordnance to attack with.`);
+            }
         }
 
         const resolveAttacksOnPlayer = (args: { attackingPlayer: AbstractPlayer, defendingPlayer: AbstractPlayer }) => {
@@ -320,13 +322,17 @@ export class GameLogic {
 
         const game = Game.getInstance();
 
-        const attacker = game.currentPlayer;
+        const playerA = game.currentPlayer;
 
-        const defender = game.currentPlayer.isHuman ? game.computerPlayer : game.humanPlayer;
+        const playerB = game.currentPlayer.isHuman ? game.computerPlayer : game.humanPlayer;
 
-        resolveAttacksOnPlayer({ attackingPlayer: attacker, defendingPlayer: defender });
-        resolveAttacksOnPlayer({ attackingPlayer: defender, defendingPlayer: attacker });
+        if (playerA.targetedOrdnanceItems.length > 0) {
+            resolveAttacksOnPlayer({ attackingPlayer: playerA, defendingPlayer: playerB });
+        }
 
+        if (playerB.targetedOrdnanceItems.length > 0) {
+            resolveAttacksOnPlayer({ attackingPlayer: playerB, defendingPlayer: playerA });
+        }
     }
 
     public static declareWar(args: { declaringPlayer: AbstractPlayer }) {
@@ -342,10 +348,13 @@ export class GameLogic {
     }
 
     public static finishHumanTurn(): void {
+        Game.getInstance().currentPlayer = Game.getInstance().computerPlayer;
         this.playComputerTurn();
+        Game.getInstance().currentPlayer = Game.getInstance().humanPlayer;
     }
 
     public static finishComputerTurn(): void {
+        Game.getInstance().currentPlayer = Game.getInstance().humanPlayer;
         this.notifyGamestateChange({ details: { changeLabel: "Advance Turn" } });
     }
 

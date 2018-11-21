@@ -3,6 +3,7 @@ import { PlaceableObject } from "./PlaceableObjects";
 import { RuralArea } from "../WorldObjects/PopulationCenters/Rural";
 import { MilitaryBaseTypeLabels, MilitaryBaseTypes } from "../WorldObjects/Bases/MilitaryBaseTypes";
 import { PopulationAreaTypes } from "../WorldObjects/PopulationCenters/PopulationAreaTypes";
+import { CountryMap } from "../WorldObjects/CountryMap";
 
 export class MapLocation extends AbstractMapLocation {
  
@@ -10,16 +11,16 @@ export class MapLocation extends AbstractMapLocation {
     public uniqueID: number = 0;
     
     public nuclearStrikes: number;
-
+    public myMap: CountryMap;
     private static nextID: number = 1;
 
-    constructor() {
+    constructor(args: {onMap: CountryMap}) {
         super();
         this.Contents = new RuralArea({name: "Empty", population: 0});
         this.uniqueID = MapLocation.nextID++;
         this.isTargeted = false;
         this.nuclearStrikes = 0;
-        
+        this.myMap = args.onMap;
     }
 
     public placeItem(args: {itemToPlace: PlaceableObject}): void {

@@ -48,7 +48,11 @@
 
 .activatedBase {
   transition: background-color 2.0s ease;
+  /* transition: opacity 2.0s ease; */
   background-color: greenyellow;
+  /* opacity: 1; */
+  /* background: radial-gradient(circle, red, yellow, green);  */
+
 }
 
 .passiveRadarPulseUp {

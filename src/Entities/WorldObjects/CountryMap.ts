@@ -1,5 +1,3 @@
-import { AbstractMapLocation } from "../MapObjects/AbstractMapLocation";
-import { RuralArea } from "./PopulationCenters/Rural";
 import { PopulationAreaFactory } from "../../Factories/PopulationAreaFactory";
 import { MapLocation } from "../MapObjects/MapLocation";
 import { MilitaryBaseTypes } from "./Bases/MilitaryBaseTypes";
@@ -8,12 +6,12 @@ export class CountryMap {
 
     private sizeX: number;
     private sizeY: number;
-    private owner: string; // mostly for debug purposes
+    public owner: "Computer" | "Human";
     public map: MapLocation[][]
 
     private readonly newRuralArea = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Rural"});
 
-    constructor(args: {sizeX: number, sizeY: number, owner: string}) {
+    constructor(args: {sizeX: number, sizeY: number, owner: "Computer" | "Human"}) {
 
         this.sizeX = args.sizeX;
         this.sizeY = args.sizeY;
@@ -40,7 +38,7 @@ export class CountryMap {
 
             for (let y = 0; y < this.sizeY; y++) {
 
-                const mi = new MapLocation();
+                const mi = new MapLocation({onMap: this});
                 mi.Contents = this.newRuralArea();
 
                 this.map[x].push(mi);

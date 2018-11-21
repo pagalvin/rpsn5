@@ -72,6 +72,8 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
        
        this.airBaseTest();
 
+       this.navyBaseTest();
+
     }
 
     private missileTest() {
@@ -88,11 +90,37 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         missile1.ordnance.forEach((o) => {
             GameLogic.handleMissileTargeted(
                 {
+                    attackingPlayer: this,
                     atMapLocation: this.getRandomLocation({ fromMap: Game.getInstance().humanPlayer.map }),
-                    targetingMissile: o
+                    targetingOrdnance: o
+                });
+
+                console.log(`ComputerPlayer.ts: missileTest: targeted missile ordnance:`, o);
+            })
+
+    }
+
+    private navyBaseTest() {
+        const myMapSummary = MapUtil.getMapSummary({ forMap: this.map });
+
+        if (myMapSummary.allNavyBases.length < 1) { return; }
+
+        const navyBase = myMapSummary.allNavyBases[0];
+
+        GameLogic.activateNavyBase({ forBase: navyBase });
+
+        console.log(`ComputerPlayer.ts: navyBaseTest: Activated a Navy base:`, { base: navyBase });
+
+        navyBase.ordnance.forEach((o) => {
+            GameLogic.handleMissileTargeted(
+                {
+                    attackingPlayer: this,
+                    atMapLocation: this.getRandomLocation({ fromMap: Game.getInstance().humanPlayer.map }),
+                    targetingOrdnance: o
                 });
         })
     }
+
 
     private airBaseTest() {
         const myMapSummary = MapUtil.getMapSummary({ forMap: this.map });
@@ -108,8 +136,9 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         airBase.ordnance.forEach((o) => {
             GameLogic.handleMissileTargeted(
                 {
+                    attackingPlayer: this,
                     atMapLocation: this.getRandomLocation({ fromMap: Game.getInstance().humanPlayer.map }),
-                    targetingMissile: o
+                    targetingOrdnance: o
                 });
         })
     }

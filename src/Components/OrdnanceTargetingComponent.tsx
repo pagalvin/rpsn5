@@ -5,6 +5,7 @@ import { GameLogic, GamestateWatcher, gameStateChangeDetails } from '../Game/Gam
 import { targetMissileResult } from './MapComponents/MapComponent';
 import { NavyBase } from '../Entities/WorldObjects/Bases/NavyBase';
 import { AirBase } from '../Entities/WorldObjects/Bases/AirBase';
+import { Game } from '../Entities/gameEntity';
 
 export interface props { 
     parentBase: MissileBase | NavyBase | AirBase;
@@ -114,10 +115,13 @@ export class OrdnanceTargetingComponent extends React.Component<props, state> im
     private handleDropResult(args: { result: targetMissileResult }) {
         console.log(`OrdnanceTargetingComponent: handleDropResult: drop finished, result:`, args.result);
 
+        const currentPlayerType = this.props.parentBase.myMapLocation.myMap.owner;
+
         GameLogic.handleMissileTargeted(
             {
+                attackingPlayer: currentPlayerType === "Computer" ? Game.getInstance().computerPlayer : Game.getInstance().humanPlayer,
                 atMapLocation: args.result.targetedLocation, 
-                targetingMissile: this.props.parentBase.ordnance[args.result.missileIndex]
+                targetingOrdnance: this.props.parentBase.ordnance[args.result.missileIndex]
             });
         
         if (this.props.parentBase.isAllOrdnanceTargeted()) {
