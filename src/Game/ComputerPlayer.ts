@@ -68,11 +68,44 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         // tests
         this.radarTest();
 
-       this.missileTest();
-       
-       this.airBaseTest();
+        this.missileTest();
 
-       this.navyBaseTest();
+        this.airBaseTest();
+
+        this.navyBaseTest();
+
+        this.armyBaseTest();
+
+        this.abmBaseTest();
+    }
+
+    private abmBaseTest() {
+
+        console.log(`ComputerPlayer.ts: abmBaseTest: entering.`);
+
+        const myMapSummary = MapUtil.getMapSummary({ forMap: this.map });
+
+        if (myMapSummary.allAbmBases.length < 1) { return; }
+
+        console.log(`ComputerPlayer.ts: abmBaseTest: testing abm base:`, myMapSummary.allAbmBases[0]);
+
+        const abmbase1 = myMapSummary.allAbmBases[0];
+        GameLogic.activateAbmBase({ forBase: abmbase1 });
+
+    }
+
+    private armyBaseTest() {
+
+        console.log(`ComputerPlayer.ts: armyBaseTest: entering.`);
+
+        const myMapSummary = MapUtil.getMapSummary({ forMap: this.map });
+
+        if (myMapSummary.allArmyBases.length < 1) { return; }
+
+        console.log(`ComputerPlayer.ts: armyBaseTest: testing army base:`, myMapSummary.allArmyBases[0]);
+
+        const armybase1 = myMapSummary.allArmyBases[0];
+        GameLogic.activateArmyBase({ forBase: armybase1 });
 
     }
 
@@ -95,8 +128,8 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
                     targetingOrdnance: o
                 });
 
-                console.log(`ComputerPlayer.ts: missileTest: targeted missile ordnance:`, o);
-            })
+            console.log(`ComputerPlayer.ts: missileTest: targeted missile ordnance:`, o);
+        })
 
     }
 

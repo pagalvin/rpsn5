@@ -28,7 +28,7 @@ export class TickerComponent extends Component<props, state> {
 
         const intervalHandler = setInterval(() => {
             if (msgTextElem) {
-                msgTextElem.innerHTML = this.props.tickerMessage.substring(0, this.idx++) + "_";
+                msgTextElem.innerHTML = this.props.tickerMessage.substring(0, this.idx++) + "█";
             }
         }, this.props.tickerInterval);
 

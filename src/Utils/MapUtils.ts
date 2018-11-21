@@ -88,9 +88,9 @@ export class MapUtil {
             case "Missile": return "M";
             case "Navy": return "S";
             case "Radar": return "R";
-            case "Rural": return ".";
+            case "Rural": return "•";
             case "Town": return "T";
-        }
+       }
 
         return "empty";
     }

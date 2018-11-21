@@ -69,10 +69,13 @@ export class GameLogic {
 
     public static activateAbmBase(args: { forBase: AbmBase }) {
 
-        args.forBase.totalMissiles = Rng.throwDice({ hiNumberMinus1: 5 }) + 1;
-        args.forBase.isTracking = true;
+        const { forBase } = args;
 
-        this.notifyGamestateChange({ details: { changeLabel: "Base Activated" } });
+        forBase.totalMissiles = Rng.throwDice({ hiNumberMinus1: 5 }) + 1;
+        forBase.isTracking = true;
+        forBase.isReceivingOrders = true;
+
+        this.notifyGamestateChange({ details: { changeLabel: "Base Activated", relatedBase: forBase } });
 
         return;
 
