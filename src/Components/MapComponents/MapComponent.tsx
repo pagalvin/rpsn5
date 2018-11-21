@@ -106,16 +106,16 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   private handleLocationNuked(args: { nukedLocation: MapLocation | undefined }) {
 
-    console.log(`MapComponent.ts: handleLocationNuked: Entering, args:`, args);
+    // console.log(`MapComponent.ts: handleLocationNuked: Entering, args:`, args);
 
     if (args.nukedLocation) {
 
-      console.log(`MapComponent.ts: handleLocationNuked: Got a nuked location OK.`);
+      // console.log(`MapComponent.ts: handleLocationNuked: Got a nuked location OK.`);
 
       const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.nukedLocation));
 
       if (mapLocElement) {
-        console.log(`MapComponent.ts: handleLocationNuked: fiddling with nuke classes.`);
+        // console.log(`MapComponent.ts: handleLocationNuked: fiddling with nuke classes.`);
 
         const nukeClasses = ["nukedOnce", "nukedTwice", "nukedThrice"];
         const { nukedLocation } = args;

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 interface props {
     tickerMessage: string;
-    tickerInterval: number
+    tickerInterval: number;
+    onRenderCompleteCallback?: () => void;
 }
 
 interface state {
@@ -38,6 +39,8 @@ export class TickerComponent extends Component<props, state> {
             if (msgTextElem) {
                 msgTextElem.innerHTML = this.props.tickerMessage;
             }
+            if (this.props.onRenderCompleteCallback) {this.props.onRenderCompleteCallback()};
+
         }, this.props.tickerInterval * this.props.tickerMessage.length + this.props.tickerInterval * 3);
 
     }

@@ -83,7 +83,7 @@ export class MapUtil {
         switch (args.forMapLocation.Contents.WorldObjectLabel) {
             case "ABM": return "A";
             case "Air": return "B";
-            case "Army": return "I";
+            case "Army": return "T";
             case "City": return "City";
             case "Missile": return "M";
             case "Navy": return "S";

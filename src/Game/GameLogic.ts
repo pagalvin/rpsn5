@@ -20,6 +20,7 @@ export type gameStateChangeType =
     "Base Activated" |
     "Computer Finished Its Turn" |
     "Computer Playing Its Turn" |
+    "ICBM Intercepted" |
     "Location Nuked" |
     "Map Location Targeted" |
     "no change" |
@@ -286,8 +287,10 @@ export class GameLogic {
                                 locationAttacked: args.locationUnderAttack
                             });
 
+                            this.notifyGamestateChange({details: {changeLabel: "ICBM Intercepted"}});
+
                             return false;
-                        }                  
+                    }                  
 
                         console.log(`GameLogic.ts: tryAttack: Missile successfully hit target.`);
 
@@ -316,8 +319,10 @@ export class GameLogic {
             const locationsUnderAttack = MapUtil.getMapSummary({ forMap: map }).targetedMapLocations;
 
             for (let i = 0; i < locationsUnderAttack.length; i++) {
-                tryAttack({ attackingPlayer: args.attackingPlayer, defendingPlayer: args.defendingPlayer, locationUnderAttack: locationsUnderAttack[i] });
-                this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: locationsUnderAttack[i] } });
+                const result = tryAttack({ attackingPlayer: args.attackingPlayer, defendingPlayer: args.defendingPlayer, locationUnderAttack: locationsUnderAttack[i] });
+                if (result) {
+                    this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: locationsUnderAttack[i] } });
+                }
             }
         };
 
