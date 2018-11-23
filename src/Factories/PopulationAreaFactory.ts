@@ -3,6 +3,7 @@ import { PopulationAreaTypeLabels } from "../Entities/WorldObjects/PopulationCen
 import { City } from "../Entities/WorldObjects/PopulationCenters/City";
 import { RuralArea } from "../Entities/WorldObjects/PopulationCenters/Rural";
 import { MajorTown } from "../Entities/WorldObjects/PopulationCenters/MajorTown";
+import { Rng } from "../Utils/Rng";
 
 export class PopulationAreaFactory {
 
@@ -32,12 +33,14 @@ export class PopulationAreaFactory {
 
     public createNewPopulationArea(args: {popAreaType: PopulationAreaTypeLabels}) {
 
+        console.log(`PopulationAreaFactory: Entering, creating a pop area:`, args.popAreaType);
+        
         switch(args.popAreaType) {
 
             case "City": {
                 const newPopulationArea = new City({
                     name: "xyzzy",
-                    population: 999
+                    population: Rng.throwDice({hiNumberMinus1: 6500000}) + 6000000
                 });
                 return newPopulationArea;
             }
@@ -45,7 +48,7 @@ export class PopulationAreaFactory {
             case "Rural": {
                 const newPopulationArea = new RuralArea({
                     name: "xyzzy",
-                    population: 999
+                    population: Rng.throwDice({hiNumberMinus1: 1000}) + 1000
                 });
                 return newPopulationArea;
             }
@@ -53,7 +56,7 @@ export class PopulationAreaFactory {
             case "Town": {
                 const newPopulationArea = new MajorTown({
                     name: "xyzzy",
-                    population: 999
+                    population: Rng.throwDice({hiNumberMinus1: 50000}) + 10000
                 });
                 return newPopulationArea;
             }

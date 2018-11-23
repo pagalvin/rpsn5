@@ -54,6 +54,107 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   }
 
+  render() {
+
+    // console.log(`MapComponent.tsx: rendering a map:`, this.props.countryMap);
+
+    const mapRow = (mapRow: MapLocation[]) => {
+
+      // console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
+
+      //   const nuclearDamageIndicator = (args: {ml: MapLocation}) => {
+      //     const {nuclearStrikes} = args.ml;
+
+      //     if (nuclearStrikes === 1) return "nukedOnce";
+      //     if (nuclearStrikes === 2) return "nukedTwice"
+      //     if (nuclearStrikes === 3) return "nukedThrice";
+
+      //     return "";
+
+      // }
+
+      const result =
+        <tr key={this.uiIdx++}>
+          {
+
+            mapRow.map(cell => (
+              <td key={this.uiIdx++}
+                className="mapCell"
+                id={`${this.getMapLocationHtmlID(cell)}`}
+                // className={nuclearDamageIndicator({ml: cell})}
+
+                onClick={() => {
+                  if (this.props.playerMapClickListener) this.props.playerMapClickListener({ location: cell });
+                }
+                }
+
+                onDrop={
+                  (e: SyntheticEvent<HTMLTableDataCellElement>) => {
+                    e.preventDefault();
+                    console.log(`MapComponent: render: onDrop: e:`, { e: e });
+                    this.handleDrop({ dropEvent: e, cell: cell });
+                  }
+                }
+
+                onDragLeave={
+                  (e: any) => {
+                    this.handleLocationDragEvent({ doLoc: cell, eventType: "leave" });
+                    e.preventDefault();
+                  }
+                }
+
+                onDragOver={
+                  (e: any) => {
+                    this.handleLocationDragEvent({ doLoc: cell, eventType: "over" });
+                    e.preventDefault();
+                    // console.log(`MapComponent: render: onDragOver: e:`, { e: e, cell: cell });
+                  }
+                }
+              >
+
+                <MapItemComponent mapItem={cell} key={this.uiIdx++} />
+                {cell.isTargeted ? <span>[T]</span> : null}
+              </td>
+            ))
+          }
+
+        </tr>
+        ;
+
+      return result;
+
+    }
+
+    const mapAsMaterialUITable = () => {
+      return (
+        <Table className="mapContainer" padding="dense">
+          <TableBody>
+            {this.props.countryMap.map.map(row => mapRow(row))}
+          </TableBody>
+        </Table>
+      )
+    }
+
+    const mapAsHtmlTable = () => {
+
+      return (
+        <table className="mapContainer">
+          <tbody>
+            {this.props.countryMap.map.map(row => mapRow(row))}
+          </tbody>
+        </table>
+      )
+    }
+
+    return (
+      <div>
+        <MapSummaryComponent mapToSummarize={this.props.countryMap} />
+        {mapAsHtmlTable()}
+        {/* {mapAsMaterialUITable()} */}
+      </div>
+    );
+  }
+
   public handleGamestateChange(args: { details: gameStateChangeDetails }) {
 
     // console.log(`MapComponent: handleGamestateChange: Got a game state change:`, args);
@@ -81,6 +182,9 @@ export class MapComponent extends React.Component<props, state> implements Games
     else if (args.details.changeLabel === "Location Nuked") {
       this.handleLocationNuked({ nukedLocation: args.details.relatedLocation });
     }
+    else if (args.details.changeLabel === "ICBM Intercepted") {
+      this.handleLocationDetargeted({ detargetedLocation: args.details.relatedLocation });
+    }
 
   }
 
@@ -104,6 +208,16 @@ export class MapComponent extends React.Component<props, state> implements Games
     }
   }
 
+  private handleLocationDetargeted(args: { detargetedLocation: MapLocation | undefined }) {
+    if (args.detargetedLocation) {
+      const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.detargetedLocation));
+
+      if (mapLocElement) {
+        mapLocElement.classList.remove("targetedMapLocation");
+      }
+    }
+  }
+
   private handleLocationNuked(args: { nukedLocation: MapLocation | undefined }) {
 
     // console.log(`MapComponent.ts: handleLocationNuked: Entering, args:`, args);
@@ -121,6 +235,8 @@ export class MapComponent extends React.Component<props, state> implements Games
         const { nukedLocation } = args;
 
         mapLocElement.classList.add(nukeClasses[nukedLocation.nuclearStrikes >= 3 ? 2 : nukedLocation.nuclearStrikes - 1]);
+
+        this.handleLocationDetargeted({detargetedLocation: args.nukedLocation});
       }
     }
   }
@@ -267,105 +383,5 @@ export class MapComponent extends React.Component<props, state> implements Games
     return MapUtil.getMapLocationHtmlID(forMapLocation);
   }
 
-  render() {
-
-    // console.log(`MapComponent.tsx: rendering a map:`, this.props.countryMap);
-
-    const mapRow = (mapRow: MapLocation[]) => {
-
-      // console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
-
-      //   const nuclearDamageIndicator = (args: {ml: MapLocation}) => {
-      //     const {nuclearStrikes} = args.ml;
-
-      //     if (nuclearStrikes === 1) return "nukedOnce";
-      //     if (nuclearStrikes === 2) return "nukedTwice"
-      //     if (nuclearStrikes === 3) return "nukedThrice";
-
-      //     return "";
-
-      // }
-
-      const result =
-        <tr key={this.uiIdx++}>
-          {
-
-            mapRow.map(cell => (
-              <td key={this.uiIdx++}
-                className="mapCell"
-                id={`${this.getMapLocationHtmlID(cell)}`}
-                // className={nuclearDamageIndicator({ml: cell})}
-
-                onClick={() => {
-                  if (this.props.playerMapClickListener) this.props.playerMapClickListener({ location: cell });
-                }
-                }
-
-                onDrop={
-                  (e: SyntheticEvent<HTMLTableDataCellElement>) => {
-                    e.preventDefault();
-                    console.log(`MapComponent: render: onDrop: e:`, { e: e });
-                    this.handleDrop({ dropEvent: e, cell: cell });
-                  }
-                }
-
-                onDragLeave={
-                  (e: any) => {
-                    this.handleLocationDragEvent({ doLoc: cell, eventType: "leave" });
-                    e.preventDefault();
-                  }
-                }
-
-                onDragOver={
-                  (e: any) => {
-                    this.handleLocationDragEvent({ doLoc: cell, eventType: "over" });
-                    e.preventDefault();
-                    // console.log(`MapComponent: render: onDragOver: e:`, { e: e, cell: cell });
-                  }
-                }
-              >
-
-                <MapItemComponent mapItem={cell} key={this.uiIdx++} />
-                {cell.isTargeted ? <span>[T]</span> : null}
-              </td>
-            ))
-          }
-
-        </tr>
-        ;
-
-      return result;
-
-    }
-
-    const mapAsMaterialUITable = () => {
-      return (
-        <Table className="mapContainer" padding="dense">
-          <TableBody>
-            {this.props.countryMap.map.map(row => mapRow(row))}
-          </TableBody>
-        </Table>
-      )
-    }
-
-    const mapAsHtmlTable = () => {
-
-      return (
-        <table className="mapContainer">
-          <tbody>
-            {this.props.countryMap.map.map(row => mapRow(row))}
-          </tbody>
-        </table>
-      )
-    }
-
-    return (
-      <div>
-        <MapSummaryComponent mapToSummarize={this.props.countryMap} />
-        {mapAsHtmlTable()}
-        {/* {mapAsMaterialUITable()} */}
-      </div>
-    );
-  }
 }
 

@@ -44,7 +44,7 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
     }
 
     private onTickerCompleted() {
-        console.log(`GameLogComponent: onTickerCompleted: Entering.`);
+        // console.log(`GameLogComponent: onTickerCompleted: Entering.`);
 
         // Move the current message to history
         this.setState({

@@ -21,6 +21,7 @@ export class MapLocation extends AbstractMapLocation {
         this.isTargeted = false;
         this.nuclearStrikes = 0;
         this.myMap = args.onMap;
+    
     }
 
     public placeItem(args: {itemToPlace: PlaceableObject}): void {

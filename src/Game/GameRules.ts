@@ -4,6 +4,7 @@ import { MapLocation } from "../Entities/MapObjects/MapLocation";
 import { PlaceableObjectLabels } from "../Entities/MapObjects/PlaceableObjects";
 import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 import { Ordnance } from "../Entities/Ordnance";
+import { Constants } from "./constants";
 
 export type strategicMoveOptions = "Build" | "Spy" | "Declare War" | "Skip" | "Activate" | "Sue for Peace" | "Surrender";
 export type tacticalMoveOptions = MilitaryBaseTypeLabels | "Activate Base";
@@ -13,9 +14,14 @@ export interface allowedMoves {
     tacticalOptions: tacticalMoveOptions[];
 }
 
+export interface nuclearStrikeDamage {
+    populationKilled: number;
+    strikeCount: number; // max of 3
+}
+
 export class GameRules {
 
-    public static canPlaceItemAtMapLocation(args: {map: CountryMap, atLocation: MapLocation, itemToCheck: PlaceableObjectLabels}): boolean {
+    public static canPlaceItemAtMapLocation(args: { map: CountryMap, atLocation: MapLocation, itemToCheck: PlaceableObjectLabels }): boolean {
 
         if (args.atLocation.Contents) {
             return args.atLocation.Contents.WorldObjectLabel === "Rural";
@@ -24,12 +30,20 @@ export class GameRules {
         return true;
     }
 
-    public static getTotalBasesAllowedToBuild(args: {basedOnStrategicChoice: strategicMoveOptions | null}): number {
+    public static getTotalBasesAllowedToBuild(args: { basedOnStrategicChoice: strategicMoveOptions | null }): number {
 
         if (args.basedOnStrategicChoice === "Build") return 2;
         if (args.basedOnStrategicChoice === "Spy") return 1;
 
         return 0;
+    }
+
+    public static getNuclearStrikePopulationKilled(args: { onMapLocation: MapLocation }): number {
+
+        const popStrikePctLookup: number[] = [Constants.FIRST_STRIKE_POPULATION_HIT_PCT, Constants.SECOND_STRIKE_POPULATION_HIT_PCT, Constants.THIRD_STRIKE_POPULATION_HIT_PCT];
+        const popKilled = args.onMapLocation.Contents ? args.onMapLocation.Contents.Population * popStrikePctLookup[args.onMapLocation.nuclearStrikes -1] : 0;
+
+        return popKilled;
     }
 
     public static getAllowedMoves(): allowedMoves {
@@ -62,9 +76,14 @@ export class GameRules {
 
     }
 
-    public static getLocationDamage(args: {attackedBy: Ordnance, locationAttacked: MapLocation}) {
+    public static getLocationDamage(args: { attackedBy: Ordnance, locationAttacked: MapLocation }): nuclearStrikeDamage {
 
-        return args.locationAttacked.nuclearStrikes < 3 ? args.locationAttacked.nuclearStrikes +=1 : 3;
+        const result: nuclearStrikeDamage = {
+            strikeCount: args.locationAttacked.nuclearStrikes < 3 ? args.locationAttacked.nuclearStrikes += 1 : 3,
+            populationKilled: this.getNuclearStrikePopulationKilled({onMapLocation: args.locationAttacked})
+        }
+
+        return result;
 
     }
 }

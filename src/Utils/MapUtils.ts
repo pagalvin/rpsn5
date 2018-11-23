@@ -25,11 +25,12 @@ export interface countrySummary {
     totalActiveRadarStationsOnLine: number;
     totalBombersInFlight: number;
     totalFightersOnPatrol: number;
+    totalPopulation: number;
 }
 
 export class MapUtil {
 
-    private static readonly initialSummary: countrySummary = {
+    public static readonly initialSummary: countrySummary = {
         allAbmBases: [],
         allRadarBases: [],
         allAirBases: [],
@@ -43,37 +44,11 @@ export class MapUtil {
         totalPassiveRadarStationsOnLine: 0,
         totalActiveRadarStationsOnLine: 0,
         totalBombersInFlight: 0,
-        totalFightersOnPatrol: 0
+        totalFightersOnPatrol: 0,
+        totalPopulation: 0
         }
 
 
-    public static createTestBases(args: {onMap: CountryMap}) {
-
-        const mLoc = args.onMap.map[0][7];
-        const m = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Missile", atLocation: mLoc});
-        const rLoc = args.onMap.map[0][1];
-        const r = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Radar", atLocation: rLoc});
-        const rLoc2 = args.onMap.map[0][2];
-        const r2 = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Radar", atLocation: rLoc2});
-        const bLoc = args.onMap.map[0][3];
-        const b = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Air", atLocation: bLoc});
-        const nLoc = args.onMap.map[0][4];
-        const n = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Navy", atLocation: nLoc});
-        const aLoc = args.onMap.map[0][5];
-        const a = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Army", atLocation: aLoc});
-        const abmLoc = args.onMap.map[0][6];
-        const abm = MilitaryBaseFactory.getInstance().createNewBase({baseType: "ABM", atLocation: abmLoc});
-
-        if (m) {mLoc.placeItem({itemToPlace: m});}
-        if (r) {rLoc.placeItem({itemToPlace: r});}
-        if (r2) {rLoc2.placeItem({itemToPlace: r2});}
-        if (b) {bLoc.placeItem({itemToPlace: b});}
-        if (n) {nLoc.placeItem({itemToPlace: n});}
-        if (a) {aLoc.placeItem({itemToPlace: a});}
-        if (abm) {abmLoc.placeItem({itemToPlace: abm});}
-
-
-    }
     public static GetMapLocationSingleCharacterCode(args: { forMapLocation: MapLocation }) {
 
         if (args.forMapLocation.Contents === null) {
@@ -103,36 +78,49 @@ export class MapUtil {
     public static isRadarBase = (l: MapLocation) => MapUtil.isWO(l, "Radar");
     public static isAbmBase = (l: MapLocation) => MapUtil.isWO(l, "ABM");
 
+    public static applyFunctionToCountryMap<T>(args: {map: CountryMap, xformFunc: (ml : MapLocation) => void}) {
+
+        for (let i = 0; i < args.map.map.length; i++) {
+            for (let j = 0; j < args.map.map[i].length;j++) {
+                args.xformFunc(args.map.map[i][j]);
+            }
+        }
+
+    }
+
     public static getMapSummary(args: { forMap: CountryMap }) {
 
         const isPassiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperation === "Passive";
         const isActiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperation === "Active";
 
         // function to,  = "allTO" = "all tageted ordnance"
-        const allTO = (base: OrdnanceCarryingBase) => base.ordnance.filter(o => o.myTarget);
+        const allTO = (base: OrdnanceCarryingBase) => base.ordnance.filter(o => o.myTarget && o.wasConsumed === false);
         const ttlTtO = (base: OrdnanceCarryingBase) => allTO(base).length;
 
-        const addLocationToSummary = (l: MapLocation, s: countrySummary) =>
-            l.Contents
+        const mu = MapUtil;
+
+        const addLocationToSummary = (mapLoc: MapLocation, addToSummary: countrySummary) =>
+            mapLoc.Contents
                 ? (
                     {
-                        allAbmBases: MapUtil.isAbmBase(l) ? s.allAbmBases.concat(l.Contents as AbmBase) : s.allAbmBases,
-                        totalAbmMissilesOnLine: MapUtil.isAbmBase(l) ? s.totalAbmMissilesOnLine += (l.Contents as AbmBase).totalMissiles : s.totalAbmMissilesOnLine,
-                        allRadarBases: MapUtil.isRadarBase(l) ? s.allRadarBases.concat(l.Contents as RadarBase) : s.allRadarBases,
-                        totalPassiveRadarStationsOnLine: isPassiveRader(l) ? s.totalPassiveRadarStationsOnLine += 1 : s.totalPassiveRadarStationsOnLine,
-                        totalActiveRadarStationsOnLine: isActiveRader(l) ? s.totalActiveRadarStationsOnLine += 1 : s.totalActiveRadarStationsOnLine,
-                        allArmyBases: MapUtil.isArmyBase(l) ? s.allArmyBases.concat(l.Contents as ArmyBase) : s.allArmyBases,
-                        allAirBases: MapUtil.isAirBase(l) ? s.allAirBases.concat(l.Contents as AirBase) : s.allAirBases,
-                        totalBombersInFlight: MapUtil.isAirBase(l) ? s.totalBombersInFlight += ttlTtO(l.Contents as AirBase) : s.totalBombersInFlight,
-                        totalFightersOnPatrol: MapUtil.isAirBase(l) ? s.totalFightersOnPatrol += (l.Contents as AirBase).totalFighters : s.totalFightersOnPatrol,
-                        allMissileBases: MapUtil.isMissileBase(l) ? s.allMissileBases.concat(l.Contents as MissileBase) : s.allMissileBases,
-                        totalICBMsOnLine: MapUtil.isMissileBase(l) ? s.totalICBMsOnLine += ttlTtO(l.Contents as MissileBase) : s.totalICBMsOnLine,
-                        allNavyBases: MapUtil.isNavyBase(l) ? s.allNavyBases.concat(l.Contents as NavyBase) : s.allNavyBases,
-                        totalSubMissilesOnLine: MapUtil.isNavyBase(l) ? s.totalSubMissilesOnLine += ttlTtO(l.Contents as NavyBase) : s.totalSubMissilesOnLine,
-                        targetedMapLocations: l.isTargeted ? s.targetedMapLocations.concat(l) : s.targetedMapLocations
+                        allAbmBases: mu.isAbmBase(mapLoc) ? addToSummary.allAbmBases.concat(mapLoc.Contents as AbmBase) : addToSummary.allAbmBases,
+                        totalAbmMissilesOnLine: mu.isAbmBase(mapLoc) ? addToSummary.totalAbmMissilesOnLine += (mapLoc.Contents as AbmBase).totalMissiles : addToSummary.totalAbmMissilesOnLine,
+                        allRadarBases: mu.isRadarBase(mapLoc) ? addToSummary.allRadarBases.concat(mapLoc.Contents as RadarBase) : addToSummary.allRadarBases,
+                        totalPassiveRadarStationsOnLine: isPassiveRader(mapLoc) ? addToSummary.totalPassiveRadarStationsOnLine += 1 : addToSummary.totalPassiveRadarStationsOnLine,
+                        totalActiveRadarStationsOnLine: isActiveRader(mapLoc) ? addToSummary.totalActiveRadarStationsOnLine += 1 : addToSummary.totalActiveRadarStationsOnLine,
+                        allArmyBases: mu.isArmyBase(mapLoc) ? addToSummary.allArmyBases.concat(mapLoc.Contents as ArmyBase) : addToSummary.allArmyBases,
+                        allAirBases: mu.isAirBase(mapLoc) ? addToSummary.allAirBases.concat(mapLoc.Contents as AirBase) : addToSummary.allAirBases,
+                        totalBombersInFlight: mu.isAirBase(mapLoc) ? addToSummary.totalBombersInFlight += ttlTtO(mapLoc.Contents as AirBase) : addToSummary.totalBombersInFlight,
+                        totalFightersOnPatrol: mu.isAirBase(mapLoc) ? addToSummary.totalFightersOnPatrol += (mapLoc.Contents as AirBase).totalFighters : addToSummary.totalFightersOnPatrol,
+                        allMissileBases: mu.isMissileBase(mapLoc) ? addToSummary.allMissileBases.concat(mapLoc.Contents as MissileBase) : addToSummary.allMissileBases,
+                        totalICBMsOnLine: mu.isMissileBase(mapLoc) ? addToSummary.totalICBMsOnLine += ttlTtO(mapLoc.Contents as MissileBase) : addToSummary.totalICBMsOnLine,
+                        allNavyBases: mu.isNavyBase(mapLoc) ? addToSummary.allNavyBases.concat(mapLoc.Contents as NavyBase) : addToSummary.allNavyBases,
+                        totalSubMissilesOnLine: mu.isNavyBase(mapLoc) ? addToSummary.totalSubMissilesOnLine += ttlTtO(mapLoc.Contents as NavyBase) : addToSummary.totalSubMissilesOnLine,
+                        targetedMapLocations: mapLoc.isTargeted ? addToSummary.targetedMapLocations.concat(mapLoc) : addToSummary.targetedMapLocations,
+                        totalPopulation: addToSummary.totalPopulation += mapLoc.Contents.Population
                     } as countrySummary
                 )
-                : s
+                : addToSummary
             ;
 
         const mapRowSummary = (row: MapLocation[]) =>
@@ -153,15 +141,29 @@ export class MapUtil {
                 totalPassiveRadarStationsOnLine: s1.totalPassiveRadarStationsOnLine + s2.totalPassiveRadarStationsOnLine,
                 totalActiveRadarStationsOnLine: s1.totalActiveRadarStationsOnLine + s2.totalActiveRadarStationsOnLine,
                 totalBombersInFlight: s1.totalBombersInFlight + s2.totalBombersInFlight,
-                totalFightersOnPatrol: s1.totalFightersOnPatrol + s2.totalFightersOnPatrol
+                totalFightersOnPatrol: s1.totalFightersOnPatrol + s2.totalFightersOnPatrol,
+                totalPopulation: s1.totalPopulation + s2.totalPopulation
             } as countrySummary
         );
 
         const allIn = args.forMap.map.reduce(
-            (prev, curr) => addTwoSummaries(prev, mapRowSummary(curr)), this.initialSummary
+            (runningSummary, currentMapRow) => addTwoSummaries(runningSummary, mapRowSummary(currentMapRow)), this.initialSummary
         );
 
-        // console.log(`MapUtils: getMapSummary: allIn:`, { allIn2: allIn });
+        // somehow, the reduce stuff up above is over-calculating the population.
+        let runningPop = 0;
+        for (let i = 0; i < args.forMap.map.length; i++) {
+            for (let j = 0; j < args.forMap.map[i].length; j++) {
+                const {Contents} = args.forMap.map[i][j];
+                if (Contents !== null) {
+                    runningPop += (Contents.Population);
+                    }
+                // console.log(`[${i}] [${j}]: pop: ${runningPop}`);
+            }
+        }
+        allIn.totalPopulation = runningPop;
+
+        console.log(`MapUtils: getMapSummary: allIn:`, { map: args.forMap, allIn: allIn, population: allIn.totalPopulation, name: args.forMap.owner });
 
         return allIn;
     }
@@ -169,5 +171,32 @@ export class MapUtil {
     public static getMapLocationHtmlID(forMapLocation: MapLocation) {
         return `MapLocation_${forMapLocation.uniqueID}`;
     }
-    
+ 
+    public static createTestBases(args: {onMap: CountryMap}) {
+
+        const mLoc = args.onMap.map[0][7];
+        const m = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Missile", atLocation: mLoc});
+        const rLoc = args.onMap.map[0][1];
+        const r = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Radar", atLocation: rLoc});
+        const rLoc2 = args.onMap.map[0][2];
+        const r2 = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Radar", atLocation: rLoc2});
+        const bLoc = args.onMap.map[0][3];
+        const b = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Air", atLocation: bLoc});
+        const nLoc = args.onMap.map[0][4];
+        const n = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Navy", atLocation: nLoc});
+        const aLoc = args.onMap.map[0][5];
+        const a = MilitaryBaseFactory.getInstance().createNewBase({baseType: "Army", atLocation: aLoc});
+        const abmLoc = args.onMap.map[0][6];
+        const abm = MilitaryBaseFactory.getInstance().createNewBase({baseType: "ABM", atLocation: abmLoc});
+
+        if (m) {mLoc.placeItem({itemToPlace: m});}
+        if (r) {rLoc.placeItem({itemToPlace: r});}
+        if (r2) {rLoc2.placeItem({itemToPlace: r2});}
+        if (b) {bLoc.placeItem({itemToPlace: b});}
+        if (n) {nLoc.placeItem({itemToPlace: n});}
+        if (a) {aLoc.placeItem({itemToPlace: a});}
+        if (abm) {abmLoc.placeItem({itemToPlace: abm});}
+
+
+    }
 }
