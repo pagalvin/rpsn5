@@ -51,6 +51,8 @@ export class MapSummaryComponent extends React.Component<props, state> implement
                 </div>
                 <div>
                     Population: <Odometer format="(,ddd)" duration={5000} value={summarizedMap.totalPopulation}/>
+                    &nbsp;
+                    Killed: <Odometer format="(,ddd)" duration={5000} value={this.props.mapToSummarize.owningPlayer.totalPopulationDied}/>
                 </div>
                 <div>
                     Bases:
@@ -78,7 +80,10 @@ export class MapSummaryComponent extends React.Component<props, state> implement
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
 
-        if (args.details.changeLabel === "Base Activated" || args.details.changeLabel === "Advance Turn") {
+        if (args.details.changeLabel === "Base Activated" 
+        || args.details.changeLabel === "Advance Turn"
+        || args.details.changeLabel === "Location Nuked"
+            ) {
             console.log(`MapSummaryComponent: handleGameStateChange: got a game state change, Base Activated.`);
 
             this.setState({

@@ -8,6 +8,7 @@ export abstract class AbstractMapLocation {
     
     public isTargeted: boolean = false;
     abstract myMap: CountryMap;
+    abstract population: number;
 
     constructor() {
         // this.Contents = null;

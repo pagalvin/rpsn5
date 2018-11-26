@@ -13,6 +13,7 @@ export class MapLocation extends AbstractMapLocation {
     public nuclearStrikes: number;
     public myMap: CountryMap;
     private static nextID: number = 1;
+    public population: number;
 
     constructor(args: {onMap: CountryMap}) {
         super();
@@ -21,14 +22,13 @@ export class MapLocation extends AbstractMapLocation {
         this.isTargeted = false;
         this.nuclearStrikes = 0;
         this.myMap = args.onMap;
-    
+        this.population = 0;
     }
 
     public placeItem(args: {itemToPlace: PlaceableObject}): void {
         this.Contents = args.itemToPlace;
     }
     
-
     public isMilitaryBase() {
 
         const militaryLabels: MilitaryBaseTypeLabels[] = [
