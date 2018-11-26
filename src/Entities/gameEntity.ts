@@ -1,9 +1,8 @@
 import { ComputerPlayer } from "../Game/ComputerPlayer";
 import { HumanPlayer } from "../Game/HumanPlayer";
-import { CountryMap } from "./WorldObjects/CountryMap";
 import { GameLogic } from "../Game/GameLogic";
 import { AbstractPlayer } from "../Game/AbstractPlayer";
-import { GameData } from "../DAta/ComputerNames";
+import { GameData } from "../Data/ComputerNames";
 
 export interface GameEntity {
     gameYear: number;

@@ -2,6 +2,7 @@ import { PopulationAreaFactory } from "../../Factories/PopulationAreaFactory";
 import { MapLocation } from "../MapObjects/MapLocation";
 import { MilitaryBaseTypes } from "./Bases/MilitaryBaseTypes";
 import { AbstractPlayer } from "../../Game/AbstractPlayer";
+import { AbmBase } from "./Bases/AbmBase";
 
 export class CountryMap {
 
@@ -59,5 +60,9 @@ export class CountryMap {
 
         return flattendedBases;
 
+    }
+
+    public getAllABMBases(): AbmBase[] {
+        return this.getAllMilitaryBases().filter(b => b.WorldObjectLabel === "ABM") as AbmBase[];
     }
 }

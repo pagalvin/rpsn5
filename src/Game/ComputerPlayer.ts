@@ -4,7 +4,6 @@ import { GamestateWatcher, gameStateChangeDetails, GameLogic } from "./GameLogic
 import { CountryMap } from "../Entities/WorldObjects/CountryMap";
 import { Rng } from "../Utils/Rng";
 import { MilitaryBaseFactory } from "../Factories/MilitaryBaseFactory";
-import { MilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 import { Game } from "../Entities/gameEntity";
 import { MapUtil } from "../Utils/MapUtils";
 
