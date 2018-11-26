@@ -25,7 +25,7 @@ export class NavyBaseComponent extends Component<props, state> {
 
     private activateNavyBase() {
         console.log(`NavyBaseComponent: activateNavyBase: entering.`);
-        GameLogic.activateNavyBase({ forBase: this.props.base });
+        // GameLogic.activateNavyBase({ forBase: this.props.base });
         this.setState({ isTargetingMissiles: true });
     }
 

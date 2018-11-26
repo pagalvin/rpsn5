@@ -3,6 +3,7 @@ import { HumanPlayer } from "../Game/HumanPlayer";
 import { CountryMap } from "./WorldObjects/CountryMap";
 import { GameLogic } from "../Game/GameLogic";
 import { AbstractPlayer } from "../Game/AbstractPlayer";
+import { GameData } from "../DAta/ComputerNames";
 
 export interface GameEntity {
     gameYear: number;
@@ -30,6 +31,7 @@ export class Game extends AbstractGameEntity {
         super();
 
         this.computerPlayer = new ComputerPlayer();
+        this.computerPlayer.Name = GameData.getRandomComputerName();
         this.humanPlayer = new HumanPlayer();
         this.currentPlayer = this.humanPlayer;
     }

@@ -1,6 +1,7 @@
 import { PopulationAreaFactory } from "../../Factories/PopulationAreaFactory";
 import { MapLocation } from "../MapObjects/MapLocation";
 import { MilitaryBaseTypes } from "./Bases/MilitaryBaseTypes";
+import { AbstractPlayer } from "../../Game/AbstractPlayer";
 
 export class CountryMap {
 
@@ -8,15 +9,17 @@ export class CountryMap {
     private sizeY: number;
     public owner: "Computer" | "Human";
     public map: MapLocation[][]
+    public owningPlayer: AbstractPlayer;
 
     private readonly newRuralArea = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Rural"});
 
-    constructor(args: {sizeX: number, sizeY: number, owner: "Computer" | "Human"}) {
+    constructor(args: {sizeX: number, sizeY: number, owner: "Computer" | "Human", owningPlayer: AbstractPlayer}) {
 
         this.sizeX = args.sizeX;
         this.sizeY = args.sizeY;
         this.map = [[]];
         this.owner = args.owner;
+        this.owningPlayer = args.owningPlayer;
         this.initializeMap();
     }
 

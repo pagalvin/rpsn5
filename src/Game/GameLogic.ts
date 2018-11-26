@@ -126,7 +126,7 @@ export class GameLogic {
             args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({ parentBase: args.forBase }));
         }
     }
-
+ 
     public static activateNavyBase(args: { forBase: NavyBase }) {
 
         args.forBase.isReceivingOrders = true;
@@ -309,9 +309,6 @@ export class GameLogic {
                         locationAttacked: args.locationUnderAttack
                     });
 
-                // args.locationUnderAttack.nuclearStrikes = nukeDamage.strikeCount;
-                // if (args.locationUnderAttack.Contents) { args.locationUnderAttack.Contents.Population -= nukeDamage.populationKilled; }
-
                 return nukeDamage;
             }
             else {
@@ -329,7 +326,7 @@ export class GameLogic {
             
             for (let i = 0; i < locationsUnderAttack.length; i++) {
 
-                const { Contents} = locationsUnderAttack[i];
+                const { Contents } = locationsUnderAttack[i];
 
                 if (! Contents) continue;
 
@@ -341,6 +338,7 @@ export class GameLogic {
                 else {
                     locationsUnderAttack[i].nuclearStrikes = result.strikeCount;
                     Contents.Population -= result.populationKilled;
+                    args.defendingPlayer.totalPopulationDied += result.populationKilled;
                     this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: locationsUnderAttack[i] } });
                 }
 

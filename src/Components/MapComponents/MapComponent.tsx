@@ -98,7 +98,7 @@ export class MapComponent extends React.Component<props, state> implements Games
 
                 onDragLeave={
                   (e: any) => {
-                    this.handleLocationDragEvent({ doLoc: cell, eventType: "leave" });
+                    this.handleLocationDragEvent({ doLoc: cell, eventType: "leave" } );
                     e.preventDefault();
                   }
                 }

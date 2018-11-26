@@ -32,7 +32,7 @@ export class AirBaseComponent extends Component<props, state> {
 
     private activateAirBase() {
         console.log(`AirbaseComponent: activateAirBase: entering.`);
-        GameLogic.activateAirBase({ forBase: this.props.base });
+        // GameLogic.activateAirBase({ forBase: this.props.base });
         this.setState({ isTargetingBombers: true });
     }
 

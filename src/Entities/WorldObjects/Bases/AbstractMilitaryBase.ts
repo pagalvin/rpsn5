@@ -10,7 +10,6 @@ export interface MilitaryBaseProperties {
     WorldObjectLabel: MilitaryBaseTypeLabels;
     isReceivingOrders: boolean;
     myMapLocation: MapLocation;
-    Population: number;
 }
 
 export interface MilitaryBaseActions {

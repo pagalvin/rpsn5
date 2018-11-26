@@ -12,13 +12,10 @@ export class NavyBase extends AbstractMilitaryBase implements OrdnanceCarryingBa
 
     public ordnance: Ordnance[];
 
-    public population: number;
-
     constructor(args: {atLocation: MapLocation}) {
         super(args);
         this.isReceivingOrders = false;
         this.ordnance = [];
-        this.population = Rng.throwDice({hiNumberMinus1: 10000}) + 10000;
     }
 
     public isAllOrdnanceTargeted(): boolean {
