@@ -93,7 +93,7 @@ export class GameComponent extends Component {
 
                 <Grid item xs={4}>
                     <Paper>
-                        Computer<br />
+                        {gameEntity.computerPlayer.Name}<br />
                         <MapComponent countryMap={gameEntity.computerPlayer.map} />
                     </Paper>
                 </Grid>
