@@ -211,18 +211,19 @@ export class GameLogic {
 
             const tryIntercept = (args: { nuclearOrdnance: Ordnance, defender: AbmBase }): "succeeded" | "failed" => {
 
-                if (! args.defender) return "failed"; // there is no ABM base on line to defend this attack against.
+                console.log(`GameLogic.ts: tryAbmDefense: tryIntercept: Entering, ABM Base:`, {base: args.defender});
 
-                console.log(`GameLogic.ts: tryAbmDefense: tryIntercept: Entering.`);
+                if (! args.defender) { return "failed" }; // there is no ABM base on line to defend this attack against.
+                if (args.defender.totalMissiles < 1) { return "failed" }
 
-                const didShootDownOrdnance1 = Rng.throwDice({ hiNumberMinus1: 100 }) < 50;
+                const didShootDownOrdnance = Rng.throwDice({ hiNumberMinus1: 100 }) < 50;
 
-                console.log(`GameLogic.ts: tryAbmDefense: tryIntercept: did shoot down?`, didShootDownOrdnance1);
+                console.log(`GameLogic.ts: tryAbmDefense: tryIntercept: did shoot down?`, didShootDownOrdnance);
 
                 // consume an abm missile.
                 args.defender.totalMissiles--;
 
-                if (didShootDownOrdnance1) {
+                if (didShootDownOrdnance) {
 
                     console.log(`GameLogic.ts: tryAbmDefense: tryIntercept: Successfully intercepted.`);
 
@@ -260,7 +261,7 @@ export class GameLogic {
 
             const secondTry = tryIntercept({ nuclearOrdnance: args.nuclearOrdnance, defender: availableABMBases[abmBaseIndex] });
 
-            if (tryIntercept({ nuclearOrdnance: args.nuclearOrdnance, defender: availableABMBases[abmBaseIndex] })) {
+            if (secondTry === "succeeded")  {
                 return "succeeded";
             }
 
