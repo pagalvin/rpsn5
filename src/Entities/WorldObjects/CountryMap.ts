@@ -3,6 +3,7 @@ import { MapLocation } from "../MapObjects/MapLocation";
 import { MilitaryBaseTypes } from "./Bases/MilitaryBaseTypes";
 import { AbstractPlayer } from "../../Game/AbstractPlayer";
 import { AbmBase } from "./Bases/AbmBase";
+import { Rng } from "../../Utils/Rng";
 
 export class CountryMap {
 
@@ -64,5 +65,14 @@ export class CountryMap {
 
     public getAllABMBases(): AbmBase[] {
         return this.getAllMilitaryBases().filter(b => b.WorldObjectLabel === "ABM") as AbmBase[];
+    }
+
+    public getRandomLocation() {
+        const x = Rng.throwDice({hiNumberMinus1: this.map.length - 1});
+        const y = Rng.throwDice({hiNumberMinus1: this.map.length - 1});
+
+        return (
+            this.map[x][y]
+         );
     }
 }

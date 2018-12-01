@@ -10,7 +10,10 @@ export abstract class AbstractMapLocation {
     abstract myMap: CountryMap;
     abstract population: number;
 
+    public enemyVisibility: number;
+
     constructor() {
         // this.Contents = null;
+        this.enemyVisibility = 0;
     }
 }

@@ -87,6 +87,11 @@
   background-color: white;
 }
 
+.visibilityCount {
+  vertical-align: super;
+  font-size: 14px;
+}
+
 .App {
   text-align: center;
 }

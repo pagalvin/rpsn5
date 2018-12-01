@@ -39,6 +39,7 @@ export class MapItemComponent extends React.Component<props, state> {
             <React.Fragment>
 
                 {MapUtil.GetMapLocationSingleCharacterCode({forMapLocation: mapItem})}
+                <span className="visibilityCount">{mapItem.enemyVisibility}</span>
                 {nuclearDamageIndicator()}
                 
             </React.Fragment>

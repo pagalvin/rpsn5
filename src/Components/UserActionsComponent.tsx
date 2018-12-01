@@ -8,6 +8,7 @@ import { HumanPlayer } from '../Game/HumanPlayer';
 import { BaseActivatorComponent } from './BaseActivatorComponent';
 import { playerMapClickListener } from './Game';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
+import { Game } from '../Entities/gameEntity';
 
 export interface state {
     isMakingStrategicChoice: boolean;
@@ -240,6 +241,8 @@ export class UserActionsComponent extends Component<props, state> implements Gam
 
         console.log(`UserActionsComponent: handleBuild: Entering.`);
 
+        GameLogic.spyOnPlayer({targetPlayer: Game.getInstance().computerPlayer, spyLevel: 2});
+
         this.setState({
             isMakingTacticalChoice: true,
             isMakingStrategicChoice: false,
@@ -247,10 +250,10 @@ export class UserActionsComponent extends Component<props, state> implements Gam
             strategicChoice: "Build",
             tacticalChoice: null
         });
+
     }
 
     private handleActivate() {
-        console.log(`handleActivate: Entering.`);
         this.setState(
             {
                 isActivating: true,
@@ -261,7 +264,7 @@ export class UserActionsComponent extends Component<props, state> implements Gam
 
     private handleSpy() {
 
-        console.log(`UserActionsComponent: handleSpy: Entering.`);
+        GameLogic.spyOnPlayer({targetPlayer: Game.getInstance().computerPlayer, spyLevel: 2});
 
         this.setState({
             isMakingTacticalChoice: true,
@@ -270,6 +273,7 @@ export class UserActionsComponent extends Component<props, state> implements Gam
             strategicChoice: "Spy",
             tacticalChoice: null
         });
+
     }
 
     private handleFinishTurn() {

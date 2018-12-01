@@ -27,6 +27,16 @@ export class MapLocation extends AbstractMapLocation {
 
     public placeItem(args: {itemToPlace: PlaceableObject}): void {
         this.Contents = args.itemToPlace;
+        
+        const {itemToPlace} = args;
+
+        if (itemToPlace && 
+                (itemToPlace.WorldObjectLabel === "City" || 
+                 itemToPlace.WorldObjectLabel === "Town"))
+        {
+            this.enemyVisibility = 100;
+        }
+
     }
     
     public isMilitaryBase() {

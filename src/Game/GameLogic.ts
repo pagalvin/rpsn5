@@ -535,4 +535,24 @@ export class GameLogic {
         return;
 
     }
+
+    public static spyOnPlayer(args: {targetPlayer: AbstractPlayer, spyLevel: 1 | 2}) {
+
+        console.log(`Gamelogic: spyOnPlayer: entering, target:`, args.targetPlayer);
+
+        /*
+        Logic:
+            Based on the spy level, give a certain number of "spy points"
+            count up to that number and select a random map point and bump up the visibility
+        */
+
+        const totalSearches = args.spyLevel * 44;
+        
+        for (let i = 0; i < totalSearches; i++) {
+            
+            const ml = args.targetPlayer.map.getRandomLocation();
+            console.log(`GameLogic.ts: spyOnPlayer: Got a random location:`, ml);
+            ml.enemyVisibility +=1;
+        }
+    }
 }

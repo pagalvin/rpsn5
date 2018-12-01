@@ -155,7 +155,6 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         })
     }
 
-
     private airBaseTest() {
         const myMapSummary = MapUtil.getMapSummary({ forMap: this.map });
 
@@ -211,10 +210,12 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         console.log(`ComputerPlayer: playTurn: my strategic choice is:`, choice);
 
         if (choice === "Build") {
+            GameLogic.spyOnPlayer({targetPlayer: Game.getInstance().humanPlayer, spyLevel: 1})
             this.buildBases({ numberToBuild: 2, allowedBases: GameRules.getAllowedMoves().tacticalOptions });
         }
 
         else if (choice === "Spy") {
+            GameLogic.spyOnPlayer({targetPlayer: Game.getInstance().humanPlayer, spyLevel: 2})
             this.buildBases({ numberToBuild: 1, allowedBases: GameRules.getAllowedMoves().tacticalOptions });
         }
 
