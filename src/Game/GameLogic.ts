@@ -18,12 +18,15 @@ import { MilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTy
 export type gameStateChangeType =
     "Advance Turn" |
     "Base Activated" |
+    "Bomber was shot down by ABM" |
+    "Bomber was shot down by Figher" |
     "Computer Finished Its Turn" |
     "Computer Playing Its Turn" |
     "ICBM Intercepted" |
     "Location Nuked" |
     "Map Location Targeted" |
     "no change" |
+    "Submarine Missile Shot Down By ABM" |
     "Tick" |
     "War Declared";
 
@@ -84,28 +87,34 @@ export class GameLogic {
 
     public static handleMissileTargeted(args: { attackingPlayer: AbstractPlayer, atMapLocation: MapLocation, targetingOrdnance: Ordnance }) {
 
+        const {targetingOrdnance} = args;
+
         args.atMapLocation.isTargeted = true;
 
-        args.targetingOrdnance.myTarget = args.atMapLocation;
+        targetingOrdnance.myTarget = args.atMapLocation;
+        targetingOrdnance.remainingTicksBeforeStriking = GameRules.getMissileArrivalTicks();
+        console.log(`GameLogic: handleMissileTargeted: A missile will land in [${targetingOrdnance.remainingTicksBeforeStriking}] ticks.`);
 
-        args.attackingPlayer.targetedOrdnanceItems = args.attackingPlayer.targetedOrdnanceItems.concat(args.targetingOrdnance);
-
+        args.attackingPlayer.allTargetedOrdnanceItems = args.attackingPlayer.allTargetedOrdnanceItems.concat(args.targetingOrdnance);
+                
         this.notifyGamestateChange({ details: { changeLabel: "Map Location Targeted", relatedLocation: args.atMapLocation } })
     }
 
     public static activateMissileBase(args: { forBase: MissileBase }) {
-        args.forBase.isReceivingOrders = true;
+
+        const {forBase} = args;
+
+        forBase.isReceivingOrders = true;
 
         this.notifyGamestateChange({ details: { relatedBase: args.forBase, changeLabel: "Base Activated" } });
 
-        const totalBombers = Rng.throwDice({ hiNumberMinus1: Constants.MAX_ICBMS - 1 }) + Constants.MIN_ICBMS;
+        const totalICBMs = Rng.throwDice({ hiNumberMinus1: Constants.MAX_ICBMS - 1 }) + Constants.MIN_ICBMS;
 
-        args.forBase.ordnance = [];
+        forBase.ordnance = [];
 
-        for (let i = 0; i < totalBombers; i++) {
-            args.forBase.ordnance = args.forBase.ordnance.concat(new Ordnance({ parentBase: args.forBase }));
+        for (let i = 0; i < totalICBMs; i++) {
+            forBase.ordnance = forBase.ordnance.concat(new Ordnance({ parentBase: forBase }));
         }
-
 
     }
 
@@ -194,21 +203,15 @@ export class GameLogic {
 
     }
 
-    private static damageLocation(args: { location: MapLocation, withOrdnance: Ordnance }) {
-
-    }
-
     private static resolveWartimeAttacks() {
 
         const tryAbmDefense = (args: { nuclearOrdnance: Ordnance, defendingPlayer: AbstractPlayer }): "succeeded" | "failed" => {
 
             console.log(`GameLogic.ts: tryAbmDefense: Entering.`);
 
-            const { myWorldLabel } = args.nuclearOrdnance;
-
-            const maxAbmTries = () => (myWorldLabel === "ICBM" || myWorldLabel === "Submarine Missile") ? 1 : 2;
-
             const tryIntercept = (args: { nuclearOrdnance: Ordnance, defender: AbmBase }): "succeeded" | "failed" => {
+
+                if (! args.defender) return "failed"; // there is no ABM base on line to defend this attack against.
 
                 console.log(`GameLogic.ts: tryAbmDefense: tryIntercept: Entering.`);
 
@@ -269,15 +272,9 @@ export class GameLogic {
 
         const tryICBMAttack = (args: {attackingOrdnance: Ordnance, defendingPlayer: AbstractPlayer,locationUnderAttack: MapLocation}): "succeeded" | "failed" => {
 
-            // console.log(`resolveWartimeAttacks: tryICBMAttack: player is defending attack against ICBM.`);
+            const abmDefenseAttempt = tryAbmDefense({defendingPlayer: args.defendingPlayer, nuclearOrdnance: args.attackingOrdnance })
 
-            const defendingPlayerMapSummary = MapUtil.getMapSummary({ forMap: args.defendingPlayer.map });
-
-            // console.log(`resolveWartimeAttacks: tryICBMAttack: player is trying an ABM defense.`);
-
-            const icbmWasDestroyed = tryAbmDefense({defendingPlayer: args.defendingPlayer, nuclearOrdnance: args.attackingOrdnance })
-
-            if (icbmWasDestroyed) {
+            if (abmDefenseAttempt === "succeeded") {
                 console.log(`resolveWartimeAttacks: tryICBMAttack: attacking player's ICBM was shot down by an ABM.`,
                     {
                         defendingPlayer: args.defendingPlayer,
@@ -293,18 +290,66 @@ export class GameLogic {
             return "succeeded";
         }
 
+        const tryBomberAttack = (args: {attackingOrdnance: Ordnance, defendingPlayer: AbstractPlayer,locationUnderAttack: MapLocation}): "succeeded" | "failed" => {
+
+            const abmDefenseAttempt = tryAbmDefense({defendingPlayer: args.defendingPlayer, nuclearOrdnance: args.attackingOrdnance })
+
+            if (abmDefenseAttempt === "succeeded") {
+                console.log(`resolveWartimeAttacks: tryBomberAttack: attacking player's bomber was shot down by an ABM.`,
+                    {
+                        defendingPlayer: args.defendingPlayer,
+                        locationAttacked: args.locationUnderAttack
+                    });
+
+                this.notifyGamestateChange({ details: { changeLabel: "Bomber was shot down by ABM", relatedLocation: args.locationUnderAttack } });
+
+                return "failed";
+            }
+
+            console.log(`resolveWartimeAttacks: tryBomberAttack: Bomber successfully hit target.`);
+            return "succeeded";
+        }
+
+        const trySubmarineAttack = (args: {attackingOrdnance: Ordnance, defendingPlayer: AbstractPlayer,locationUnderAttack: MapLocation}): "succeeded" | "failed" => {
+
+            const abmDefenseAttempt = tryAbmDefense({defendingPlayer: args.defendingPlayer, nuclearOrdnance: args.attackingOrdnance })
+
+            if (abmDefenseAttempt === "succeeded") {
+                console.log(`resolveWartimeAttacks: trySubmarineAttack: attacking player's submarine missile was shot down by an ABM.`,
+                    {
+                        defendingPlayer: args.defendingPlayer,
+                        locationAttacked: args.locationUnderAttack
+                    });
+
+                this.notifyGamestateChange({ details: { changeLabel: "Submarine Missile Shot Down By ABM", relatedLocation: args.locationUnderAttack } });
+
+                return "failed";
+            }
+
+            console.log(`resolveWartimeAttacks: tryBomberAttack: Bomber successfully hit target.`);
+            return "succeeded";
+        }
+
+        const getNextReadyOrdnance = (args: {attackingPlayer: AbstractPlayer, locationUnderAttack: MapLocation}) => {
+            const attackingOrdnance = args.attackingPlayer.ordnanceItemsArrivingThisTick.filter((ao) => {
+                if (ao.myTarget === null) return false;
+                if (ao.wasConsumed) return false;
+                if (ao.remainingTicksBeforeStriking > 0) return false;
+                return (ao.myTarget.uniqueID === args.locationUnderAttack.uniqueID);
+            })[0];
+
+            return attackingOrdnance;
+        }
 
         const tryAttack = (args: { attackingPlayer: AbstractPlayer, defendingPlayer: AbstractPlayer, locationUnderAttack: MapLocation }): nuclearStrikeDamage | "failed" => {
 
             console.log(`resolveWartimeAttacks: tryAttack: entering, args:`, { args: args });
 
-            const attackingOrdnance = args.attackingPlayer.targetedOrdnanceItems.filter((ao) => {
-                if (ao.myTarget === null) return false;
-                if (ao.wasConsumed) return false;
-                return (ao.myTarget.uniqueID === args.locationUnderAttack.uniqueID);
-            })[0];
+            // return nothing if there is no ordnance ready this turn.
+            const attackingOrdnance = getNextReadyOrdnance({attackingPlayer: args.attackingPlayer, locationUnderAttack: args.locationUnderAttack});
 
-            console.log(`resolveWartimeAttacks: tryAttack: found ordnance:`, { foundAttackingOrdnance: attackingOrdnance });
+            console.log(`resolveWartimeAttacks: tryAttack: found ordnance:`, { 
+                foundAttackingOrdnance: attackingOrdnance, ticks: attackingOrdnance ? attackingOrdnance.remainingTicksBeforeStriking : "na" });
 
             if (attackingOrdnance) {
 
@@ -318,32 +363,20 @@ export class GameLogic {
                 });
 
                 if (attackingOrdnance.myWorldLabel === "ICBM") {
-
-                    console.log(`resolveWartimeAttacks: tryAttack: player is defending attack against ICBM.`);
-
-                    if (defendingPlayerMapSummary.totalAbmMissilesOnLine > 0 || true) {
-
-                        console.log(`resolveWartimeAttacks: tryAttack: player is trying an ABM defense.`);
-
-                        const icbmWasDestroyed = tryAbmDefense({ defendingPlayer: args.defendingPlayer, nuclearOrdnance: attackingOrdnance })
-
-                        if (icbmWasDestroyed) {
-                            console.log(`resolveWartimeAttacks: tryAttack: resolveAttack: attacking player's ICBM was shot down by an ABM.`,
-                                {
-                                    attackerName: args.attackingPlayer.Name,
-                                    attackingPlayer: args.attackingPlayer,
-                                    defendingPlayer: args.defendingPlayer,
-                                    locationAttacked: args.locationUnderAttack
-                                });
-
-                            this.notifyGamestateChange({ details: { changeLabel: "ICBM Intercepted", relatedLocation: args.locationUnderAttack } });
-
-                            return "failed";
-                        }
-
-                        console.log(`resolveWartimeAttacks: tryAttack: Missile successfully hit target.`);
-
-                    }
+                    const icbmAttackResult = tryICBMAttack({attackingOrdnance: attackingOrdnance, defendingPlayer: args.defendingPlayer, locationUnderAttack: args.locationUnderAttack});
+                    if (icbmAttackResult === "failed") return "failed";
+                }
+                else if (attackingOrdnance.myWorldLabel === "Bomber") {
+                    const bomberAttackResult = tryBomberAttack({attackingOrdnance: attackingOrdnance, defendingPlayer: args.defendingPlayer, locationUnderAttack: args.locationUnderAttack});
+                    if (bomberAttackResult === "failed") return "failed";
+                }
+                else if (attackingOrdnance.myWorldLabel === "Submarine Missile") {
+                    const subMissileAttackResult = trySubmarineAttack({attackingOrdnance: attackingOrdnance, defendingPlayer: args.defendingPlayer, locationUnderAttack: args.locationUnderAttack});
+                    if (subMissileAttackResult === "failed") return "failed";
+                }
+                else {
+                    console.error(`GameLogic.ts: tryAttack: Error: tried to attack with unknown ordnance type:`, attackingOrdnance);
+                    return "failed";
                 }
 
                 const nukeDamage = GameRules.getLocationDamage(
@@ -355,54 +388,102 @@ export class GameLogic {
                 return nukeDamage;
             }
             else {
-                console.log(`resolveWartimeAttack: resolveAttack: there was no ordnance to attack with.`);
+                console.error(`resolveWartimeAttack: resolveAttack: there was no ordnance to attack with.`);
                 return "failed";
             }
+        }
+
+        const getUpdatedOrdnanceArrivalTicksForPlayer = (args: {p: AbstractPlayer}) => {
+            return args.p.allTargetedOrdnanceItems = args.p.allTargetedOrdnanceItems
+                .map (ao => ao.remainingTicksBeforeStriking < 1 ? ao : {...ao, remainingTicksBeforeStriking: ao.remainingTicksBeforeStriking -1})
+        }
+
+        const hasOrdnanceStrikingThisTick = (args: {forPlayer: AbstractPlayer}) => {
+            return (
+                args.forPlayer.ordnanceItemsArrivingThisTick.some(
+                    o => 
+                        o.remainingTicksBeforeStriking < 1 && 
+                        o.wasConsumed === false && 
+                        o.wasIntercepted === false
+                )
+            );
         }
 
         const resolveAttacksOnPlayer = (args: { attackingPlayer: AbstractPlayer, defendingPlayer: AbstractPlayer }) => {
 
             const defendersMap = args.defendingPlayer.map;
-            const locationsUnderAttack = MapUtil.getMapSummary({ forMap: defendersMap }).targetedMapLocations;
 
-            if (args.attackingPlayer.targetedOrdnanceItems.length < 1) { return }
+            const allTargetedLocations = MapUtil.getMapSummary({ forMap: defendersMap }).targetedMapLocations;
 
-            for (let i = 0; i < locationsUnderAttack.length; i++) {
+            const locationsUnderAttackThisTick =
+                allTargetedLocations.filter(
+                    aTargetedLocation => args.attackingPlayer.ordnanceItemsArrivingThisTick.filter(
+                        oiatt => (
+                            oiatt.wasConsumed === false &&
+                            oiatt.wasIntercepted === false &&
+                            oiatt.myTarget && 
+                            oiatt.myTarget.uniqueID === aTargetedLocation.uniqueID)
+                    ).length > 0
+                )
 
-                const { Contents } = locationsUnderAttack[i];
+            console.log(`GameLogic: resolveAttacksOnPlayer: player locations under attack this tick:`, {allTargetedLocations: allTargetedLocations, locationsUnderAttackThisTick});
+
+            for (let i = 0; i < locationsUnderAttackThisTick.length; i++) {
+
+                const { Contents } = locationsUnderAttackThisTick[i];
+
+                const attackedLocation = locationsUnderAttackThisTick[i];
 
                 if (!Contents) continue;
 
-                const result = tryAttack({ attackingPlayer: args.attackingPlayer, defendingPlayer: args.defendingPlayer, locationUnderAttack: locationsUnderAttack[i] });
+                const result = tryAttack({ attackingPlayer: args.attackingPlayer, defendingPlayer: args.defendingPlayer, locationUnderAttack: attackedLocation });
+
                 if (result === "failed") {
-                    this.notifyGamestateChange({ details: { changeLabel: "ICBM Intercepted", relatedLocation: locationsUnderAttack[i] } });
+                    this.notifyGamestateChange({ details: { changeLabel: "ICBM Intercepted", relatedLocation: attackedLocation } });
                 }
                 else {
-                    locationsUnderAttack[i].nuclearStrikes = result.strikeCount;
+                    locationsUnderAttackThisTick[i].nuclearStrikes = result.strikeCount;
                     Contents.Population -= result.populationKilled;
                     args.defendingPlayer.totalPopulationDied += result.populationKilled;
-                    this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: locationsUnderAttack[i] } });
+                    this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: attackedLocation } });
                 }
 
-                MapUtil.applyFunctionToCountryMap({ map: defendersMap, xformFunc: (ml: MapLocation) => { ml.isTargeted = false } });
+                // MapUtil.applyFunctionToCountryMap({ map: defendersMap, xformFunc: (ml: MapLocation) => { ml.isTargeted = false } });
             }
         };
+
+        const isLiveOrdnance = (forOrdnance: Ordnance) => ! forOrdnance.wasIntercepted && ! forOrdnance.wasConsumed;
 
         console.log(`GameLogic: resolveWartimeAttacks: Entering.`);
 
         const game = Game.getInstance();
 
         const playerA = game.currentPlayer;
-
         const playerB = game.currentPlayer.isHuman ? game.computerPlayer : game.humanPlayer;
 
-        if (playerA.targetedOrdnanceItems.length > 0) {
+        playerA.allTargetedOrdnanceItems = getUpdatedOrdnanceArrivalTicksForPlayer({p: playerA});
+        playerB.allTargetedOrdnanceItems = getUpdatedOrdnanceArrivalTicksForPlayer({p: playerB});
+        playerA.ordnanceItemsArrivingThisTick = playerA.allTargetedOrdnanceItems.filter(ato => isLiveOrdnance(ato) && ato.remainingTicksBeforeStriking < 1);
+        playerB.ordnanceItemsArrivingThisTick = playerB.allTargetedOrdnanceItems.filter(ato => isLiveOrdnance(ato) && ato.remainingTicksBeforeStriking < 1);
+
+        if (hasOrdnanceStrikingThisTick({forPlayer: playerA})) {
+            console.log(`GameLogic: resolveWartimeAttacks Player A (${playerA.Name}) has ordnance ready this tick:`, playerA.ordnanceItemsArrivingThisTick);
             resolveAttacksOnPlayer({ attackingPlayer: playerA, defendingPlayer: playerB });
         }
+        else {
+            console.log(`GameLogic: resolveWartimeAttacks Player A (${playerA.Name}) does not have ordnance ready this tick.`);
+        }
 
-        if (playerB.targetedOrdnanceItems.length > 0) {
+        if (hasOrdnanceStrikingThisTick({forPlayer: playerB})) {
+            console.log(`GameLogic: resolveWartimeAttacks Player B (${playerB.Name}) has ordnance ready this tick:`, playerB.ordnanceItemsArrivingThisTick);
             resolveAttacksOnPlayer({ attackingPlayer: playerB, defendingPlayer: playerA });
         }
+        else {
+            console.log(`GameLogic: resolveWartimeAttacks Player B (${playerB.Name}) does not have ordnance ready this tick.`);
+        }
+
+
+        // debugger;
     }
 
     public static declareWar(args: { declaringPlayer: AbstractPlayer }) {

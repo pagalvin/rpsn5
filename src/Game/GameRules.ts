@@ -5,6 +5,7 @@ import { PlaceableObjectLabels } from "../Entities/MapObjects/PlaceableObjects";
 import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 import { Ordnance } from "../Entities/Ordnance";
 import { Constants } from "./constants";
+import { Rng } from "../Utils/Rng";
 
 export type strategicMoveOptions = "Build" | "Spy" | "Declare War" | "Skip" | "Activate" | "Sue for Peace" | "Surrender";
 export type tacticalMoveOptions = MilitaryBaseTypeLabels | "Activate Base";
@@ -28,6 +29,13 @@ export class GameRules {
         }
 
         return true;
+    }
+
+    public static getMissileArrivalTicks() {
+        const rNbr = Rng.throwDice({hiNumberMinus1: 99});
+        if (rNbr < 33) return 1;
+        if (rNbr < 85) return 2;
+        return 3;
     }
 
     public static getTotalBasesAllowedToBuild(args: { basedOnStrategicChoice: strategicMoveOptions | null }): number {
