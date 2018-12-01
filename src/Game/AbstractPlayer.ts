@@ -12,12 +12,14 @@ export abstract class AbstractPlayer {
     
     abstract totalPopulationDied: number;
 
-    public targetedOrdnanceItems: Ordnance[];
+    public allTargetedOrdnanceItems: Ordnance[];
+    public ordnanceItemsArrivingThisTick: Ordnance[];
 
     public isHuman: boolean;
 
     constructor(args: {isHuman: boolean}) {
         this.isHuman = args.isHuman;
-        this.targetedOrdnanceItems = [];
+        this.allTargetedOrdnanceItems = [];
+        this.ordnanceItemsArrivingThisTick = []; // these are arriving this tick
     }
 }
