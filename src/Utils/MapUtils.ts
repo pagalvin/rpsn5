@@ -163,7 +163,7 @@ export class MapUtil {
         }
         allIn.totalPopulation = runningPop;
 
-        console.log(`MapUtils: getMapSummary: allIn:`, { map: args.forMap, allIn: allIn, population: allIn.totalPopulation, name: args.forMap.owner });
+        // console.log(`MapUtils: getMapSummary: allIn:`, { map: args.forMap, allIn: allIn, population: allIn.totalPopulation, name: args.forMap.owner });
 
         return allIn;
     }
