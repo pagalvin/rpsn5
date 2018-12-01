@@ -33,13 +33,13 @@ export class MilitaryBaseFactory {
     }
 
     private newName(args: {forBase: AbstractMilitaryBase}) {
-        console.log(`${this.msh}: newName: typeof base:`, args.forBase.WorldObjectLabel);
+        // console.log(`${this.msh}: newName: typeof base:`, args.forBase.WorldObjectLabel);
         return 'xyzzy';
     }
 
     public createNewBase(args: {baseType: MilitaryBaseTypeLabels, atLocation: MapLocation}) {
 
-        console.log(`MilitaryBaseFactory: createNewBase: entering with args:`, {args: args});
+        // console.log(`MilitaryBaseFactory: createNewBase: entering with args:`, {args: args});
         
         switch(args.baseType) {
 
