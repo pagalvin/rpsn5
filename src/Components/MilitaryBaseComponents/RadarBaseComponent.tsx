@@ -30,11 +30,13 @@ export class RadarBaseComponent extends Component<props, state> {
 
     render() {
 
+        const { base } = this.props;
+
         const setMode = (args: { mode: "Active" | "Passive" }) => {
-            this.props.base.setModeOfOperation(args);
+            base.setModeOfOperation(args);
             this.setState({ didActivate: true });
-            this.handleRaderPulser({ forBase: this.props.base });
-            GameLogic.activateRadarBase({ forBase: this.props.base });
+            this.handleRaderPulser({ forBase: base });
+            GameLogic.activateRadarBase({ forBase: base });
         }
 
         const readyToActivateMarkup =
@@ -45,7 +47,7 @@ export class RadarBaseComponent extends Component<props, state> {
 
         const isActivatedMarkup =
             <React.Fragment>
-                <span>Mode: {this.props.base.modeOfOperation} Tracking</span>
+                <span>Mode: {base.modeOfOperation} Tracking</span>
             </React.Fragment>
 
         const isNotReceivingOrdersMarkup =
@@ -56,12 +58,18 @@ export class RadarBaseComponent extends Component<props, state> {
         const wrapper = (toWrap: JSX.Element) => {
             return (
                 <div>
-                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    <span>{`${base.WorldObjectLabel}: ${base.Name}`}</span>
                     {toWrap}
                 </div>
             )
         };
 
+        const wasDestroyedMarkup =
+            <React.Fragment>
+                <span>Radar base ${base.Name} was destroyed.</span>
+            </React.Fragment>
+
+        if (base.wasDestroyed) { return wasDestroyedMarkup }
 
         return (
             this.props.base.isReceivingOrders

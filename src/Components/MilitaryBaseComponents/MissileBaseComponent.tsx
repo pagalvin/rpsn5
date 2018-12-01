@@ -38,12 +38,14 @@ export class MissileBaseComponent extends Component<props, state> {
 
     render() {
 
+        const {base} = this.props;
+
         const isTargetingMarkup =
             <React.Fragment>
-                <span>{`Targeting ${this.props.base.ordnance.length} missiles.`}<br /></span>
+                <span>{`Targeting ${base.ordnance.length} missiles.`}<br /></span>
                 <OrdnanceTargetingComponent
                     ordnanceLabel={"ICBM"}
-                    parentBase={this.props.base}
+                    parentBase={base}
                     targetingCompleteCallback={() => this.setState({ isTargetingMissiles: false })}
                 />
             </React.Fragment>;
@@ -51,7 +53,7 @@ export class MissileBaseComponent extends Component<props, state> {
         const readyToActivateMarkup =
             <React.Fragment>
                 <Button onClick={() => this.activateMissileBase()}>
-                    {`Target ${this.props.base.ordnance.length} Missiles`}
+                    {`Target ${base.ordnance.length} Missiles`}
                 </Button>
             </React.Fragment>;
 
@@ -59,7 +61,7 @@ export class MissileBaseComponent extends Component<props, state> {
             <React.Fragment>
                 <span>
                     {
-                        `${this.props.base.ordnance.length} en route.`
+                        `${base.ordnance.length} en route.`
                     }
                 </span>
             </React.Fragment>;
@@ -73,15 +75,22 @@ export class MissileBaseComponent extends Component<props, state> {
         const wrapper = (toWrap: JSX.Element) => {
             return (
                 <div>
-                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    <span>{`${base.WorldObjectLabel}: ${base.Name}`}</span>
                     {toWrap}
                 </div>
             )
         };
 
+        const wasDestroyedMarkup = 
+            <React.Fragment>
+                <span>Missile base ${base.Name} was destroyed.</span>
+            </React.Fragment>
+
+
+        if (base.wasDestroyed) { return wasDestroyedMarkup }
         if (this.state.isTargetingMissiles) { return wrapper(isTargetingMarkup); }
-        if (!this.props.base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
-        if (this.props.base.isAllOrdnanceTargeted()) { return wrapper(allTargetedMarkup); }
+        if (!base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
+        if (base.isAllOrdnanceTargeted()) { return wrapper(allTargetedMarkup); }
 
         return wrapper(readyToActivateMarkup);
 

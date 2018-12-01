@@ -34,6 +34,8 @@ export class ArmyBaseComponent extends Component<props, state> {
 
     render() {
 
+        const {base} = this.props;
+
         const readyToActivateMarkup =
             <React.Fragment>
                 <Button onClick={() => this.decampArmy()}>
@@ -50,7 +52,6 @@ export class ArmyBaseComponent extends Component<props, state> {
                 </span>
             </React.Fragment>;
 
-
         const isNotReceivingOrdersMarkup =
             <React.Fragment>
                 <span>Organizing...</span>
@@ -59,17 +60,24 @@ export class ArmyBaseComponent extends Component<props, state> {
         const wrapper = (toWrap: JSX.Element) => {
             return (
                 <div>
-                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    <span>{`${base.WorldObjectLabel}: ${base.Name}`}</span>
                     {toWrap}
                 </div>
             )
         };
 
+        const wasDestroyedMarkup = 
+            <React.Fragment>
+                <span>Army base ${base.Name} was destroyed.</span>
+            </React.Fragment>
+
+
+        if (base.wasDestroyed) { return wasDestroyedMarkup }
 
         return (
-            this.props.base.isReceivingOrders
+            base.isReceivingOrders
                 ? (
-                    this.props.base.isDecamped ? wrapper(isDecampedMarkup) : wrapper(readyToActivateMarkup)
+                    base.isDecamped ? wrapper(isDecampedMarkup) : wrapper(readyToActivateMarkup)
                 )
                 : wrapper(isNotReceivingOrdersMarkup)
         );

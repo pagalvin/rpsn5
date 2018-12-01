@@ -18,6 +18,7 @@ export interface allowedMoves {
 export interface nuclearStrikeDamage {
     populationKilled: number;
     strikeCount: number; // max of 3
+    attackingOrdnance: Ordnance;
 }
 
 export class GameRules {
@@ -88,7 +89,8 @@ export class GameRules {
 
         const result: nuclearStrikeDamage = {
             strikeCount: args.locationAttacked.nuclearStrikes < 3 ? args.locationAttacked.nuclearStrikes += 1 : 3,
-            populationKilled: this.getNuclearStrikePopulationKilled({onMapLocation: args.locationAttacked})
+            populationKilled: this.getNuclearStrikePopulationKilled({onMapLocation: args.locationAttacked}),
+            attackingOrdnance: args.attackedBy
         }
 
         return result;

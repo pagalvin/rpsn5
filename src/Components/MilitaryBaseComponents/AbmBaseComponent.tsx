@@ -34,6 +34,8 @@ export class AbmBaseComponent extends Component<props, state> {
 
     render() {
 
+        const {base} = this.props;
+
         const readyToActivateMarkup =
             <React.Fragment>
                 <Button onClick={() => this.activateAbmBase()}>
@@ -45,11 +47,10 @@ export class AbmBaseComponent extends Component<props, state> {
             <React.Fragment>
                 <span>
                     {
-                        `Actively tracking incoming missiles and bombers, ${this.props.base.totalMissiles} missiles remain in arsenal.`
+                        `Actively tracking incoming missiles and bombers, ${base.totalMissiles} missiles remain in arsenal.`
                     }
                 </span>
             </React.Fragment>;
-
 
         const isNotReceivingOrdersMarkup =
             <React.Fragment>
@@ -59,14 +60,21 @@ export class AbmBaseComponent extends Component<props, state> {
         const wrapper = (toWrap: JSX.Element) => {
             return (
                 <div>
-                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    <span>{`${base.WorldObjectLabel}: ${base.Name}`}</span>
                     {toWrap}
                 </div>
             )
         };
 
+        const wasDestroyedMarkup = 
+            <React.Fragment>
+                <span>ABM base ${base.Name} was destroyed.</span>
+            </React.Fragment>
+
+        if (base.wasDestroyed) { return wasDestroyedMarkup }
 
         return (
+
             this.props.base.isReceivingOrders
                 ? (
                     this.props.base.isTracking ? wrapper(isTrackingMarkup) : wrapper(readyToActivateMarkup)

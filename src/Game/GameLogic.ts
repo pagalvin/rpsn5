@@ -383,7 +383,7 @@ export class GameLogic {
                 const nukeDamage = GameRules.getLocationDamage(
                     {
                         attackedBy: attackingOrdnance,
-                        locationAttacked: args.locationUnderAttack
+                        locationAttacked: args.locationUnderAttack,
                     });
 
                 return nukeDamage;
@@ -443,16 +443,28 @@ export class GameLogic {
                     this.notifyGamestateChange({ details: { changeLabel: "ICBM Intercepted", relatedLocation: attackedLocation } });
                 }
                 else {
-                    locationsUnderAttackThisTick[i].nuclearStrikes = result.strikeCount;
-                    Contents.Population -= result.populationKilled;
-                    args.defendingPlayer.totalPopulationDied += result.populationKilled;
-                    this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: attackedLocation } });
+                    damageLocation({location: locationsUnderAttackThisTick[i], damage: result});
                 }
 
-                // MapUtil.applyFunctionToCountryMap({ map: defendersMap, xformFunc: (ml: MapLocation) => { ml.isTargeted = false } });
             }
         };
 
+        const damageLocation = (args: {location: MapLocation, damage: nuclearStrikeDamage}) => {
+
+            args.location.nuclearStrikes = args.damage.strikeCount;
+            if (args.location.Contents) {args.location.Contents.Population -= args.damage.populationKilled};
+            args.location.myMap.owningPlayer.totalPopulationDied += args.damage.populationKilled;
+
+            if (args.location.isMilitaryBase()) {
+                const militaryBase = args.location.Contents as Exclude<MilitaryBaseTypes,null>;
+                militaryBase.wasDestroyed = militaryBase.wasDestroyed || Rng.throwDice({hiNumberMinus1: 100}) < 97;
+                militaryBase.isReceivingOrders = militaryBase.isReceivingOrders || (militaryBase.isReceivingOrders && ! militaryBase.wasDestroyed);
+            }
+
+            this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: args.location } });
+
+        }
+        
         const isLiveOrdnance = (forOrdnance: Ordnance) => ! forOrdnance.wasIntercepted && ! forOrdnance.wasConsumed;
 
         console.log(`GameLogic: resolveWartimeAttacks: Entering.`);

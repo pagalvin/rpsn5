@@ -39,6 +39,7 @@ interface state {
     isWaitingForSelection: boolean;
     activeBases: initializedBase[];
     inactiveBases: initializedBase[];
+    destroyedBases: initializedBase[];
 }
 
 export class BaseActivatorComponent extends Component<props, state> implements GamestateWatcher {
@@ -51,7 +52,8 @@ export class BaseActivatorComponent extends Component<props, state> implements G
         this.state = {
             isWaitingForSelection: false,
             activeBases: [],
-            inactiveBases: []
+            inactiveBases: [],
+            destroyedBases: []
         }
 
         GameLogic.registerGamestateWatcher({ watcher: this });
@@ -60,14 +62,21 @@ export class BaseActivatorComponent extends Component<props, state> implements G
 
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
 
+        if (args.details.changeLabel === "Location Nuked") {
+
+            const destroyedBases1 = this.state.activeBases.filter(ab => ab.baseEntity.wasDestroyed);
+            const destroyedBases2 = this.state.inactiveBases.filter(ib => ib.baseEntity.wasDestroyed);
+
+            this.setState({
+                destroyedBases: this.state.destroyedBases.concat(destroyedBases1).concat(destroyedBases2),
+                activeBases: this.state.activeBases.filter(ab => ! ab.baseEntity.wasDestroyed),
+                inactiveBases: this.state.inactiveBases.filter(ib => ! ib.baseEntity.wasDestroyed)
+            })
+        }
+
         if (args.details.changeLabel === "Tick") {
 
             if (this.state.inactiveBases.length > 0) {
-
-                // console.log(`BaseActivatorComponent: handleGameStateChange: Got a tick, activatig a base:`,
-                //     {
-                //         base: this.state.inactiveBases[0]
-                //     });
 
                 this.state.inactiveBases[0].baseEntity.activate();
                 this.handleBaseActivatedAnimation({forBase: this.state.inactiveBases[0]});
@@ -92,13 +101,9 @@ export class BaseActivatorComponent extends Component<props, state> implements G
 
     componentDidMount() {
 
-        // console.log(`BaseActivatorComponent: componentDidMount: state and props:`, { state: this.state, props: this.props });
-
         this.props.registerForHumanPlayerMapClicks({ ui: this });
 
-        // console.log(`BaseActivatorComponent: componentDidMount: Got all the available military bases: `, { bases: this.props.player.map.getAllMilitaryBases() });
-
-        const getIB = (base: Exclude<MilitaryBaseTypes,null>) => { 
+        const getInitializeBased = (base: Exclude<MilitaryBaseTypes,null>) => { 
             return ( 
                 {
                     baseEntity: base as any,
@@ -109,7 +114,7 @@ export class BaseActivatorComponent extends Component<props, state> implements G
 
          const allPlayerMilitaryBases = this.props.player.map.getAllMilitaryBases();
 
-         const initializedBases = allPlayerMilitaryBases.map(b => getIB(b));
+         const initializedBases = allPlayerMilitaryBases.map(b => getInitializeBased(b));
 
          this.setState({
              inactiveBases: initializedBases
@@ -143,14 +148,17 @@ export class BaseActivatorComponent extends Component<props, state> implements G
 
                 <div><h5>Active bases ({this.state.activeBases.length})</h5></div>
                 {
-                    // this.state.activeBases.map(activeBase => baseDetails({ forInitializedBase: activeBase }))
                     this.state.activeBases.map(activeBase => activeBase.ui)
                 }
 
                 <div><h5>Inactive bases ({this.state.inactiveBases.length})</h5></div>
                 {
-                    // this.state.inactiveBases.map(inactiveBase => baseDetails({ forInitializedBase: inactiveBase }))
                     this.state.inactiveBases.map(inactiveBase => inactiveBase.ui)
+                }
+
+                <div><h5>Destroyed bases ({this.state.destroyedBases.length})</h5></div>
+                {
+                    this.state.destroyedBases.map(destroyedBase => destroyedBase.ui)
                 }
             </React.Fragment>
         )

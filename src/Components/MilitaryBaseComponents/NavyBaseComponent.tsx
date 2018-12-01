@@ -32,6 +32,7 @@ export class NavyBaseComponent extends Component<props, state> {
     render() {
 
         const { ordnance } = this.props.base;
+        const { base } = this.props;
 
         const isTargetingMarkup =
             <React.Fragment>
@@ -69,15 +70,22 @@ export class NavyBaseComponent extends Component<props, state> {
         const wrapper = (toWrap: JSX.Element) => {
             return (
                 <React.Fragment>
-                    <span>{`${this.props.base.WorldObjectLabel}: ${this.props.base.Name}`}</span>
+                    <span>{`${base.WorldObjectLabel}: ${base.Name}`}</span>
                     {toWrap}
                 </React.Fragment>
             )
         };
 
+        const wasDestroyedMarkup =
+            <React.Fragment>
+                <span>Nave Base ${base.Name} was destroyed.</span>
+            </React.Fragment>
+
+
+        if (base.wasDestroyed) { return wasDestroyedMarkup }
         if (this.state.isTargetingMissiles) { return wrapper(isTargetingMarkup); }
-        if (!this.props.base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
-        if (this.props.base.isAllOrdnanceTargeted()) { return wrapper(allTargetedMarkup); }
+        if (!base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
+        if (base.isAllOrdnanceTargeted()) { return wrapper(allTargetedMarkup); }
 
         return wrapper(readyToActivateMarkup);
 

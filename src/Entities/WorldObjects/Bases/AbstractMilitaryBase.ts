@@ -29,6 +29,7 @@ export abstract class AbstractMilitaryBase implements MilitaryBaseProperties, Mi
     public isReceivingOrders: boolean;
     public myMapLocation: MapLocation;
     public Population: number = Rng.throwDice({hiNumberMinus1: 10000}) + 10000;
+    public wasDestroyed: boolean = false;
 
     // Having a "BaseType" label here helps some code work a little more generically since "typeof [any base object]" returns "object"
     // This gives us a shot at treating bases a little more generically. Look at MilitaryBaseFactory.ts for an example.
