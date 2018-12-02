@@ -15,12 +15,13 @@ export class HumanPlayer extends AbstractPlayer  {
     constructor() {
         super({isHuman: true});
 
-        this.map = new CountryMap({sizeX: 10, sizeY: 10, owner: "Human", owningPlayer: this});
+        this.map = new CountryMap({sizeX: 10, sizeY: 10, ownerLabel: "Human", owningPlayer: this});
         this.Name = "Human";
         this.declaredWar = false;
         this.totalFunctionalActiveRadarStations = 0;
         this.totalFunctionalPassiveRadarStations = 0;
         this.totalPopulationDied = 0;
+
         MapUtil.createTestBases({onMap: this.map});
     }
 

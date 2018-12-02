@@ -23,12 +23,13 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
 
         GameLogic.registerGamestateWatcher({ watcher: this });
 
-        this.map = new CountryMap({ sizeX: 10, sizeY: 10, owner: "Computer", owningPlayer: this});
+        this.map = new CountryMap({ sizeX: 10, sizeY: 10, ownerLabel: "Computer", owningPlayer: this});
         this.Name = "Computer";
         this.declaredWar = false;
         this.totalFunctionalActiveRadarStations = 0;
         this.totalFunctionalPassiveRadarStations = 0;
         this.totalPopulationDied = 0;
+
         MapUtil.createTestBases({ onMap: this.map });
 
     }
