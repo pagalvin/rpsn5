@@ -6,10 +6,11 @@ import { Rng } from "../../../Utils/Rng";
 
 export interface MilitaryBaseProperties {
     Name: string;
-    Age: number;
     WorldObjectLabel: MilitaryBaseTypeLabels;
     isReceivingOrders: boolean;
     myMapLocation: MapLocation;
+    yearBuilt: number;
+
 }
 
 export interface MilitaryBaseActions {
@@ -25,11 +26,12 @@ export abstract class AbstractMilitaryBase implements MilitaryBaseProperties, Mi
 {
 
     public Name: string = "";
-    public Age: number = 0;
     public isReceivingOrders: boolean;
     public myMapLocation: MapLocation;
     public Population: number = Rng.throwDice({hiNumberMinus1: 10000}) + 10000;
     public wasDestroyed: boolean = false;
+    public yearBuilt: number;
+
 
     // Having a "BaseType" label here helps some code work a little more generically since "typeof [any base object]" returns "object"
     // This gives us a shot at treating bases a little more generically. Look at MilitaryBaseFactory.ts for an example.
@@ -39,9 +41,10 @@ export abstract class AbstractMilitaryBase implements MilitaryBaseProperties, Mi
         this.isReceivingOrders = true;
     };
 
-    constructor(args: {atLocation: MapLocation}) {
+    constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         this.isReceivingOrders = false;
         this.myMapLocation = args.atLocation;
+        this.yearBuilt = args.yearBuilt;
     }
     
 }

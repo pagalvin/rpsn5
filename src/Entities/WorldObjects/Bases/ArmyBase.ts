@@ -5,10 +5,9 @@ import { MapLocation } from "../../MapObjects/MapLocation";
 export class ArmyBase extends AbstractMilitaryBase {
 
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "Army";
-    public gameYear: number = 1;
     public isDecamped: boolean;
 
-    constructor(args: {atLocation: MapLocation}) {
+    constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
     
         super(args);
 

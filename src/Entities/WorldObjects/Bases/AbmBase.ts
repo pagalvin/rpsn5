@@ -6,12 +6,10 @@ export class AbmBase extends AbstractMilitaryBase {
 
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "ABM";
 
-    public gameYear: number = 1;
-
     public totalMissiles: number;
     public isTracking: boolean;
 
-    constructor(args: {atLocation: MapLocation}) {
+    constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
 
         this.totalMissiles = 0;

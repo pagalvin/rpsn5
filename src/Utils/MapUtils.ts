@@ -4,9 +4,9 @@ import { AbmBase } from "../Entities/WorldObjects/Bases/AbmBase";
 import { MissileBase } from "../Entities/WorldObjects/Bases/MissileBase";
 import { NavyBase } from "../Entities/WorldObjects/Bases/NavyBase";
 import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
-import { MilitaryBaseTypeLabels } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
+import { MilitaryBaseTypeLabels, MilitaryBaseTypes, NonNullMilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
-import { OrdnanceCarryingBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";
+import { OrdnanceCarryingBase, AbstractMilitaryBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";
 import { ArmyBase } from "../Entities/WorldObjects/Bases/ArmyBase";
 import { MilitaryBaseFactory } from "../Factories/MilitaryBaseFactory";
 
@@ -88,7 +88,24 @@ export class MapUtil {
 
     }
 
-    public static getMapSummary(args: { forMap: CountryMap }) {
+    public static allMilitaryBases(args: {forMap: CountryMap}): NonNullMilitaryBaseTypes[] {
+
+        const summary = this.getMapSummary({forMap: args.forMap});
+
+        const onlyMilitaryBases = ([] as NonNullMilitaryBaseTypes[]).concat(
+            summary.allAbmBases,
+            summary.allAirBases,
+            summary.allArmyBases,
+            summary.allMissileBases,
+            summary.allNavyBases,
+            summary.allRadarBases
+            );
+
+        return onlyMilitaryBases;
+
+    }
+
+    public static getMapSummary(args: { forMap: CountryMap }): countrySummary {
 
         const isPassiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperation === "Passive";
         const isActiveRader = (loc: MapLocation) => MapUtil.isRadarBase(loc) && (loc.Contents as RadarBase).modeOfOperation === "Active";

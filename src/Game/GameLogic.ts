@@ -541,18 +541,38 @@ export class GameLogic {
         console.log(`Gamelogic: spyOnPlayer: entering, target:`, args.targetPlayer);
 
         /*
-        Logic:
-            Based on the spy level, give a certain number of "spy points"
-            count up to that number and select a random map point and bump up the visibility
+            Principles:
+            - Tech (concealment and discovery) improves all the time
+            - Older bases are less easy to conceal
+            - Newer bases are easier to conceal
+            - When spying in 1990, it's easier to find opponent's bases then it is in 1945
+            - Towns and cities are never hidden
         */
 
-        const totalSearches = args.spyLevel * 44;
-        
-        for (let i = 0; i < totalSearches; i++) {
+        const allMilitaryBases = MapUtil.allMilitaryBases({forMap: args.targetPlayer.map});
+
+        const game = Game.getInstance();
+
+        for (let i = 0; i < allMilitaryBases.length; i++) {
             
-            const ml = args.targetPlayer.map.getRandomLocation();
-            console.log(`GameLogic.ts: spyOnPlayer: Got a random location:`, ml);
-            ml.enemyVisibility +=1;
+            const base = allMilitaryBases[i];
+
+            console.log(`GameLogic: spyOnPlayer: spying on a base:`, {base: base});
+
+            // New bases are harder to find.
+            const baseConcealmentFactor = base.yearBuilt - GameRules.GameStartYear; // gives a value like: 1950 - 1945 = 5
+            
+            // If this turn is a spying turn, you get a bonus..
+            const baseSpyFactor = args.spyLevel === 1 ? 1.1 : 1.25; 
+
+            // As time goes on, you get better at spying at baseline.
+            const spyTechnologyFactor = (game.gameYear - GameRules.GameStartYear) * baseSpyFactor; // ex: (1950 - 1945) * 1.1 = 5.5
+            
+            const spyAmount = spyTechnologyFactor - baseConcealmentFactor; // 5.5 - 5 = 0.5
+
+            allMilitaryBases[i].myMapLocation.enemyVisibility += spyAmount;
+
         }
+
     }
 }

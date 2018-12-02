@@ -9,14 +9,13 @@ import { MapLocation } from "../../MapObjects/MapLocation";
 export class AirBase extends AbstractMilitaryBase implements OrdnanceCarryingBase{
 
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "Air";
-    public gameYear: number = 1;
 
     public ordnance: Ordnance[];
     public totalFighters: number;
 
     public isFlying: boolean;
 
-    constructor(args: {atLocation: MapLocation}) {
+    constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
 
         this.ordnance = [];

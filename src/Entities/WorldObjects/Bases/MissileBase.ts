@@ -7,11 +7,11 @@ import { MapLocation } from "../../MapObjects/MapLocation";
 export class MissileBase extends AbstractMilitaryBase implements OrdnanceCarryingBase {
 
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "Missile";
-    public gameYear: number = 1;
+    public : number = 1;
 
     public ordnance: Ordnance[];
     
-    constructor(args: {atLocation: MapLocation}) {
+    constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
 
         this.ordnance = [];

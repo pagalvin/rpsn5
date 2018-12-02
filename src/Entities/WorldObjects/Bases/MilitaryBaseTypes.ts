@@ -9,3 +9,4 @@ export type MilitaryBaseTypeLabels = "Navy" | "Army" | "Radar" | "Missile" | "Ai
 
 export type MilitaryBaseTypes = NavyBase | ArmyBase | RadarBase | MissileBase | AirBase | AbmBase | null;
 
+export type NonNullMilitaryBaseTypes = Exclude<MilitaryBaseTypes,null>;

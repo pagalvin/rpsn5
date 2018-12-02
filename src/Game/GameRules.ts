@@ -23,6 +23,8 @@ export interface nuclearStrikeDamage {
 
 export class GameRules {
 
+    public static readonly GameStartYear = 1945;
+
     public static canPlaceItemAtMapLocation(args: { map: CountryMap, atLocation: MapLocation, itemToCheck: PlaceableObjectLabels }): boolean {
 
         if (args.atLocation.Contents) {

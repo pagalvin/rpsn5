@@ -8,11 +8,10 @@ import { Rng } from "../../../Utils/Rng";
 export class NavyBase extends AbstractMilitaryBase implements OrdnanceCarryingBase {
 
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "Navy";
-    public gameYear: number = 1;
 
     public ordnance: Ordnance[];
 
-    constructor(args: {atLocation: MapLocation}) {
+    constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
         this.isReceivingOrders = false;
         this.ordnance = [];
