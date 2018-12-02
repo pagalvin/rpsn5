@@ -3,6 +3,7 @@ import { HumanPlayer } from "../Game/HumanPlayer";
 import { GameLogic } from "../Game/GameLogic";
 import { AbstractPlayer } from "../Game/AbstractPlayer";
 import { GameData } from "../Data/ComputerNames";
+import { GameRules } from "../Game/GameRules";
 
 export interface GameEntity {
     gameYear: number;
@@ -20,15 +21,18 @@ export class Game extends AbstractGameEntity {
     public isWartime: boolean = false;
     
     public turn: number = 0;
-    public get gameYear() { return this.turn + 1944;}
+    public get gameYear() { return this.turn + GameRules.GameStartYear;}
     
-    public computerPlayer: ComputerPlayer;
-    public humanPlayer: HumanPlayer;
-    public currentPlayer: AbstractPlayer;
+    public computerPlayer!: ComputerPlayer;
+    public humanPlayer!: HumanPlayer;
+    public currentPlayer!: AbstractPlayer;
 
     private constructor() {
         super();
 
+    }
+
+    private initializeGame() {
         this.computerPlayer = new ComputerPlayer();
         this.computerPlayer.Name = GameData.getRandomComputerName();
         this.humanPlayer = new HumanPlayer();
@@ -36,8 +40,10 @@ export class Game extends AbstractGameEntity {
     }
 
     public static getInstance() {
+        
         if (! this.instance) {
             this.instance = new Game();
+            this.instance.initializeGame();
         }
 
         return this.instance;
