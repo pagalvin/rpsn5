@@ -13,7 +13,7 @@ import { MapLocation } from "../Entities/MapObjects/MapLocation";
 import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
 import { MapUtil } from "../Utils/MapUtils";
 import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
-import { MilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
+import { MilitaryBaseTypes, NonNullMilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 
 export type gameStateChangeType =
     "Advance Turn" |
@@ -547,6 +547,8 @@ export class GameLogic {
             - Newer bases are easier to conceal
             - When spying in 1990, it's easier to find opponent's bases then it is in 1945
             - Towns and cities are never hidden
+
+            On any given turn, you can discover up to two bases depending on spy level.
         */
 
         const allMilitaryBases = MapUtil.allMilitaryBases({forMap: args.targetPlayer.map});
@@ -570,9 +572,20 @@ export class GameLogic {
             
             const spyAmount = spyTechnologyFactor - baseConcealmentFactor; // 5.5 - 5 = 0.5
 
-            allMilitaryBases[i].myMapLocation.enemyVisibility += spyAmount;
+            allMilitaryBases[i].myMapLocation.enemyVisibility += Math.ceil(spyAmount);
 
         }
 
+        const tryFindBase = (forBase: NonNullMilitaryBaseTypes) => {
+            const didFind = Rng.throwDice({hiNumberMinus1: 100}) < forBase.myMapLocation.enemyVisibility;
+            if (didFind) { forBase.myMapLocation.enemyVisibility =100 }
+        }
+
+        tryFindBase(Rng.pickRandomFromArray({sourceArray: allMilitaryBases}));
+
+        if (args.spyLevel > 1) {
+            tryFindBase(Rng.pickRandomFromArray({sourceArray: allMilitaryBases}));
+        }
+        
     }
 }
