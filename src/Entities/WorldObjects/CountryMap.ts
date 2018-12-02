@@ -15,14 +15,16 @@ export class CountryMap {
 
     private readonly newRuralArea = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Rural"});
 
-    constructor(args: {sizeX: number, sizeY: number, owner: "Computer" | "Human", owningPlayer: AbstractPlayer}) {
+    constructor(args: {sizeX: number, sizeY: number, ownerLabel: "Computer" | "Human", owningPlayer: AbstractPlayer}) {
 
         this.sizeX = args.sizeX;
         this.sizeY = args.sizeY;
         this.map = [[]];
-        this.owner = args.owner;
+        this.owner = args.ownerLabel;
         this.owningPlayer = args.owningPlayer;
+
         this.initializeMap();
+
     }
 
     public logDetailedMapToConsole() {
@@ -35,6 +37,8 @@ export class CountryMap {
     }
 
     private initializeMap() {
+
+        console.log(`CountryMap: initializeMap: Entering, my sizex/sizey:`, this.sizeX, this.sizeY, this.owner);
 
         // First, create sizeX by sizeY  collection of negligble population centers
         for (let x = 0; x < this.sizeX; x++) {
