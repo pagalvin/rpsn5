@@ -22,4 +22,7 @@ export class Constants {
     public static readonly SECOND_STRIKE_POPULATION_HIT_PCT = 0.50;
     public static readonly THIRD_STRIKE_POPULATION_HIT_PCT = 0.25;
 
+    public static readonly PCT_VISIBLE_SENTIMENT_THRESHOLD = 20;
+    public static readonly EXPECTED_BASE_COUNT_FACTOR = 1.75;
 }
+
