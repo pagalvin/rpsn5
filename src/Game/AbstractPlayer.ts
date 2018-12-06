@@ -10,7 +10,7 @@ export abstract class AbstractPlayer {
     abstract totalFunctionalPassiveRadarStations: number;
     abstract totalFunctionalActiveRadarStations: number;
     
-    abstract totalPopulationDied: number;
+    abstract totalCausualties: number;
 
     public allTargetedOrdnanceItems: Ordnance[];
     public ordnanceItemsArrivingThisTick: Ordnance[];
