@@ -11,6 +11,7 @@ import { MapItemComponent } from './MapItemComponent';
 import { MapSummaryComponent } from './MapSummaryComponent';
 import { MapUtil } from '../../Utils/MapUtils';
 import { Table, TableBody, TableCell } from '@material-ui/core';
+import { MapItemHoverComponent, hoverListenerFunc } from './MapItemHoverComponent';
 
 export interface buildBaseResult {
   manifestIndex: number;
@@ -28,7 +29,8 @@ export interface targetMissileResult {
 export type notifyBuildDragResult = (args: { result: buildBaseResult }) => void;
 export type notifyTargetDragResult = (args: { result: targetMissileResult }) => void;
 
-export interface state { }
+export interface state {
+}
 
 export interface props {
   countryMap: CountryMap;
@@ -38,6 +40,8 @@ export interface props {
 export class MapComponent extends React.Component<props, state> implements GamestateWatcher {
 
   private uiIdx: number = 0;
+
+  private notifyMapLocationHoveredOver!: hoverListenerFunc;
 
   constructor(props: props, state: state) {
     super(props, state);
@@ -50,55 +54,51 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   }
 
-  componentDidMount() {
-
+  // This is passed as an argument down to the map item hover component.
+  // When it mounts, it invokes this and passes in the hover listener function to invoke when the user hovers their mouse over a map location.
+  private registerHoverListener(args: {hoverListener: hoverListenerFunc}) {
+    console.log(`MapComponent: hoverListenerRegistrationFunc: Entering with args:`, args);
+    this.notifyMapLocationHoveredOver = args.hoverListener;
   }
-
+  
   render() {
 
     // console.log(`MapComponent.tsx: rendering a map:`, this.props.countryMap);
 
     const mapRow = (mapRow: MapLocation[]) => {
 
-      // console.log(`MapComponent: mapRow: got a row to map:`, mapRow);
-
-      //   const nuclearDamageIndicator = (args: {ml: MapLocation}) => {
-      //     const {nuclearStrikes} = args.ml;
-
-      //     if (nuclearStrikes === 1) return "nukedOnce";
-      //     if (nuclearStrikes === 2) return "nukedTwice"
-      //     if (nuclearStrikes === 3) return "nukedThrice";
-
-      //     return "";
-
-      // }
-
       const result =
         <tr key={this.uiIdx++}>
           {
 
             mapRow.map(cell => (
+
               <td key={this.uiIdx++}
                 className="mapCell"
                 id={`${this.getMapLocationHtmlID(cell)}`}
-                // className={nuclearDamageIndicator({ml: cell})}
 
-                onClick={() => {
-                  if (this.props.playerMapClickListener) this.props.playerMapClickListener({ location: cell });
+                onMouseOver={
+                  (e: any) => {
+                    console.log(`MapComponent: onMousOver: entering, hover listener:`, this.notifyMapLocationHoveredOver);
+                    if (this.notifyMapLocationHoveredOver) {
+                      console.log(`MapComponent: onMousOver: notifying listener.`);
+                      this.notifyMapLocationHoveredOver({onMapLocation: cell});
+                    }
+                  }
                 }
-                }
+
+                onClick={() => {if (this.props.playerMapClickListener) this.props.playerMapClickListener({ location: cell });}}
 
                 onDrop={
                   (e: SyntheticEvent<HTMLTableDataCellElement>) => {
                     e.preventDefault();
-                    console.log(`MapComponent: render: onDrop: e:`, { e: e });
                     this.handleDrop({ dropEvent: e, cell: cell });
                   }
                 }
 
                 onDragLeave={
                   (e: any) => {
-                    this.handleLocationDragEvent({ doLoc: cell, eventType: "leave" } );
+                    this.handleLocationDragEvent({ doLoc: cell, eventType: "leave" });
                     e.preventDefault();
                   }
                 }
@@ -110,6 +110,8 @@ export class MapComponent extends React.Component<props, state> implements Games
                     // console.log(`MapComponent: render: onDragOver: e:`, { e: e, cell: cell });
                   }
                 }
+
+
               >
 
                 <MapItemComponent mapItem={cell} key={this.uiIdx++} />
@@ -125,24 +127,19 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     }
 
-    const mapAsMaterialUITable = () => {
-      return (
-        <Table className="mapContainer" padding="dense">
-          <TableBody>
-            {this.props.countryMap.map.map(row => mapRow(row))}
-          </TableBody>
-        </Table>
-      )
-    }
-
     const mapAsHtmlTable = () => {
 
       return (
-        <table className="mapContainer">
-          <tbody>
-            {this.props.countryMap.map.map(row => mapRow(row))}
-          </tbody>
-        </table>
+        <React.Fragment>
+          <table className="mapContainer">
+            <tbody>
+              {this.props.countryMap.map.map(row => mapRow(row))}
+            </tbody>
+          </table>
+
+          <MapItemHoverComponent registerHoverListener={this.registerHoverListener.bind(this)}/>
+
+        </React.Fragment>
       )
     }
 
@@ -182,11 +179,10 @@ export class MapComponent extends React.Component<props, state> implements Games
     else if (args.details.changeLabel === "Location Nuked") {
       this.handleLocationNuked({ nukedLocation: args.details.relatedLocation });
     }
-    else if (args.details.changeLabel === "ICBM Intercepted" || 
+    else if (args.details.changeLabel === "ICBM Intercepted" ||
       args.details.changeLabel === "Submarine Missile Shot Down By ABM" ||
-      args.details.changeLabel === "Bomber was shot down by ABM" || 
-      args.details.changeLabel === "Bomber was shot down by Figher") 
-      {
+      args.details.changeLabel === "Bomber was shot down by ABM" ||
+      args.details.changeLabel === "Bomber was shot down by Figher") {
       this.handleLocationDetargeted({ detargetedLocation: args.details.relatedLocation });
     }
 
@@ -240,7 +236,7 @@ export class MapComponent extends React.Component<props, state> implements Games
 
         mapLocElement.classList.add(nukeClasses[nukedLocation.nuclearStrikes >= 3 ? 2 : nukedLocation.nuclearStrikes - 1]);
 
-        this.handleLocationDetargeted({detargetedLocation: args.nukedLocation});
+        this.handleLocationDetargeted({ detargetedLocation: args.nukedLocation });
       }
     }
   }
@@ -305,8 +301,8 @@ export class MapComponent extends React.Component<props, state> implements Games
     }
     );
 
-    this.handleLocationDragEvent({doLoc: args.cell, eventType: "leave"}); // clears any class artifact.
-    
+    this.handleLocationDragEvent({ doLoc: args.cell, eventType: "leave" }); // clears any class artifact.
+
     notifyDragResultCallack(
       {
         result: {
