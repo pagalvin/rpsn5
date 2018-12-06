@@ -268,7 +268,7 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
             - pick a random number and looku up a choice based on that.
 
         */
-        // const availableStrategicChoices = GameRules.getAllowedMoves().strategicOptions;
+        const availableStrategicChoices = GameRules.getAllowedMoves().strategicOptions;
 
         const sentiment = this.calculateCurrentSentiment();
 
