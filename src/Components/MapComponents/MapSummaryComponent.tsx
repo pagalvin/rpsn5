@@ -52,7 +52,7 @@ export class MapSummaryComponent extends React.Component<props, state> implement
                 <div>
                     Population: <Odometer format="(,ddd)" duration={5000} value={summarizedMap.totalPopulation}/>
                     &nbsp;
-                    Killed: <Odometer format="(,ddd)" duration={5000} value={this.props.mapToSummarize.owningPlayer.totalPopulationDied}/>
+                    Killed: <Odometer format="(,ddd)" duration={5000} value={this.props.mapToSummarize.owningPlayer.totalCausualties}/>
                 </div>
                 <div>
                     Bases:

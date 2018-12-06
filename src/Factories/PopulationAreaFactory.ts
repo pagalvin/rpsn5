@@ -33,7 +33,7 @@ export class PopulationAreaFactory {
 
     public createNewPopulationArea(args: {popAreaType: PopulationAreaTypeLabels}) {
 
-        console.log(`PopulationAreaFactory: Entering, creating a pop area:`, args.popAreaType);
+        // console.log(`PopulationAreaFactory: Entering, creating a pop area:`, args.popAreaType);
         
         switch(args.popAreaType) {
 
