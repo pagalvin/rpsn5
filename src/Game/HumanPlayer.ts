@@ -10,7 +10,7 @@ export class HumanPlayer extends AbstractPlayer  {
     public declaredWar: boolean;
     public Name: string;
     public map: CountryMap;
-    public totalPopulationDied: number = 0;
+    public totalCausualties: number = 0;
 
     constructor() {
         super({isHuman: true});
@@ -20,7 +20,7 @@ export class HumanPlayer extends AbstractPlayer  {
         this.declaredWar = false;
         this.totalFunctionalActiveRadarStations = 0;
         this.totalFunctionalPassiveRadarStations = 0;
-        this.totalPopulationDied = 0;
+        this.totalCausualties = 0;
 
         MapUtil.createTestBases({onMap: this.map});
     }

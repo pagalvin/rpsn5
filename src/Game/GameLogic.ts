@@ -453,7 +453,7 @@ export class GameLogic {
 
             args.location.nuclearStrikes = args.damage.strikeCount;
             if (args.location.Contents) {args.location.Contents.Population -= args.damage.populationKilled};
-            args.location.myMap.owningPlayer.totalPopulationDied += args.damage.populationKilled;
+            args.location.myMap.owningPlayer.totalCausualties += args.damage.populationKilled;
 
             if (args.location.isMilitaryBase()) {
                 const militaryBase = args.location.Contents as Exclude<MilitaryBaseTypes,null>;
