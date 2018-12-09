@@ -509,6 +509,7 @@ export class GameLogic {
         Game.getInstance().isWartime = true;
 
         this.notifyGamestateChange({ details: { changeLabel: "War Declared" } });
+
     }
 
     public static finishHumanTurn(): void {
