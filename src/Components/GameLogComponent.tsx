@@ -71,7 +71,7 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
 
         const doIgnore = this.ignoreChangeLabels.filter(igcl => igcl === args.details.changeLabel).length > 0;
         if (doIgnore) { return; }
-        
+
         // add the message we just got to the queue
         this.queuedMessages = this.queuedMessages.concat(args.details.changeLabel);
 
@@ -91,7 +91,10 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
     render() {
 
         return (
-            <Paper>
+            <div className="gameLogContainer">
+                <div>
+                    -- Activities Log --
+                </div>
                 <div>
                     {this.state.currentMessage && this.state.currentMessage.length > 0
                         ?
@@ -109,7 +112,7 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
                         this.state.oldMessages.map(m => <div key={this.uiKey()}>{m}</div>)
                     }
                 </div>
-            </Paper>
+            </div>
         )
 
     }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { GameHeaderComponent } from "./GameHeaderComponent";
 import { UserActionsComponent } from "./UserActionsComponent";
 import { GameLogComponent } from "./GameLogComponent";
-import { Grid, Paper } from '@material-ui/core';
+import { Grid, Paper, createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import { Game } from '../Entities/gameEntity';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
 import { MapComponent } from './MapComponents/MapComponent';
@@ -51,17 +51,11 @@ export class GameComponent extends Component {
                 </Grid>
 
                 <Grid item xs={6}>
-                    <Paper>
-                        Human<br />
-                        <MapComponent countryMap={gameEntity.humanPlayer.map} playerMapClickListener={this.playerMapClickListener.bind(this)} />
-                    </Paper>
+                    <MapComponent countryMap={gameEntity.humanPlayer.map} playerMapClickListener={this.playerMapClickListener.bind(this)} />
                 </Grid>
                 <Grid item xs={6}>
                     <div className="xcomputerMapContainer">
-                        <Paper>
-                            Computer<br />
-                            <MapComponent countryMap={gameEntity.computerPlayer.map} />
-                        </Paper>
+                        <MapComponent countryMap={gameEntity.computerPlayer.map} />
                     </div>
                 </Grid>
                 <Grid item xs={12}>
@@ -104,6 +98,35 @@ export class GameComponent extends Component {
 
         );
 
-        return format2();
+        const format3 = () => (
+            <Grid container className="gameDefaults gameContainer" alignContent="center">
+
+                <Grid item xs={12}>
+                    <GameHeaderComponent />
+                </Grid>
+
+                <Grid item xs={4} className="gameUILeftZone">
+                    <Grid container alignContent="center">
+                        <MapComponent countryMap={gameEntity.humanPlayer.map} playerMapClickListener={this.playerMapClickListener.bind(this)} />
+                    </Grid>
+                </Grid>
+                <Grid item xs={4} className="gameUIMiddleZone">
+                    <UserActionsComponent
+                        player={gameEntity.humanPlayer}
+                        mapClickListener={this.playerMapClickListener.bind(this)}
+                        registerMapListener={this.registerMapListener.bind(this)}
+                    />
+                    <GameLogComponent />
+                </Grid>
+
+                <Grid item xs={4} className="gameUIRightZone">
+                    <MapComponent countryMap={gameEntity.computerPlayer.map} />
+                </Grid>
+            </Grid>
+
+        );
+
+
+        return format3();
     }
 }

@@ -144,10 +144,9 @@ export class MapComponent extends React.Component<props, state> implements Games
     }
 
     return (
-      <div>
+      <div className="playerMapContainer">
         <MapSummaryComponent mapToSummarize={this.props.countryMap} />
         {mapAsHtmlTable()}
-        {/* {mapAsMaterialUITable()} */}
       </div>
     );
   }

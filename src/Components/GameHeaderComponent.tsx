@@ -28,9 +28,8 @@ export class GameHeaderComponent extends Component<props, state> implements Game
 
         // console.log(`GameHeaderComponent: handleGamestateChange: Got a game state change.`);
 
-        if (args.details.changeLabel === "Advance Turn") {
+        if (args.details.changeLabel === "Advance Turn" || args.details.changeLabel === "War Declared") {
             this.forceUpdate();
-
         }
     }
 
@@ -39,14 +38,14 @@ export class GameHeaderComponent extends Component<props, state> implements Game
         console.log(`GameHeaderComponent: render: Entering.`);
         const game: Game = Game.getInstance();
 
-        // Need a min height or we end up with a flicker.
-        const style = {
-            "height": "30px"
-        }
-
         return (
-            <div style={style}>
-                <TickerComponent tickerInterval={25} tickerMessage={`The year was ${game.gameYear}, a time of ${game.isPeacetime ? "peace" : "war!"}`} />
+            <div className="gameYearContainer">
+                {
+                    game.isPeacetime 
+                        ? <TickerComponent tickerInterval={25} tickerMessage={`The year was ${game.gameYear}, a time of ${game.isPeacetime ? "peace" : "war!"}`} />
+                        : <TickerComponent tickerInterval={25} tickerMessage={`The year was ${game.gameYear}, where a state of WAR existed in the world.`} />
+
+                }
             </div>
         );
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { GameRules, strategicMoveOptions, tacticalMoveOptions } from "../Game/GameRules";
 import { GameLogic, GamestateWatcher, gameStateChangeDetails } from '../Game/GameLogic';
-import { Button } from '@material-ui/core';
+import { Button, withStyles } from '@material-ui/core';
 import { TickerComponent } from './TickerComponent';
 import { BuildManifestComponent } from './BuildManifestComponent';
 import { HumanPlayer } from '../Game/HumanPlayer';
@@ -9,6 +9,8 @@ import { BaseActivatorComponent } from './BaseActivatorComponent';
 import { playerMapClickListener } from './Game';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
 import { Game } from '../Entities/gameEntity';
+import { UIComponent } from './GameButton';
+
 
 export interface state {
     isMakingStrategicChoice: boolean;
@@ -34,6 +36,21 @@ interface actionHandlerMappings {
 
 export class UserActionsComponent extends Component<props, state> implements GamestateWatcher, playerMapClickListener {
 
+    // readonly StyledButton = withStyles({
+    //     root: {
+    //       background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    //       borderRadius: 3,
+    //       border: 0,
+    //       color: 'blue',
+    //       height: 48,
+    //       padding: '0 30px',
+    //       boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    //     },
+    //     label: {
+    //       textTransform: 'capitalize',
+    //     },
+    //   })(Button);
+      
     private uiIdx: number = 0;
     private readonly uiKey = () => `useractions${this.uiIdx++}`;
 
@@ -216,9 +233,10 @@ export class UserActionsComponent extends Component<props, state> implements Gam
         }
 
         return (
-            <Button key={this.uiKey()} onClick={actionHandler.actionHandler.bind(this)}>
-                <TickerComponent tickerInterval={50} tickerMessage={args.forChoice as string}/>
-            </Button>
+            <UIComponent.GameButton key={this.uiKey()} onClick={actionHandler.actionHandler.bind(this)}>
+                {/* <TickerComponent tickerInterval={50} tickerMessage={args.forChoice as string}/> */}
+                {args.forChoice}
+            </UIComponent.GameButton>
         )
     }
 

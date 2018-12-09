@@ -1,18 +1,113 @@
-.mapContainer {
-  align-content: center;
+body {
   margin: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  background-color: gray;
+  color: #FFB000;
+  width: 1292px;
+  -webkit-box-shadow: inset 10px 10px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: inset 10px 10px 5px 0px rgba(0,0,0,0.75);
+  /* box-shadow: inset 10px 10px 5px 0px rgba(0,0,0,0.75); */
+  box-shadow: inset 0 0 0 -1px red
+}
+
+.mapContainer {
+  /* align-content: center; */
+  /* margin: auto; */
+  /* padding-left: 20px; */
   font-family: 'Courier New', Courier, monospace;
+  background-color: black;
+  align-content: center;
+
+}
+
+.playerMapContainer {
+  max-width: 400px;
+  margin: auto;
+  align-content: center;
+}
+
+.gameUILeftZone, .gameUIMiddleZone, .gameUIRightZone {
+  width: 200px;
+  margin: auto;
+  align-content: center;
+}
+
+.gameUIMiddleZone {
+  height: 700px;
+  max-height: 700px;
+  padding-right: 20px;
+}
+
+.baseActivatorContainer, .gameLogContainer {
+  max-height: 300px;
+  min-height: 300px;
+  height: 300px;
+  overflow-y: auto;
+}
+
+.mapRow {
+  display: table-row;
+}
+
+.gameYearContainer {
+  height: 30px; /* need a fixed height to avoid flicker */
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+}
+
+.gameDefaults {
+  color: #FFB000;
+  background-color: black;
+}
+
+.mapSummaryContainer {
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.computerPlayerZone {
+  float: right;
+  padding-right: 20px;
+}
+
+.gameContainer {
+  -webkit-box-shadow: inset 10px 10px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: inset 10px 10px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: inset 10px 10px 5px 0px rgba(0,0,0,0.75);
+}
+
+.playerName {
+  padding-bottom: 10px;
+  font-weight: 700;
+}
+
+.leftZone {
+  padding-left: 20px;
+  padding-right: 20px;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+
+.rightZone {
+  padding-right: 20px;
+  float: right;
 }
 
 .mapCell {
   padding: 8px;
   margin: auto;
   border: 1px solid;
-  border-color: whitesmoke;
+  border-color: rgb(34, 34, 34);
 }
 
+
 .mapCell:hover {
-  border-color: lightslategray;
+  border-color: #00ff66;
 }
 
 .targetedMapLocation {
@@ -23,12 +118,6 @@
 .mapLocationDraggedOver {
   transition: border-color 0.25s ease;
   background-color: lightskyblue;
-}
-.computerMapContainer {
-    -webkit-transform:scale(0.8);
-    -moz-transform:scale(0.8);
-    -ms-transform:scale(0.8);
-    transform:scale(0.8);
 }
 
 .nukedOnce {
@@ -61,7 +150,7 @@
 .activatedBase {
   transition: background-color 2.0s ease;
   /* transition: opacity 2.0s ease; */
-  background-color: greenyellow;
+  background-color: rgb(44, 71, 2);
   /* opacity: 1; */
   /* background: radial-gradient(circle, red, yellow, green);  */
 
@@ -123,4 +212,24 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: black; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #FFB000; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }

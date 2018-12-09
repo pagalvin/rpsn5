@@ -144,8 +144,12 @@ export class BaseActivatorComponent extends Component<props, state> implements G
         };
 
         const toRender = (
-            <React.Fragment>
+            <div className="baseActivatorContainer">
 
+                <div>
+                    There exists a state of war.
+                </div>
+                
                 <div><h5>Active bases ({this.state.activeBases.length})</h5></div>
                 {
                     this.state.activeBases.map(activeBase => activeBase.ui)
@@ -160,7 +164,8 @@ export class BaseActivatorComponent extends Component<props, state> implements G
                 {
                     this.state.destroyedBases.map(destroyedBase => destroyedBase.ui)
                 }
-            </React.Fragment>
+
+            </div>
         )
 
         return toRender;

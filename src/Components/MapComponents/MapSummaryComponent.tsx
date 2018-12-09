@@ -45,14 +45,14 @@ export class MapSummaryComponent extends React.Component<props, state> implement
         const { summarizedMap } = this.state;
 
         return (
-            <React.Fragment>
-                <div>
-                    Summary
+            <div className="mapSummaryContainer">
+                <div className="playerName">
+                    {this.props.mapToSummarize.owningPlayer.Name}
                 </div>
                 <div>
                     Population: <Odometer format="(,ddd)" duration={5000} value={summarizedMap.totalPopulation}/>
                     &nbsp;
-                    Killed: <Odometer format="(,ddd)" duration={5000} value={this.props.mapToSummarize.owningPlayer.totalCausualties}/>
+                    Casualties: <Odometer format="(,ddd)" duration={5000} value={this.props.mapToSummarize.owningPlayer.totalCausualties}/>
                 </div>
                 <div>
                     Bases:
@@ -73,7 +73,7 @@ export class MapSummaryComponent extends React.Component<props, state> implement
                     | M: <Odometer format="d" duration={5000} value={summarizedMap.totalICBMsOnLine}/>
 
                 </div>
-            </React.Fragment>
+            </div>
         );
 
     }
