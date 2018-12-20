@@ -40,6 +40,7 @@ export class GameData {
         "Hal"
     ];
 
+    
     public static getRandomComputerName(): string {
         return Rng.pickRandomFromArray({ sourceArray: this.allComputerNames });
     }
