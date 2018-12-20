@@ -3,6 +3,7 @@ import { Button } from '@material-ui/core';
 import { NavyBase } from '../../Entities/WorldObjects/Bases/NavyBase';
 import { GameLogic } from '../../Game/GameLogic';
 import { OrdnanceTargetingComponent } from '../OrdnanceTargetingComponent';
+import { UIComponent } from '../GameButton';
 
 interface props {
     base: NavyBase;
@@ -47,9 +48,9 @@ export class NavyBaseComponent extends Component<props, state> {
 
         const readyToActivateMarkup =
             <React.Fragment>
-                <Button onClick={() => this.activateNavyBase()}>
+                <UIComponent.GameButton onClick={() => this.activateNavyBase()}>
                     {`Target ${ordnance.length} Missiles`}
-                </Button>
+                </UIComponent.GameButton>
             </React.Fragment>;
 
         const allTargetedMarkup =

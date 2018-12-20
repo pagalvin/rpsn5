@@ -4,6 +4,7 @@ import { GameLogic } from '../../Game/GameLogic';
 import { MissileBase } from '../../Entities/WorldObjects/Bases/MissileBase';
 import { Button } from '@material-ui/core';
 import { OrdnanceTargetingComponent } from '../OrdnanceTargetingComponent';
+import { UIComponent } from '../GameButton';
 
 interface props {
     base: MissileBase;
@@ -52,9 +53,9 @@ export class MissileBaseComponent extends Component<props, state> {
 
         const readyToActivateMarkup =
             <React.Fragment>
-                <Button onClick={() => this.activateMissileBase()}>
+                <UIComponent.GameButton onClick={() => this.activateMissileBase()}>
                     {`Target ${base.ordnance.length} Missiles`}
-                </Button>
+                </UIComponent.GameButton>
             </React.Fragment>;
 
         const allTargetedMarkup =

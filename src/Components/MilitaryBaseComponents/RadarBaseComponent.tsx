@@ -4,6 +4,7 @@ import { Button } from '@material-ui/core';
 import { GameLogic } from '../../Game/GameLogic';
 import { MapLocation } from '../../Entities/MapObjects/MapLocation';
 import { MapUtil } from '../../Utils/MapUtils';
+import { UIComponent } from '../GameButton';
 
 interface props {
     base: RadarBase
@@ -41,8 +42,8 @@ export class RadarBaseComponent extends Component<props, state> {
 
         const readyToActivateMarkup =
             <React.Fragment>
-                <Button onClick={() => setMode({ mode: "Active" })}>Go Active</Button>
-                <Button onClick={() => setMode({ mode: "Passive" })}>Go Passive</Button>
+                <UIComponent.GameButton onClick={() => setMode({ mode: "Active" })}>Go Active</UIComponent.GameButton>
+                <UIComponent.GameButton onClick={() => setMode({ mode: "Passive" })}>Go Passive</UIComponent.GameButton>
             </React.Fragment>;
 
         const isActivatedMarkup =

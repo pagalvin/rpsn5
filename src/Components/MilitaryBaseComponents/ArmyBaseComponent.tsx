@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button } from '@material-ui/core';
 import { ArmyBase } from '../../Entities/WorldObjects/Bases/ArmyBase';
 import { GameLogic } from '../../Game/GameLogic';
+import { UIComponent } from '../GameButton';
 
 interface props {
     base: ArmyBase;
@@ -38,9 +39,9 @@ export class ArmyBaseComponent extends Component<props, state> {
 
         const readyToActivateMarkup =
             <React.Fragment>
-                <Button onClick={() => this.decampArmy()}>
+                <UIComponent.GameButton onClick={() => this.decampArmy()}>
                     Decamp
-                </Button>
+                </UIComponent.GameButton>
             </React.Fragment>;
 
         const isDecampedMarkup =

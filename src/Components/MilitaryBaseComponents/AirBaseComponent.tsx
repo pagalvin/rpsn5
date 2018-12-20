@@ -3,6 +3,7 @@ import { AirBase } from '../../Entities/WorldObjects/Bases/AirBase';
 import { Button } from '@material-ui/core';
 import { GameLogic } from '../../Game/GameLogic';
 import { OrdnanceTargetingComponent } from '../OrdnanceTargetingComponent';
+import { UIComponent } from '../GameButton';
 
 interface props {
     base: AirBase;
@@ -60,9 +61,9 @@ export class AirBaseComponent extends Component<props, state> {
 
         const readyToActivateMarkup =
             <React.Fragment>
-                <Button onClick={() => this.activateAirBase()}>
+                <UIComponent.GameButton onClick={() => this.activateAirBase()}>
                     {`Scramble ${base.totalFighters} fighters and ${base.ordnance.length} bombers.`}
-                </Button>
+                </UIComponent.GameButton>
             </React.Fragment>;
 
         const isFlyingMarkup =

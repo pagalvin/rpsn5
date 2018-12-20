@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button } from '@material-ui/core';
 import { AbmBase } from '../../Entities/WorldObjects/Bases/AbmBase';
 import { GameLogic } from '../../Game/GameLogic';
+import { UIComponent } from '../GameButton';
 
 interface props {
     base: AbmBase;
@@ -38,9 +39,9 @@ export class AbmBaseComponent extends Component<props, state> {
 
         const readyToActivateMarkup =
             <React.Fragment>
-                <Button onClick={() => this.activateAbmBase()}>
+                <UIComponent.GameButton onClick={() => this.activateAbmBase()}>
                     Enable Active Tracking
-                </Button>
+                </UIComponent.GameButton>
             </React.Fragment>;
 
         const isTrackingMarkup =
