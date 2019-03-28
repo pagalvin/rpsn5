@@ -14,6 +14,7 @@ import { AirBase } from "../Entities/WorldObjects/Bases/AirBase";
 import { MapUtil } from "../Utils/MapUtils";
 import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
 import { MilitaryBaseTypes, NonNullMilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
+import { getNameProcessResult } from "../Entities/nameableGameObject";
 
 export type gameStateChangeType =
     "Advance Turn" |
@@ -588,5 +589,28 @@ export class GameLogic {
             tryFindBase(Rng.pickRandomFromArray({sourceArray: allMilitaryBases}));
         }
         
+    }
+
+    public static getNameForNameableItem(args: {fromNamesArr: string[]}): getNameProcessResult {
+
+        const selectedNameIdx = Rng.throwDice({hiNumberMinus1: args.fromNamesArr.length});
+        
+        const emptyProcessResult: getNameProcessResult = 
+        {
+            allOtherNames: [], 
+            baseName: ""
+        };
+        
+        const processedResult = args.fromNamesArr.reduce ((prev: getNameProcessResult, curr, idx) => {
+            
+            if (idx === selectedNameIdx) return {allOtherNames: prev.allOtherNames, baseName: curr} as getNameProcessResult;
+
+            return {
+                allOtherNames: prev.allOtherNames.concat(curr),
+                baseName: prev.baseName
+            } as getNameProcessResult;
+        }, emptyProcessResult);
+
+        return processedResult;
     }
 }

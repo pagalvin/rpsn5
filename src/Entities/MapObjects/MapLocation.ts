@@ -7,7 +7,7 @@ import { CountryMap } from "../WorldObjects/CountryMap";
 
 export class MapLocation extends AbstractMapLocation {
  
-    public Contents: MilitaryBaseTypes | PopulationAreaTypes;
+    public Contents!: MilitaryBaseTypes | PopulationAreaTypes;
     public uniqueID: number = 0;
     
     public nuclearStrikes: number;

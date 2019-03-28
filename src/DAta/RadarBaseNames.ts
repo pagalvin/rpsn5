@@ -1,13 +1,6 @@
-import { Rng } from "../Utils/Rng";
+import { GameLogic } from "../Game/GameLogic";
 
-interface radarBaseNameProcessResult {
-    baseName: string,
-    allOtherBases: string[]
-}
-
-
-
-export class RadarNames {
+export class RadarBaseNames {
 
     private static availableRadarBaseNames: string[] = [
         "Hertz",
@@ -47,26 +40,10 @@ export class RadarNames {
 
     public static getRadarBaseName(): string {
 
-        const selectedBaseIdx = Rng.throwDice({hiNumberMinus1: this.availableRadarBaseNames.length});
-        
-        const emptyProcessResult: radarBaseNameProcessResult = 
-        {
-            allOtherBases: [], 
-            baseName: ""
-        };
-        
-        const processedResult = this.availableRadarBaseNames.reduce ((prev: radarBaseNameProcessResult, curr, idx) => {
-            
-            if (idx === selectedBaseIdx) return {allOtherBases: prev.allOtherBases, baseName: curr} as radarBaseNameProcessResult;
-
-            return {
-                allOtherBases: prev.allOtherBases.concat(curr),
-                baseName: prev.baseName
-            } as radarBaseNameProcessResult;
-        }, emptyProcessResult);
-
-        this.availableRadarBaseNames = emptyProcessResult.allOtherBases;
-        return processedResult.baseName;
-
+        const getNameReslt = GameLogic.getNameForNameableItem({fromNamesArr: this.availableRadarBaseNames});
+        this.availableRadarBaseNames = getNameReslt.allOtherNames;
+        return getNameReslt.baseName;
     }
+
 }
+ 

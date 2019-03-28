@@ -1,8 +1,12 @@
 import { AbstractMilitaryBase } from "./AbstractMilitaryBase";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
 import { MapLocation } from "../../MapObjects/MapLocation";
+import { nameableGAmeObject } from "../../nameableGameObject";
+import { GameLogComponent } from "../../../Components/GameLogComponent";
+import { GameLogic } from "../../../Game/GameLogic";
+import { RadarBaseNames } from "../../../Data/RadarBaseNames";
 
-export class RadarBase extends AbstractMilitaryBase {
+export class RadarBase extends AbstractMilitaryBase implements nameableGAmeObject {
  
     public readonly WorldObjectLabel: MilitaryBaseTypeLabels = "Radar";
 
@@ -12,6 +16,9 @@ export class RadarBase extends AbstractMilitaryBase {
         super(args);
 
         this.modeOfOperation = "Inactive";
+
+        this.Name = RadarBaseNames.getRadarBaseName();
+        console.log("RadarBase.ts: ctor: got a radar base name:", this.Name)
     }
 
     public setModeOfOperation(args: {mode: "Active" | "Passive"}) {

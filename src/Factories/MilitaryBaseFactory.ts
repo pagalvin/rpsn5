@@ -33,10 +33,10 @@ export class MilitaryBaseFactory {
         return this.instance;
     }
 
-    private newName(args: {forBase: AbstractMilitaryBase}) {
-        // console.log(`${this.msh}: newName: typeof base:`, args.forBase.WorldObjectLabel);
-        return 'xyzzy';
-    }
+    // private newName(args: {forBase: AbstractMilitaryBase}) {
+    //     // console.log(`${this.msh}: newName: typeof base:`, args.forBase.WorldObjectLabel);
+    //     return 'xyzzy';
+    // }
 
     public createNewBase(args: {baseType: MilitaryBaseTypeLabels, atLocation: MapLocation}) {
 
@@ -50,32 +50,32 @@ export class MilitaryBaseFactory {
 
             case "ABM": {
                 const newBase = new AbmBase(newBaseProperties);
-                newBase.Name = this.newName({forBase: newBase});
+                // newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Radar": {
                 const newBase = new RadarBase(newBaseProperties);
-                newBase.Name = this.newName({forBase: newBase});
+                // newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Navy": {
                 const newBase = new NavyBase(newBaseProperties);
-                newBase.Name = this.newName({forBase: newBase});
+                // newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Missile": {
                 const newBase = new MissileBase(newBaseProperties);
-                newBase.Name = this.newName({forBase: newBase});
+                // newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Air": {
                 const newBase = new AirBase(newBaseProperties);
-                newBase.Name = this.newName({forBase: newBase});
+                // newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
             case "Army": {
                 const newBase = new ArmyBase(newBaseProperties);
-                newBase.Name = this.newName({forBase: newBase});
+                // newBase.Name = this.newName({forBase: newBase});
                 return newBase;
             }
         }

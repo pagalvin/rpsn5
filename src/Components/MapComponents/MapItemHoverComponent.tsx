@@ -49,6 +49,7 @@ export class MapItemHoverComponent extends React.Component<props, state> {
         return (
             <React.Fragment>
             <p>map location: {this.state.hoverMapLocation.uniqueID}</p>
+            <p>map location: {this.state.hoverMapLocation.Contents.Name}</p>
             </React.Fragment>
         )
     }
