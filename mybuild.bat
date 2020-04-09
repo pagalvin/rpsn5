@@ -13,6 +13,6 @@ call git add .
 call git commit -m "Build and deploy to Azure"
 call git push
 
-echo Finished. The build should begin shortly in Azure be ready in a few minutes.
+echo Finished. The build should begin shortly in Azure and be ready in a few minutes.
 
 
