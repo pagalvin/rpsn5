@@ -19,7 +19,7 @@ interface peaceTimeSentimentMapping {
     Falling Behind: doesn't think it has enough bases
     Confident: feels good about the mix of things.
 */
-type sentiments = "Underinformed" | "Falling Behind" | "Confident";
+type sentiments =  "Underinformed" | "Falling Behind" | "Confident";
 
 export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
 

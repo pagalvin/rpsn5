@@ -1,4 +1,6 @@
 export class Constants {
+
+    public static readonly GAME_VERSION = 0.1;
     
     public static readonly NOTIFY_BUILD_RESULT_CALLBACK_NAME = "rpsn_notifyBuildDragResult";
     public static readonly NOTIFY_TARGET_RESULT_CALLBACK_NAME = "rpsn_notifyTargetResult";
@@ -36,5 +38,6 @@ export class Constants {
     public static readonly MISSILE_BASELABEL = "Missile";
     public static readonly ABM_BASELABEL = "Abm";
     public static readonly AIR_BASELABEL = "Air";
+
 }
 

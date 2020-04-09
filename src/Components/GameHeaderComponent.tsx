@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Game } from '../Entities/gameEntity';
 import { GamestateWatcher, GameLogic, gameStateChangeDetails } from '../Game/GameLogic';
 import { TickerComponent } from './TickerComponent';
+import { Constants } from '../Game/constants';
 
 interface state {
     yearMessage: string,
@@ -11,7 +12,7 @@ interface props { }
 
 export class GameHeaderComponent extends Component<props, state> implements GamestateWatcher {
 
-    private readonly yearMessageTemplate: string = "The year was blah, a time of blah.";
+    private readonly yearMessageTemplate: string = "(v0.1) The year was blah, a time of blah.";
 
     constructor(props: props, state: state) {
         super(props, state);
@@ -42,8 +43,8 @@ export class GameHeaderComponent extends Component<props, state> implements Game
             <div className="gameYearContainer">
                 {
                     game.isPeacetime 
-                        ? <TickerComponent tickerInterval={25} tickerMessage={`The year was ${game.gameYear}, a time of ${game.isPeacetime ? "peace" : "war!"}`} />
-                        : <TickerComponent tickerInterval={25} tickerMessage={`The year was ${game.gameYear}, where a state of WAR existed in the world.`} />
+                        ? <TickerComponent tickerInterval={25} tickerMessage={`(v${Constants.GAME_VERSION}) The year was ${game.gameYear}, a time of ${game.isPeacetime ? "peace" : "war!"}`} />
+                        : <TickerComponent tickerInterval={25} tickerMessage={`(v${Constants.GAME_VERSION}) The year was ${game.gameYear}, where a state of WAR existed in the world.`} />
 
                 }
             </div>
