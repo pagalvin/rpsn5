@@ -141,7 +141,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
             const title = `${args.forBaseType} base`;
             const baseTokenSrc = `images/baseTokens/${args.forBaseType}base.png`
-            return (<span><img src={baseTokenSrc} width="20" height="20" title={title}/> {args.forBaseType}</span>);
+            return (<span className="allowedBase" ><img src={baseTokenSrc} width="20" height="20" title={title}/> {args.forBaseType}</span>);
         }   
 
         const qtyMessage = () => {

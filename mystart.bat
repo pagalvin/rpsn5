@@ -1,10 +1,8 @@
 
-set /p Build=<buildVersion.txt
-SET /A Build = %Build% + 1
+echo Setting build version number ...
 
-echo "hello" %Build%
+call setBuildVersion.bat
 
-echo %Build% > buildVersion.txt
-echo export class BuildVersion { public static readonly BUILD_VERSION = %Build%; } > src\Game\BuildVersion.ts
+echo running react-scripts
 
-react-scripts start
+npm run start
