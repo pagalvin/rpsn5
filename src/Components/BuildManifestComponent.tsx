@@ -7,6 +7,8 @@ import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../Game/Gam
 import { Constants } from '../Game/constants';
 import { Button } from '@material-ui/core';
 import { buildBaseResult } from './MapComponents/MapComponent';
+import { UIComponent } from './GameButton';
+import { constants } from 'os';
 
 interface props {
     allowedBasesToBuild: tacticalMoveOptions[],
@@ -50,7 +52,6 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
         // console.log(`BuildManifestComponent: componentDidMount: state and props:`, { state: this.state, props: this.props});
 
-
         this.setState({
             buildManifest: new Array(this.props.totalAllowedToBuild).fill(this.emptyManifestSelection)
         });
@@ -87,16 +88,16 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
         console.log(`BuildManifestComponent: render: Entering with props and state:`, {props: this.props, state: this.state});
 
-        const manifestCompleteMarkup = () => {
+        const buildManifestCompleteMarkup = () => {
             return (
                 <div>
                     All base assignments complete.
-                    <Button onClick={
+                    <UIComponent.GameButton onClick={
                         () => {
                             console.log(`BuildManifestComponent: render: manifestCompleteMarkup: finish turn.`)
                             GameLogic.finishHumanTurn();
                         }}>
-                        Finish Turn</Button>
+                        Finish Turn</UIComponent.GameButton>
                 </div>
             )
         }
@@ -109,9 +110,9 @@ export class BuildManifestComponent extends Component<props, state> implements G
                 manifestIndex: args.manifiestIndex
             });
 
-            args.dragEvent.dataTransfer.setData("dropType", Constants.BUILD_DROP);
-            args.dragEvent.dataTransfer.setData("baseType", args.baseType as string);
-            args.dragEvent.dataTransfer.setData("manifestIndex", args.manifiestIndex.toString());
+            args.dragEvent.dataTransfer.setData(Constants.DROPTYPE, Constants.BUILD_DROP);
+            args.dragEvent.dataTransfer.setData(Constants.BASETYPE, args.baseType as string);
+            args.dragEvent.dataTransfer.setData(Constants.MANIFESTINDEX, args.manifiestIndex.toString());
             
             (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
         }
@@ -130,10 +131,18 @@ export class BuildManifestComponent extends Component<props, state> implements G
                             }
                         }
                     >
-                        {allowedBase} |&nbsp;
+                        {individualAllowedBaseMarkup({forBaseType: allowedBase as string})}
+                        {/* <img src="images/airbase1.png"/> {allowedBase} |&nbsp; */}
                 </span>
                 )))
         };
+
+        const individualAllowedBaseMarkup = (args: {forBaseType: string}) => {
+
+            const title = `${args.forBaseType} base`;
+            const baseTokenSrc = `images/baseTokens/${args.forBaseType}base.png`
+            return (<span><img src={baseTokenSrc} width="20" height="20" title={title}/> {args.forBaseType}</span>);
+        }   
 
         const qtyMessage = () => {
             return (
@@ -177,7 +186,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
                 {
                     this.state.buildManifest.filter(m => m.didBuild).length === this.state.buildManifest.length
-                        ? manifestCompleteMarkup()
+                        ? buildManifestCompleteMarkup()
                         : null
                 }
 

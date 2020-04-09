@@ -24,5 +24,17 @@ export class Constants {
 
     public static readonly PCT_VISIBLE_SENTIMENT_THRESHOLD = 20;
     public static readonly EXPECTED_BASE_COUNT_FACTOR = 1.75;
+
+    // Supporting drag and drop on the screen.
+    public static readonly DROPTYPE = "dropType";
+    public static readonly BASETYPE = "baseType";
+    public static readonly MANIFESTINDEX = "manifestIndex";
+
+    // Base labels
+    public static readonly ARMY_BASELABEL = "Army";
+    public static readonly NAVY_BASELABEL = "Navy";
+    public static readonly MISSILE_BASELABEL = "Missile";
+    public static readonly ABM_BASELABEL = "Abm";
+    public static readonly AIR_BASELABEL = "Air";
 }
 
