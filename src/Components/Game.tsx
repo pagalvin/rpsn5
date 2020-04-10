@@ -124,11 +124,14 @@ export class GameComponent extends Component {
                     <MapComponent countryMap={gameEntity.computerPlayer.map} />
                 </Grid>
 
-                <span className="gameBuildInformation">Build version: {BuildVersion.BUILD_VERSION}</span>
+                <span className="gameBuildInformation">
+                    Build version: {BuildVersion.BUILD_VERSION}
+                    <br/>
+                    View the source: <a href="https://github.com/pagalvin/rpsn5" target="github">https://github.com/pagalvin/rpsn5</a>
+                </span>
             </Grid>
 
         );
-
 
         return format3();
     }

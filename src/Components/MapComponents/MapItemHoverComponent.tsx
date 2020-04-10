@@ -22,26 +22,26 @@ export class MapItemHoverComponent extends React.Component<props, state> {
             hoverMapLocation: null
         };
 
-        console.log(`MapItemHoverComponent: Entering with props and state:`, { props: props, state: state });
+        // console.log(`MapItemHoverComponent: Entering with props and state:`, { props: props, state: state });
     }
 
     private handleMapLocationHover: hoverListenerFunc = (args: {onMapLocation: MapLocation}) => {
-        console.log(`MapItemHoverComponent: handleMapLocationHover: Entering with args:`, args);
+        // console.log(`MapItemHoverComponent: handleMapLocationHover: Entering with args:`, args);
         this.setState({hoverMapLocation: args.onMapLocation})
     }
 
     componentDidMount() {
-        
-        console.log(`MapItemHoverComponent: componentDidMount: my props and state:`, {props: this.props, state: this.state});
-        console.log(`MapItemHoverComponent: componentDidMount: registering my map location hover handler.`);
 
-        this.props.registerHoverListener({hoverListener: this.handleMapLocationHover.bind(this)});        
+        // console.log(`MapItemHoverComponent: componentDidMount: my props and state:`, {props: this.props, state: this.state});
+        // console.log(`MapItemHoverComponent: componentDidMount: registering my map location hover handler.`);
+
+        this.props.registerHoverListener({hoverListener: this.handleMapLocationHover.bind(this)});
     }
 
     render() {
 
-        console.log(`MapItemHoverLocation: render: entering.`);
-        
+        // console.log(`MapItemHoverLocation: render: entering.`);
+
         if (! this.state.hoverMapLocation) {
             return null;
         }

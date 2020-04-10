@@ -6,6 +6,7 @@ import { GamestateWatcher, gameStateChangeDetails, GameLogic } from '../../Game/
 import Odometer from 'react-odometerjs'
 // import 'odometer/themes/odometer-theme-default.css';
 import 'odometer/themes/odometer-theme-train-station.css';
+import { Game } from '../../Entities/gameEntity';
 
 
 export interface state {
@@ -44,6 +45,23 @@ export class MapSummaryComponent extends React.Component<props, state> implement
         // const summarizedMap = MapUtil.getMapSummary({ forMap: this.props.mapToSummarize });
         const { summarizedMap } = this.state;
 
+        const ordnanceMarkup = () => {
+            return (
+                <div>
+                    Ordnance:
+                    A: <Odometer format="d" duration={5000} value={summarizedMap.totalAbmMissilesOnLine}/> 
+                    | B: <Odometer format="d" duration={5000} value={summarizedMap.totalBombersInFlight}/>
+                    | S: <Odometer format="d" duration={5000} value={summarizedMap.totalSubMissilesOnLine}/>
+                    | F: <Odometer format="d" duration={5000} value={summarizedMap.totalFightersOnPatrol}/>
+                    | M: <Odometer format="d" duration={5000} value={summarizedMap.totalICBMsOnLine}/>
+                </div>
+            );
+        }
+        
+        const warTimeMarkup = () => {
+            return ( Game.getInstance().isWartime ? ordnanceMarkup() : "")
+        }
+
         return (
             <div className="mapSummaryContainer">
                 <div className="playerName">
@@ -64,15 +82,7 @@ export class MapSummaryComponent extends React.Component<props, state> implement
                     | N: <Odometer format="d" duration={5000} value={summarizedMap.allNavyBases.length}/>
 
                 </div>
-                <div>
-                    Ordnance:
-                    A: <Odometer format="d" duration={5000} value={summarizedMap.totalAbmMissilesOnLine}/> 
-                    | B: <Odometer format="d" duration={5000} value={summarizedMap.totalBombersInFlight}/>
-                    | S: <Odometer format="d" duration={5000} value={summarizedMap.totalSubMissilesOnLine}/>
-                    | F: <Odometer format="d" duration={5000} value={summarizedMap.totalFightersOnPatrol}/>
-                    | M: <Odometer format="d" duration={5000} value={summarizedMap.totalICBMsOnLine}/>
-
-                </div>
+                { warTimeMarkup() }
             </div>
         );
 
