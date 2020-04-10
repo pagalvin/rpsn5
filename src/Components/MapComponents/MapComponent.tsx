@@ -349,7 +349,7 @@ export class MapComponent extends React.Component<props, state> implements Games
             result: {
               didSucceed: true,
               manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
-              message: `Successfully built a base, type=${newBase.WorldObjectLabel} named ${newBase.Name}.`
+              message: `${newBase.WorldObjectLabel} base ${newBase.Name} slated for construction.`
             }
           });
       }

@@ -88,13 +88,13 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
         console.log(`BuildManifestComponent: render: Entering with props and state:`, {props: this.props, state: this.state});
 
-        const buildManifestCompleteMarkup = () => {
+        const buildManifestCompletedMarkup = () => {
             return (
                 <div>
                     All base assignments complete.
                     <UIComponent.GameButton onClick={
                         () => {
-                            console.log(`BuildManifestComponent: render: manifestCompleteMarkup: finish turn.`)
+                            //console.log(`BuildManifestComponent: render: manifestCompleteMarkup: finish turn.`)
                             GameLogic.finishHumanTurn();
                         }}>
                         Finish Turn</UIComponent.GameButton>
@@ -132,7 +132,6 @@ export class BuildManifestComponent extends Component<props, state> implements G
                         }
                     >
                         {individualAllowedBaseMarkup({forBaseType: allowedBase as string})}
-                        {/* <img src="images/airbase1.png"/> {allowedBase} |&nbsp; */}
                 </span>
                 )))
         };
@@ -148,7 +147,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
             return (
                 this.props.totalAllowedToBuild > 1
                     ? <div>
-                        <TickerComponent tickerInterval={20} tickerMessage={`You are allowed to build ${this.props.totalAllowedToBuild} bases.`} /></div>
+                        <TickerComponent tickerInterval={20} tickerMessage={`You are allowed to build ${this.props.totalAllowedToBuild} ${this.props.totalAllowedToBuild == 1 ? "base" : "bases"}.`} /></div>
                     : <div>{`You are allowed to build 1 base.`}</div>
             );
         };
@@ -157,19 +156,20 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
             console.log(`BuildManifestComponent: manifestMarkup: building up a selection:`, this.state.buildManifest);
 
-            return this.state.buildManifest.map((selection, idx) => {
-                return (
-                    <div key={this.uiKey()}>
-                        Option: {idx}: &nbsp;
-                        Build what: {selection.didBuild ? selection.buildResultText : allowedBaseMarkup({forManifestIndex: idx})}
-                        &nbsp;
-                        Did Build? {selection.didBuild ? "Yes" : "No"}
-                        {
-                            (selection.buildResultText && ! selection.didBuild) ? selection.buildResultText : null
-                        }
-                    </div>
-                )
-            });
+            return (<ol> { this.state.buildManifest.map((selection, idx) => individualManifestChoiceMarkup(selection, idx)) }</ol>)
+        }
+
+        const individualManifestChoiceMarkup = (selection: buildSelection, idx: number) => {
+
+            return (
+                <li key={this.uiKey()}>
+                {selection.didBuild ? selection.buildResultText : allowedBaseMarkup({forManifestIndex: idx})}
+                {/* Did Build? {selection.didBuild ? "Yes" : "No"} */}
+                {
+                    (selection.buildResultText && ! selection.didBuild) ? selection.buildResultText : null
+                }
+            </li>
+    );
         }
 
         const toRender = (
@@ -186,7 +186,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
                 {
                     this.state.buildManifest.filter(m => m.didBuild).length === this.state.buildManifest.length
-                        ? buildManifestCompleteMarkup()
+                        ? buildManifestCompletedMarkup()
                         : null
                 }
 

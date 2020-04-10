@@ -6,6 +6,7 @@ import { Grid, Paper, createMuiTheme, MuiThemeProvider } from '@material-ui/core
 import { Game } from '../Entities/gameEntity';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
 import { MapComponent } from './MapComponents/MapComponent';
+import { BuildVersion } from '../Game/BuildVersion';
 
 export interface playerMapClickListener {
     handlePlayerMapClick: (args: { location: MapLocation }) => void;
@@ -122,6 +123,8 @@ export class GameComponent extends Component {
                 <Grid item xs={4} className="gameUIRightZone">
                     <MapComponent countryMap={gameEntity.computerPlayer.map} />
                 </Grid>
+
+                <span className="gameBuildInformation">Build version: {BuildVersion.BUILD_VERSION}</span>
             </Grid>
 
         );
