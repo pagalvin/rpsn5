@@ -59,13 +59,28 @@ export class MapSummaryComponent extends React.Component<props, state> implement
         }
         
         const warTimeMarkup = () => {
-            return ( Game.getInstance().isWartime ? ordnanceMarkup() : "")
+            return ( Game.getInstance().isWartime ? ordnanceMarkup() : null)
+        }
+
+        const playerNameMarkup = (args: {playerName: string}) => {
+            const maxWidth = 44;
+            const dashes = "- - - - - - - - - - - - - - - - - - ";
+
+            if (args.playerName.length >= maxWidth) return args.playerName;
+            
+            const idx = 0.5 * (maxWidth - args.playerName.length);
+
+            return (
+                dashes.substring(0,idx) + " " + args.playerName + " " + dashes.substr(0,idx)
+            );
+
         }
 
         return (
             <div className="mapSummaryContainer">
                 <div className="playerName">
-                    {this.props.mapToSummarize.owningPlayer.Name}
+                    {playerNameMarkup({playerName: this.props.mapToSummarize.owningPlayer.Name})}
+                    {/* {this.props.mapToSummarize.owningPlayer.Name} */}
                 </div>
                 <div>
                     Population: <Odometer format="(,ddd)" duration={5000} value={summarizedMap.totalPopulation}/>
