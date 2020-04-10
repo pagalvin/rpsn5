@@ -181,7 +181,7 @@ export class MapComponent extends React.Component<props, state> implements Games
     else if (args.details.changeLabel === "ICBM Intercepted" ||
       args.details.changeLabel === "Submarine Missile Shot Down By ABM" ||
       args.details.changeLabel === "Bomber was shot down by ABM" ||
-      args.details.changeLabel === "Bomber was shot down by Figher") {
+      args.details.changeLabel === "Bomber was shot down by Fighter") {
       this.handleLocationDetargeted({ detargetedLocation: args.details.relatedLocation });
     }
 

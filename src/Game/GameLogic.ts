@@ -20,7 +20,7 @@ export type gameStateChangeType =
     "Advance Turn" |
     "Base Activated" |
     "Bomber was shot down by ABM" |
-    "Bomber was shot down by Figher" |
+    "Bomber was shot down by Fighter" |
     "Computer Finished Its Turn" |
     "Computer Playing Its Turn" |
     "ICBM Intercepted" |
