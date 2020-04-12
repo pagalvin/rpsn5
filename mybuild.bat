@@ -1,3 +1,5 @@
+echo Copying build .gitignore to .gitignore
+copy .gitignoreBuild .gitignore
 
 echo Setting build version number ...
 
