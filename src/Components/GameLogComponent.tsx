@@ -70,7 +70,7 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
     private loggableMessageFromGameStateChange(args: {gsc: gameStateChangeDetails}) : string {
 
         if (args.gsc.changeLabel == "Computer Playing Its Turn") {
-            return args.gsc.miscDetails + " playing its turn.";
+            return args.gsc.miscDetails + " is playing its turn.";
         }
 
         return args.gsc.changeLabel;
