@@ -514,7 +514,6 @@ export class GameLogic {
     }
 
     public static finishHumanTurn(): void {
-        this.notifyGamestateChange({ details: { changeLabel: "Advance Turn" } });
         Game.getInstance().currentPlayer = Game.getInstance().computerPlayer;
         this.playComputerTurn();
         Game.getInstance().currentPlayer = Game.getInstance().humanPlayer;

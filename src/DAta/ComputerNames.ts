@@ -41,7 +41,7 @@ export class GameData {
     ];
 
     
-    public static getRandomComputerName(): string {
+    public static getRandomComputerPlayerName(): string {
         return Rng.pickRandomFromArray({ sourceArray: this.allComputerNames });
     }
 

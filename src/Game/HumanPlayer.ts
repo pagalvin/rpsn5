@@ -12,7 +12,7 @@ export class HumanPlayer extends AbstractPlayer  {
     public map: CountryMap;
     public totalCausualties: number = 0;
 
-    constructor() {
+     constructor() {
         super({isHuman: true});
 
         this.map = new CountryMap({sizeX: 10, sizeY: 10, ownerLabel: "Human", owningPlayer: this});
