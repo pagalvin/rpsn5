@@ -34,7 +34,7 @@ export class Game extends AbstractGameEntity {
 
     private initializeGame() {
         this.computerPlayer = new ComputerPlayer();
-        this.computerPlayer.Name = GameData.getRandomComputerName();
+        this.computerPlayer.Name = GameData.getRandomComputerPlayerName();
         this.humanPlayer = new HumanPlayer();
         this.currentPlayer = this.humanPlayer;
     }
