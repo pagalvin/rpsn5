@@ -67,13 +67,23 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
 
     }
 
+    private loggableMessageFromGameStateChange(args: {gsc: gameStateChangeDetails}) : string {
+
+        if (args.gsc.changeLabel == "Computer Playing Its Turn") {
+            return args.gsc.miscDetails + " playing its turn.";
+        }
+
+        return args.gsc.changeLabel;
+    }
+
     public handleGamestateChange(args: { details: gameStateChangeDetails }) {
 
         const doIgnore = this.ignoreChangeLabels.filter(igcl => igcl === args.details.changeLabel).length > 0;
         if (doIgnore) { return; }
 
         // add the message we just got to the queue
-        this.queuedMessages = this.queuedMessages.concat(args.details.changeLabel);
+        // this.queuedMessages = this.queuedMessages.concat(args.details.changeLabel);
+        this.queuedMessages = this.queuedMessages.concat(this.loggableMessageFromGameStateChange({gsc : args.details}));
 
         // if we're already processing a message, do nothing
         if (this.state.currentMessage.length > 0) {
@@ -93,6 +103,7 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
         return (
             <div className="gameLogContainer">
                 <div>
+                    <br/>
                     -- Activities Log --
                 </div>
                 <div>

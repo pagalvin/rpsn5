@@ -35,6 +35,7 @@ export interface gameStateChangeDetails {
     changeLabel: gameStateChangeType;
     relatedLocation?: MapLocation;
     relatedBase?: MilitaryBaseTypes;
+    miscDetails?: string;
 }
 
 export interface GamestateWatcher {
@@ -62,7 +63,7 @@ export class GameLogic {
 
         const game = Game.getInstance();
 
-        this.notifyGamestateChange({ details: { changeLabel: "Computer Playing Its Turn" } })
+        this.notifyGamestateChange({ details: { changeLabel: "Computer Playing Its Turn", miscDetails: game.currentPlayer.Name } })
 
         game.currentPlayer = game.computerPlayer;
 
