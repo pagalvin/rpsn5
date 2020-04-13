@@ -4,6 +4,8 @@ import { MilitaryBaseTypes } from "./Bases/MilitaryBaseTypes";
 import { AbstractPlayer } from "../../Game/AbstractPlayer";
 import { AbmBase } from "./Bases/AbmBase";
 import { Rng } from "../../Utils/Rng";
+import { Constants } from "../../Game/constants";
+import { constants } from "os";
 
 export class CountryMap {
 
@@ -14,6 +16,7 @@ export class CountryMap {
     public owningPlayer: AbstractPlayer;
 
     private readonly newRuralArea = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Rural"});
+    private readonly newCity = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "City"});
 
     constructor(args: {sizeX: number, sizeY: number, ownerLabel: "Computer" | "Human", owningPlayer: AbstractPlayer}) {
 
@@ -53,6 +56,25 @@ export class CountryMap {
                 this.map[x].push(mi);
             }
         }
+
+        // Place cities.
+        let citiesToPlace: number = Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_CITIES - Constants.MIN_INITIAL_CITIES}) + Constants.MIN_INITIAL_CITIES;
+
+        while (citiesToPlace > 0) {
+
+            const tryX = Rng.throwDice({hiNumberMinus1: this.sizeX - 1});
+            const tryY = Rng.throwDice({hiNumberMinus1: this.sizeY - 1});
+
+            const mi: MapLocation = this.map[tryX][tryY];
+
+            if (mi.Contents.WorldObjectLabel === "Rural") {
+                citiesToPlace --;
+                mi.Contents = this.newCity();
+            }
+
+        }
+
+        
     }
 
     public getAllMilitaryBases(): Exclude<MilitaryBaseTypes, null>[] {

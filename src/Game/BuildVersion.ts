@@ -1,1 +1,1 @@
-export class BuildVersion { public static readonly BUILD_VERSION = "39 at  7:55:27.94 on Mon 04/13/2020"; } 
+export class BuildVersion { public static readonly BUILD_VERSION = "40 at 15:39:22.06 on Mon 04/13/2020"; } 

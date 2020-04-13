@@ -39,5 +39,7 @@ export class Constants {
     public static readonly ABM_BASELABEL = "Abm";
     public static readonly AIR_BASELABEL = "Air";
 
+    public static readonly MIN_INITIAL_CITIES = 5;
+    public static readonly MAX_INITIAL_CITIES = 8;
 }
 

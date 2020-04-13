@@ -59,7 +59,7 @@ export class MapUtil {
             case "ABM": return "A";
             case "Air": return "B";
             case "Army": return "T";
-            case "City": return "City";
+            case "City": return "C";
             case "Missile": return "M";
             case "Navy": return "S";
             case "Radar": return "R";
