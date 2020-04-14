@@ -3,6 +3,7 @@ import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
 import { GameLogic } from "../../../Game/GameLogic";
 import { Ordnance } from "../../Ordnance";
 import { MapLocation } from "../../MapObjects/MapLocation";
+import { MissileBaseNames } from "../../../Data/MissileBaseNames";
 
 export class MissileBase extends AbstractMilitaryBase implements OrdnanceCarryingBase {
 
@@ -14,6 +15,7 @@ export class MissileBase extends AbstractMilitaryBase implements OrdnanceCarryin
     constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
 
+        this.Name = MissileBaseNames.getMissileBaseName();
         this.ordnance = [];
 
         this.isReceivingOrders = false;
