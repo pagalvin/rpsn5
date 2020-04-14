@@ -69,10 +69,21 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
 
     private loggableMessageFromGameStateChange(args: {gsc: gameStateChangeDetails}) : string {
 
-        if (args.gsc.changeLabel == "Computer Playing Its Turn") {
+        if (args.gsc.changeLabel === "Computer Playing Its Turn") {
             return args.gsc.miscDetails + " is playing its turn.";
         }
 
+        if (args.gsc.changeLabel === "New base constructed") {
+            if (args.gsc.relatedBase) {
+            const baseLabel = args.gsc.relatedBase.WorldObjectLabel;
+            const baseName = args.gsc.relatedBase.Name;
+            return `Constructed a new ${baseLabel} base: ${baseName}`;
+            }
+            else {
+                return `Cosntructed a new base but I don't know what kind!`;
+            }
+        }
+        
         return args.gsc.changeLabel;
     }
 

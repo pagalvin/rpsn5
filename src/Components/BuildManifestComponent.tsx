@@ -60,7 +60,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
     private handleDropResult(args: {result: buildBaseResult}) {
         console.log(`BuidManifestComponent: handleDropResult: drop finished, result:`, args.result);
-
+        
         this.setState({
             buildManifest: this.state.buildManifest.reduce( (prev, curr, idx) => {
 
@@ -102,17 +102,17 @@ export class BuildManifestComponent extends Component<props, state> implements G
             )
         }
 
-        const dragStartMarkup = (args: {dragEvent: React.DragEvent, baseType: tacticalMoveOptions, manifiestIndex: number}) => {
+        const dragStartMarkup = (args: {dragEvent: React.DragEvent, baseType: tacticalMoveOptions, manifestIndex: number}) => {
             console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragStart: e, ab:`, 
             { 
                 e: args.dragEvent, 
                 ab: args.baseType,
-                manifestIndex: args.manifiestIndex
+                manifestIndex: args.manifestIndex
             });
 
             args.dragEvent.dataTransfer.setData(Constants.DROPTYPE, Constants.BUILD_DROP);
             args.dragEvent.dataTransfer.setData(Constants.BASETYPE, args.baseType as string);
-            args.dragEvent.dataTransfer.setData(Constants.MANIFESTINDEX, args.manifiestIndex.toString());
+            args.dragEvent.dataTransfer.setData(Constants.MANIFESTINDEX, args.manifestIndex.toString());
             
             (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
         }
@@ -122,7 +122,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
                 this.props.allowedBasesToBuild.map((allowedBase, idx) => (
                     <span key={this.uiKey()}
                         draggable
-                        onDragStart={(e) => dragStartMarkup({baseType:allowedBase, dragEvent: e, manifiestIndex: args.forManifestIndex})}
+                        onDragStart={(e) => dragStartMarkup({baseType:allowedBase, dragEvent: e, manifestIndex: args.forManifestIndex})}
                         onDragEnd={
                             (e) => {
                                 console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragEnd: e, ab:`,

@@ -337,7 +337,7 @@ export class MapComponent extends React.Component<props, state> implements Games
 
       const newBase = MilitaryBaseFactory.getInstance().createNewBase(
         {
-          baseType: (args.dropEvent.dataTransfer.getData("baseType") as MilitaryBaseTypeLabels),
+          baseType: (args.dropEvent.dataTransfer.getData(Constants.BASETYPE) as MilitaryBaseTypeLabels),
           atLocation: args.cell
         });
 
@@ -352,6 +352,9 @@ export class MapComponent extends React.Component<props, state> implements Games
               message: `${newBase.WorldObjectLabel} base ${newBase.Name} slated for construction.`
             }
           });
+
+          GameLogic.notifyNewBaseConstructed({forBaseType: newBase});
+
       }
       else {
         notifyDragResultCallack(

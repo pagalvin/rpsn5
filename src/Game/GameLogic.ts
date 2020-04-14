@@ -26,6 +26,7 @@ export type gameStateChangeType =
     "ICBM Intercepted" |
     "Location Nuked" |
     "Map Location Targeted" |
+    "New base constructed" |
     "no change" |
     "Submarine Missile Shot Down By ABM" |
     "Tick" |
@@ -34,7 +35,7 @@ export type gameStateChangeType =
 export interface gameStateChangeDetails {
     changeLabel: gameStateChangeType;
     relatedLocation?: MapLocation;
-    relatedBase?: MilitaryBaseTypes;
+    relatedBase?: Exclude<MilitaryBaseTypes,null>;
     miscDetails?: string;
 }
 
@@ -117,6 +118,12 @@ export class GameLogic {
         for (let i = 0; i < totalICBMs; i++) {
             forBase.ordnance = forBase.ordnance.concat(new Ordnance({ parentBase: forBase }));
         }
+
+    }
+
+    public static notifyNewBaseConstructed(args: {forBaseType: MilitaryBaseTypes}) {
+
+        this.notifyGamestateChange({details: {changeLabel: "New base constructed", relatedBase: args.forBaseType}});
 
     }
 
