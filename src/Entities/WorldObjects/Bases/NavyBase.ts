@@ -4,6 +4,7 @@ import { GameLogic } from "../../../Game/GameLogic";
 import { Ordnance } from "../../Ordnance";
 import { MapLocation } from "../../MapObjects/MapLocation";
 import { Rng } from "../../../Utils/Rng";
+import { NavyBaseNames } from "../../../Data/NavyBaseNames";
 
 export class NavyBase extends AbstractMilitaryBase implements OrdnanceCarryingBase {
 
@@ -14,6 +15,7 @@ export class NavyBase extends AbstractMilitaryBase implements OrdnanceCarryingBa
     constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
         this.isReceivingOrders = false;
+        this.Name = NavyBaseNames.getNavyBaseName();
         this.ordnance = [];
     }
 
