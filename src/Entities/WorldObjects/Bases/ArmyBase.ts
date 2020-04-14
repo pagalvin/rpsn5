@@ -1,6 +1,7 @@
 import { AbstractMilitaryBase } from "./AbstractMilitaryBase";
 import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
 import { MapLocation } from "../../MapObjects/MapLocation";
+import { ArmyBaseNames } from "../../../Data/ArmyBaseNames";
 
 export class ArmyBase extends AbstractMilitaryBase {
 
@@ -11,13 +12,10 @@ export class ArmyBase extends AbstractMilitaryBase {
     
         super(args);
 
+        this.Name = ArmyBaseNames.getArmyBaseName();
         this.isReceivingOrders = false;
         this.isDecamped = false;
     
     }
-
-    // public activate(): void {
-    //     throw ("Not yet implemented.");
-    // }
 
 }
