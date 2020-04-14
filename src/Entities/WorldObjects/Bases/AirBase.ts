@@ -5,6 +5,7 @@ import { Rng } from "../../../Utils/Rng";
 import { Ordnance } from "../../Ordnance";
 import { GameLogic } from "../../../Game/GameLogic";
 import { MapLocation } from "../../MapObjects/MapLocation";
+import { AirBaseNames } from "../../../Data/AirBaseNames";
 
 export class AirBase extends AbstractMilitaryBase implements OrdnanceCarryingBase{
 
@@ -18,6 +19,7 @@ export class AirBase extends AbstractMilitaryBase implements OrdnanceCarryingBas
     constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
 
+        this.Name = AirBaseNames.getAirBaseName();
         this.ordnance = [];
         this.totalFighters = 0;
         this.isFlying = false;
@@ -29,11 +31,6 @@ export class AirBase extends AbstractMilitaryBase implements OrdnanceCarryingBas
         
         GameLogic.activateAirBase({forBase: this});
 
-        // this.isReceivingOrders = true;
-
-        // // this.ordnance = Constants.MAX_INITIAL_BOMBERS + Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_BOMBERS -1});
-        // this.totalFighters = Constants.MAX_INITIAL_FIGHTERS + Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_FIGHTERS -1});
-        
     }
 
 
