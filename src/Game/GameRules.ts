@@ -54,7 +54,7 @@ export class GameRules {
         const popStrikePctLookup: number[] = [Constants.FIRST_STRIKE_POPULATION_HIT_PCT, Constants.SECOND_STRIKE_POPULATION_HIT_PCT, Constants.THIRD_STRIKE_POPULATION_HIT_PCT];
         const popKilled = args.onMapLocation.Contents ? args.onMapLocation.Contents.Population * popStrikePctLookup[args.onMapLocation.nuclearStrikes -1] : 0;
 
-        return popKilled;
+        return Math.round(popKilled);
     }
 
     public static getAllowedMoves(): allowedMoves {

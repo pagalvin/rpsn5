@@ -72,8 +72,7 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
         if (args.gsc.changeLabel === "Computer Playing Its Turn") {
             return args.gsc.miscDetails + " is playing its turn.";
         }
-
-        if (args.gsc.changeLabel === "New base constructed") {
+        else if (args.gsc.changeLabel === "New base constructed") {
             if (args.gsc.relatedBase) {
             const baseLabel = args.gsc.relatedBase.WorldObjectLabel;
             const baseName = args.gsc.relatedBase.Name;
@@ -83,7 +82,31 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
                 return `Cosntructed a new base but I don't know what kind!`;
             }
         }
-        
+        else if (args.gsc.changeLabel === "Location Nuked") {
+
+            const loc = args.gsc.relatedLocation;
+
+            if (loc) {
+                const msgStart = 
+                    (loc.myMap.owningPlayer.isHuman
+                        ? "An enemy missile evaded your defenses! "
+                        : "One of your missiles evaded the enemy's defenses. "
+                    ) +
+                    `${ args.gsc.miscDetails} citizens were killed. `;
+
+                const b = args.gsc.relatedBase;
+                if (b) {
+                    return `${msgStart} The ${b.WorldObjectLabel} base there (${b.Name}) ${b.wasDestroyed ? "was" : "was not"} destroyed.` 
+                }
+                else {
+                    return msgStart;
+                }
+            }
+            else {
+                return "A location was nuked.";
+            }
+        }        
+
         return args.gsc.changeLabel;
     }
 

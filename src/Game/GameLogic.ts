@@ -468,10 +468,25 @@ export class GameLogic {
                 const militaryBase = args.location.Contents as Exclude<MilitaryBaseTypes,null>;
                 militaryBase.wasDestroyed = militaryBase.wasDestroyed || Rng.throwDice({hiNumberMinus1: 100}) < 97;
                 militaryBase.isReceivingOrders = militaryBase.isReceivingOrders || (militaryBase.isReceivingOrders && ! militaryBase.wasDestroyed);
+
+                this.notifyGamestateChange({ 
+                    details: { 
+                        changeLabel: "Location Nuked", 
+                        relatedLocation: args.location, 
+                        relatedBase: militaryBase, 
+                        miscDetails: `${ args.damage.populationKilled.toLocaleString()}` // citizens were killed. The ${militaryBase.WorldObjectLabel} base there (${militaryBase.Name}) ${militaryBase.wasDestroyed ? "was" : "was not"} destroyed.` 
+                    } 
+                });
             }
-
-            this.notifyGamestateChange({ details: { changeLabel: "Location Nuked", relatedLocation: args.location } });
-
+            else {
+                this.notifyGamestateChange({ 
+                    details: { 
+                        changeLabel: "Location Nuked", 
+                        relatedLocation: args.location, 
+                        miscDetails: `${args.damage.populationKilled.toLocaleString()}` 
+                    } 
+                });
+            }
         }
         
         const isLiveOrdnance = (forOrdnance: Ordnance) => ! forOrdnance.wasIntercepted && ! forOrdnance.wasConsumed;
