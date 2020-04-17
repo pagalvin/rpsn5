@@ -4,7 +4,7 @@ import { MapLocation } from "../../MapObjects/MapLocation";
 import { nameableGAmeObject } from "../../nameableGameObject";
 import { GameLogComponent } from "../../../Components/GameLogComponent";
 import { GameLogic } from "../../../Game/GameLogic";
-import { RadarBaseNames } from "../../../Data/RadarBaseNames";
+import { RadarBaseNamesFactory } from "../../../Factories/BaseNameFactories/RadarBaseNamesFactory";
 
 export class RadarBase extends AbstractMilitaryBase implements nameableGAmeObject {
  
@@ -12,12 +12,14 @@ export class RadarBase extends AbstractMilitaryBase implements nameableGAmeObjec
 
     public modeOfOperation: "Inactive" | "Active" | "Passive";
 
+    baseNameFactory = RadarBaseNamesFactory.getInstance();
+
     constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
 
         this.modeOfOperation = "Inactive";
 
-        this.Name = RadarBaseNames.getRadarBaseName();
+        this.Name = this.baseNameFactory.generateBaseName({isHumanOwner: args.atLocation.myMap.owningPlayer.isHuman});
         console.log("RadarBase.ts: ctor: got a radar base name:", this.Name)
     }
 

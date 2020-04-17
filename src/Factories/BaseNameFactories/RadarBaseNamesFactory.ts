@@ -1,8 +1,11 @@
-import { GameLogic } from "../Game/GameLogic";
+import { GameLogic } from "../../Game/GameLogic";
+import { AbstractBaseNameFactory } from "./AbstractBaseNameFactory";
 
-export class RadarBaseNames {
+export class RadarBaseNamesFactory extends AbstractBaseNameFactory{
 
-    private static availableRadarBaseNames: string[] = [
+    computerPrefix = "R";
+    
+    availableBaseNames: string[] = [
         "Hertz",
         "Maxwell",
         "Hülsmeyer",
@@ -38,11 +41,11 @@ export class RadarBaseNames {
         "Lobanov"
     ];
 
-    public static getRadarBaseName(): string {
-
-        const getNameReslt = GameLogic.getNameForNameableItem({fromNamesArr: this.availableRadarBaseNames});
-        this.availableRadarBaseNames = getNameReslt.allOtherNames;
-        return getNameReslt.baseName;
+    public static getInstance() {
+        if (! this.instance) {
+            this.instance = new RadarBaseNamesFactory();
+        }
+        return this.instance;
     }
 
 }

@@ -3,6 +3,7 @@ import { MilitaryBaseTypeLabels } from "./MilitaryBaseTypes";
 import { Ordnance } from "../../Ordnance";
 import { MapLocation } from "../../MapObjects/MapLocation";
 import { Rng } from "../../../Utils/Rng";
+import { AbstractBaseNameFactory as AbstractBaseNameFactory } from "../../../Factories/BaseNameFactories/AbstractBaseNameFactory";
 
 export interface MilitaryBaseProperties {
     Name: string;
@@ -10,7 +11,6 @@ export interface MilitaryBaseProperties {
     isReceivingOrders: boolean;
     myMapLocation: MapLocation;
     yearBuilt: number;
-
 }
 
 export interface MilitaryBaseActions {
@@ -32,6 +32,7 @@ export abstract class AbstractMilitaryBase implements MilitaryBaseProperties, Mi
     public wasDestroyed: boolean = false;
     public yearBuilt: number;
 
+    protected abstract baseNameFactory: AbstractBaseNameFactory;
 
     // Having a "BaseType" label here helps some code work a little more generically since "typeof [any base object]" returns "object"
     // This gives us a shot at treating bases a little more generically. Look at MilitaryBaseFactory.ts for an example.

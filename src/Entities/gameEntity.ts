@@ -2,7 +2,7 @@ import { ComputerPlayer } from "../Game/ComputerPlayer";
 import { HumanPlayer } from "../Game/HumanPlayer";
 import { GameLogic } from "../Game/GameLogic";
 import { AbstractPlayer } from "../Game/AbstractPlayer";
-import { GameData } from "../Data/ComputerNames";
+import { GameData } from "../Data/ComputerNamesFactory";
 import { GameRules } from "../Game/GameRules";
 
 export interface GameEntity {

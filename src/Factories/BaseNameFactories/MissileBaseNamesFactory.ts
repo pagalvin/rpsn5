@@ -1,10 +1,11 @@
-import { GameLogic } from "../Game/GameLogic";
+import { GameLogic } from "../../Game/GameLogic";
+import { AbstractBaseNameFactory } from "./AbstractBaseNameFactory";
 
-export class MissileBaseNames {
+export class MissileBaseNamesFactory extends AbstractBaseNameFactory {
 
-    static genericBaseCounter: number = 0;
-
-    static availableMissileBaseNames: string[] = [
+    computerPrefix = "M";
+    
+    availableBaseNames: string[] = [
         "Wernher von Braun",
         "Armstrong",
         "Musk",
@@ -47,16 +48,11 @@ export class MissileBaseNames {
         "Bethe"
     ];
 
-    public static getMissileBaseName(): string {
-        
-        if (MissileBaseNames.availableMissileBaseNames.length > 0) {
-            const getNameResult = GameLogic.getNameForNameableItem({ fromNamesArr: MissileBaseNames.availableMissileBaseNames });
-            MissileBaseNames.availableMissileBaseNames = getNameResult.allOtherNames;
-            return getNameResult.baseName;
+    public static getInstance() {
+        if (! this.instance) {
+            this.instance = new MissileBaseNamesFactory();
         }
-        else {
-            return `Missile Base ${++MissileBaseNames.genericBaseCounter}`;
-        }
+        return this.instance;
     }
 
 }

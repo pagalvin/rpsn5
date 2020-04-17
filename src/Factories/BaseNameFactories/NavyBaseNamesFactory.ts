@@ -1,11 +1,11 @@
-import { GameLogic } from "../Game/GameLogic";
+import { GameLogic } from "../../Game/GameLogic";
+import { AbstractBaseNameFactory } from "./AbstractBaseNameFactory";
 
-export class NavyBaseNames {
+export class NavyBaseNamesFactory extends AbstractBaseNameFactory {
 
-    static gericBaseCounter: number = 0;
-
-    static availableNavyBaseNames: string[] = [
-
+      computerPrefix = "S";
+      
+      availableBaseNames: string[] = [
         "Wahoo",
         "Triton",
         "George Washington",
@@ -44,16 +44,11 @@ export class NavyBaseNames {
         "I-507"
     ];
 
-    public static getNavyBaseName(): string {
-
-        if (NavyBaseNames.availableNavyBaseNames.length > 0) {
-            const getNameResult = GameLogic.getNameForNameableItem({ fromNamesArr: NavyBaseNames.availableNavyBaseNames });
-            NavyBaseNames.availableNavyBaseNames = getNameResult.allOtherNames;
-            return getNameResult.baseName;
-        }
-        else {
-            return `Generic Navy Base ${++NavyBaseNames.gericBaseCounter}`;
-        }
-    }
+    public static getInstance() {
+      if (! this.instance) {
+          this.instance = new NavyBaseNamesFactory();
+      }
+      return this.instance;
+  }
 
 }

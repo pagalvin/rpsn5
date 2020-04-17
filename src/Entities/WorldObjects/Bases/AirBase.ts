@@ -5,7 +5,7 @@ import { Rng } from "../../../Utils/Rng";
 import { Ordnance } from "../../Ordnance";
 import { GameLogic } from "../../../Game/GameLogic";
 import { MapLocation } from "../../MapObjects/MapLocation";
-import { AirBaseNames } from "../../../Data/AirBaseNames";
+import { AirBaseNamesFactory } from "../../../Factories/BaseNameFactories/AirBaseNamesFactory";
 
 export class AirBase extends AbstractMilitaryBase implements OrdnanceCarryingBase{
 
@@ -16,10 +16,12 @@ export class AirBase extends AbstractMilitaryBase implements OrdnanceCarryingBas
 
     public isFlying: boolean;
 
+    baseNameFactory = AirBaseNamesFactory.getInstance();
+
     constructor(args: {atLocation: MapLocation, yearBuilt: number}) {
         super(args);
 
-        this.Name = AirBaseNames.getAirBaseName();
+        this.Name = this.baseNameFactory.generateBaseName({isHumanOwner: args.atLocation.myMap.owningPlayer.isHuman});
         this.ordnance = [];
         this.totalFighters = 0;
         this.isFlying = false;
