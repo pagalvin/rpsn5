@@ -64,7 +64,7 @@ export class MapUtil {
             case "Navy": return "S";
             case "Radar": return "R";
             case "Rural": return "•";
-            case "Town": return "T";
+            case "Town": return "t";
        }
 
         return "empty";

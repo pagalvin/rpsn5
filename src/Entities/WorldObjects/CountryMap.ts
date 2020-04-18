@@ -17,6 +17,7 @@ export class CountryMap {
 
     private readonly newRuralArea = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Rural"});
     private readonly newCity = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "City"});
+    private readonly newTown = () => PopulationAreaFactory.getInstance().createNewPopulationArea({popAreaType: "Town"});
 
     constructor(args: {sizeX: number, sizeY: number, ownerLabel: "Computer" | "Human", owningPlayer: AbstractPlayer}) {
 
@@ -57,22 +58,51 @@ export class CountryMap {
             }
         }
 
-        // Place cities.
-        let citiesToPlace: number = Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_CITIES - Constants.MIN_INITIAL_CITIES}) + Constants.MIN_INITIAL_CITIES;
+        const placeTownOrCity = (args: {totalToPlace: number, factoryFunc: Function}) => {
 
-        while (citiesToPlace > 0) {
+            let totalCitiesOrTownsToPlace = args.totalToPlace;
 
-            const tryX = Rng.throwDice({hiNumberMinus1: this.sizeX - 1});
-            const tryY = Rng.throwDice({hiNumberMinus1: this.sizeY - 1});
+            while (totalCitiesOrTownsToPlace > 0) {
 
-            const mi: MapLocation = this.map[tryX][tryY];
+                const tryX = Rng.throwDice({hiNumberMinus1: this.sizeX - 1});
+                const tryY = Rng.throwDice({hiNumberMinus1: this.sizeY - 1});
 
-            if (mi.Contents.WorldObjectLabel === "Rural") {
-                citiesToPlace --;
-                mi.Contents = this.newCity();
+                const mi: MapLocation = this.map[tryX][tryY];
+
+                if (mi.Contents.WorldObjectLabel === "Rural") {
+                    totalCitiesOrTownsToPlace --;
+                    mi.Contents = args.factoryFunc();
+                }
             }
-
         }
+
+        // Place cities.
+        placeTownOrCity({
+            totalToPlace: Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_CITIES - Constants.MIN_INITIAL_CITIES}) + Constants.MIN_INITIAL_CITIES,
+            factoryFunc: this.newCity
+        });
+
+        // Place towns
+        placeTownOrCity({
+            totalToPlace: Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_TOWNS - Constants.MIN_INITIAL_TOWNS}) + Constants.MIN_INITIAL_TOWNS,
+            factoryFunc: this.newTown
+        });
+
+        // let citiesToPlace: number = Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_CITIES - Constants.MIN_INITIAL_CITIES}) + Constants.MIN_INITIAL_CITIES;
+
+        // while (citiesToPlace > 0) {
+
+        //     const tryX = Rng.throwDice({hiNumberMinus1: this.sizeX - 1});
+        //     const tryY = Rng.throwDice({hiNumberMinus1: this.sizeY - 1});
+
+        //     const mi: MapLocation = this.map[tryX][tryY];
+
+        //     if (mi.Contents.WorldObjectLabel === "Rural") {
+        //         citiesToPlace --;
+        //         mi.Contents = this.newCity();
+        //     }
+
+        // }
 
         
     }

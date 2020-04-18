@@ -41,5 +41,7 @@ export class Constants {
 
     public static readonly MIN_INITIAL_CITIES = 5;
     public static readonly MAX_INITIAL_CITIES = 8;
+    public static readonly MIN_INITIAL_TOWNS = 10;
+    public static readonly MAX_INITIAL_TOWNS = 20;
 }
 
