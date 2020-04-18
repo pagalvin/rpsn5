@@ -27,6 +27,10 @@ export class GameRules {
 
     public static canPlaceItemAtMapLocation(args: { map: CountryMap, atLocation: MapLocation, itemToCheck: PlaceableObjectLabels }): boolean {
 
+        if (args.itemToCheck === "Navy") {
+            return args.atLocation.doesHaveWaterBorder();
+        }
+
         if (args.atLocation.Contents) {
             return args.atLocation.Contents.WorldObjectLabel === "Rural";
         }

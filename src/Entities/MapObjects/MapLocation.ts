@@ -14,8 +14,9 @@ export class MapLocation extends AbstractMapLocation {
     public myMap: CountryMap;
     private static nextID: number = 1;
     public population: number;
+    private _doesHaveWaterBorder: boolean = false;
 
-    constructor(args: {onMap: CountryMap}) {
+    constructor(args: {onMap: CountryMap, doesHaveWaterBorder: boolean}) {
         super();
         this.Contents = new RuralArea({name: "Empty", population: 0});
         this.uniqueID = MapLocation.nextID++;
@@ -23,6 +24,7 @@ export class MapLocation extends AbstractMapLocation {
         this.nuclearStrikes = 0;
         this.myMap = args.onMap;
         this.population = 0;
+        this._doesHaveWaterBorder = args.doesHaveWaterBorder;
     }
 
     public placeItem(args: {itemToPlace: PlaceableObject}): void {
@@ -36,9 +38,12 @@ export class MapLocation extends AbstractMapLocation {
         {
             this.enemyVisibility = 100;
         }
-
     }
-    
+
+    public doesHaveWaterBorder() : boolean {
+        return this._doesHaveWaterBorder;
+    }
+
     public isMilitaryBase() {
 
         const militaryLabels: MilitaryBaseTypeLabels[] = [

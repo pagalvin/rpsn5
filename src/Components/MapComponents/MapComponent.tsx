@@ -272,16 +272,11 @@ export class MapComponent extends React.Component<props, state> implements Games
 
   private handleLocationDragEvent(args: { doLoc: MapLocation, eventType: "over" | "leave" }) {
 
-    console.log(`MapComponent.ts: handleLocationDraggedOver: Entering, args:`, args);
-
     if (args.doLoc) {
-
-      console.log(`MapComponent.ts: handleLocationDraggedOver: Got a nuked location OK.`);
 
       const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.doLoc));
 
       if (mapLocElement) {
-        console.log(`MapComponent.ts: handleLocationDraggedOver: fiddling with nuke classes.`);
 
         if (args.eventType === "over") {
           mapLocElement.classList.add("mapLocationDraggedOver");
@@ -359,7 +354,7 @@ export class MapComponent extends React.Component<props, state> implements Games
     const isOK = args.cell.Contents !== null && GameRules.canPlaceItemAtMapLocation(
       {
         atLocation: args.cell,
-        itemToCheck: args.cell.Contents.WorldObjectLabel,
+        itemToCheck: args.dropEvent.dataTransfer.getData("baseType"),
         map: this.props.countryMap
       });
 
@@ -398,13 +393,12 @@ export class MapComponent extends React.Component<props, state> implements Games
       }
     }
     else {
-      console.log(`MapComponent: handleBuildDrop: You can't place an object there because of rules or it's not an empty location.`);
       notifyDragResultCallack(
         {
           result: {
             didSucceed: false,
             manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
-            message: "You cannot build a base there because it is already occupied by another base or large population area."
+            message: "You cannot build the base at that location. You can only build new bases in rural areas. Navy bases must border the ocean."
           }
         });
     }

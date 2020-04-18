@@ -51,7 +51,7 @@ export class CountryMap {
 
             for (let y = 0; y < this.sizeY; y++) {
 
-                const mi = new MapLocation({onMap: this});
+                const mi = new MapLocation({onMap: this, doesHaveWaterBorder: (y === 0 || y === this.sizeY - 1 || x === 0 || x === this.sizeX - 1)});
                 mi.Contents = this.newRuralArea();
 
                 this.map[x].push(mi);
