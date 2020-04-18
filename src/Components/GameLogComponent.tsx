@@ -3,49 +3,58 @@ import React, { Component } from 'react';
 import { Paper } from "@material-ui/core";
 import { GamestateWatcher, gameStateChangeDetails, GameLogic, gameStateChangeType } from '../Game/GameLogic';
 import { TickerComponent } from './TickerComponent';
+import { MapLocation } from '../Entities/MapObjects/MapLocation';
 
-interface gameMessage {
-    msg: string;
-}
+// interface gameMessage {
+//     msg: string;
+// }
 
 interface props { }
 
+interface queuedMessage {
+    messageText: string;
+    relatedLocation? : MapLocation;
+}
+
 interface state {
-    oldMessages: string[];
-    currentMessage: string;
+    oldMessages: queuedMessage[];
+    currentMessage: queuedMessage;
 }
 
 export class GameLogComponent extends Component<props, state> implements GamestateWatcher {
 
     private nextUIKeyVal: number = 0;
-    private uiKey = () => `GLC_${this.nextUIKeyVal++}`;
+    private uiKey = () => `GLC_${this.nextUIKeyVal++}`; // react wants something on the "key" on the <div>
 
     private ignoreChangeLabels: gameStateChangeType[];
 
-    private queuedMessages: string[] = [];
+    private queuedMessages: queuedMessage[] = [];
+
+    private emptyMessage : queuedMessage = {messageText: "", relatedLocation: undefined};
 
     constructor(props: props, state: state) {
         super(props, state);
 
         this.state = {
             oldMessages: [],
-            currentMessage: ""
+            currentMessage: this.emptyMessage
         }
 
-        this.ignoreChangeLabels = ["Tick"];
+        this.ignoreChangeLabels = ["Tick", "DeHighlightMapLocation", "HighlightMapLocation"];
     }
 
     componentDidMount() {
-        GameLogic.registerGamestateWatcher({ watcher: this });
+        GameLogic.registerGamestateWatcher(
+            { watcher: this });
 
         this.setState({
-            currentMessage: "Initializing..."
+            oldMessages: [],
+            currentMessage: {messageText: "Initializing...", relatedLocation: undefined} as queuedMessage
         })
     }
 
     private onTickerCompleted() {
-        // console.log(`GameLogComponent: onTickerCompleted: Entering.`);
-
+        
         // Move the current message to history
         this.setState({
             oldMessages: [this.state.currentMessage].concat(this.state.oldMessages)
@@ -53,8 +62,9 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
 
         // if there are any queued messages, then process them
         if (this.queuedMessages.length > 0) {
+
             this.setState({
-                currentMessage: this.queuedMessages.shift() as string
+                currentMessage: this.queuedMessages.shift() as queuedMessage
             })
 
             return;
@@ -62,7 +72,7 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
 
         // If there's no queued message, then we're done.
         this.setState({
-            currentMessage: ""
+            currentMessage: this.emptyMessage
         });
 
     }
@@ -117,17 +127,21 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
 
         // add the message we just got to the queue
         // this.queuedMessages = this.queuedMessages.concat(args.details.changeLabel);
-        this.queuedMessages = this.queuedMessages.concat(this.loggableMessageFromGameStateChange({gsc : args.details}));
+        this.queuedMessages = this.queuedMessages.concat(
+            {
+                messageText: this.loggableMessageFromGameStateChange({gsc : args.details}),
+                relatedLocation: args.details.relatedLocation
+            });
 
         // if we're already processing a message, do nothing
-        if (this.state.currentMessage.length > 0) {
+        if (this.state.currentMessage.messageText.length > 0) {
             return;
         }
 
         // Otherwise, the queue was empty, so process this one.
         // Take the first item from the queue and make it current.
         this.setState({
-            currentMessage: this.queuedMessages ? this.queuedMessages.shift() as string : ""
+            currentMessage: this.queuedMessages ? this.queuedMessages.shift() as queuedMessage : {} as queuedMessage
         });
 
     }
@@ -141,11 +155,11 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
                     -- Activities Log --
                 </div>
                 <div>
-                    {this.state.currentMessage && this.state.currentMessage.length > 0
+                    {this.state.currentMessage.messageText && this.state.currentMessage.messageText.length > 0
                         ?
                         <TickerComponent
                             tickerInterval={25}
-                            tickerMessage={this.state.currentMessage}
+                            tickerMessage={this.state.currentMessage.messageText}
                             onRenderCompleteCallback={this.onTickerCompleted.bind(this)} />
                         :
                         null
@@ -154,7 +168,15 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
                 </div>
                 <div key={this.uiKey()}>
                     {
-                        this.state.oldMessages.map(m => <div key={this.uiKey()}>{m}</div>)
+                        this.state.oldMessages.map(m => 
+                            <div 
+                                key={this.uiKey()} 
+                                onMouseOver={() => m.relatedLocation ? GameLogic.notifyHighlightMapLocation({mapLocation: m.relatedLocation}): null}
+                                onMouseOut={() => m.relatedLocation ? GameLogic.notifyDeHighlightMapLocation({mapLocation: m.relatedLocation}): null}
+                            >
+                                {m.messageText}
+                            </div>
+                        )
                     }
                 </div>
             </div>

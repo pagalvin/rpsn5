@@ -157,7 +157,15 @@ export class MapComponent extends React.Component<props, state> implements Games
 
     const { changeLabel } = args.details;
 
-    if (changeLabel === "Advance Turn") {
+    if (changeLabel === "HighlightMapLocation") {
+      this.handleHighlightRequest({forLocation: args.details.relatedLocation as MapLocation});
+    }
+
+    if (changeLabel === "DeHighlightMapLocation") {
+      this.handleDeHighlightRequest({forLocation: args.details.relatedLocation as MapLocation});
+    }
+
+    else if (changeLabel === "Advance Turn") {
       this.forceUpdate();
     }
 
@@ -236,6 +244,28 @@ export class MapComponent extends React.Component<props, state> implements Games
         mapLocElement.classList.add(nukeClasses[nukedLocation.nuclearStrikes >= 3 ? 2 : nukedLocation.nuclearStrikes - 1]);
 
         this.handleLocationDetargeted({ detargetedLocation: args.nukedLocation });
+      }
+    }
+  }
+
+  private handleHighlightRequest(args: {forLocation: MapLocation}) {
+    if (args.forLocation) {
+      const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.forLocation));
+
+      if (mapLocElement) {
+        const nukeClasses = ["nukedOnce", "nukedTwice", "nukedThrice"];
+        mapLocElement.classList.add(nukeClasses[2]);
+      }
+    }
+  }
+
+  private handleDeHighlightRequest(args: {forLocation: MapLocation}) {
+    if (args.forLocation) {
+      const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.forLocation));
+
+      if (mapLocElement) {
+        const nukeClasses = ["nukedOnce", "nukedTwice", "nukedThrice"];
+        mapLocElement.classList.remove(nukeClasses[2]);
       }
     }
   }

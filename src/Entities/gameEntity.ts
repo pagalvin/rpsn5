@@ -50,7 +50,6 @@ export class Game extends AbstractGameEntity {
     }
 
     public startGame() {
-        
         GameLogic.startClock();
     }
 }

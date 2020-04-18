@@ -32,6 +32,8 @@ export type gameStateChangeType =
     "Tick" |
     "Initializing ..." |
     "Initialization complete, make your first move." |
+    "HighlightMapLocation" |
+    "DeHighlightMapLocation" |
     "War Declared";
 
 export interface gameStateChangeDetails {
@@ -123,7 +125,7 @@ export class GameLogic {
 
     public static notifyNewBaseConstructed(args: {forBaseType: MilitaryBaseTypes}) {
 
-        this.notifyGamestateChange({details: {changeLabel: "New base constructed", relatedBase: args.forBaseType}});
+        this.notifyGamestateChange({details: {changeLabel: "New base constructed", relatedBase: args.forBaseType, relatedLocation: args.forBaseType.myMapLocation}});
 
     }
 
@@ -641,4 +643,13 @@ export class GameLogic {
         this.notifyGamestateChange({details: {changeLabel: "Initialization complete, make your first move."}});
     }
 
+    public static notifyHighlightMapLocation(args: {mapLocation: MapLocation}) {
+        this.notifyGamestateChange({details: {changeLabel: "HighlightMapLocation", relatedLocation: args.mapLocation}});
+    }
+
+    public static notifyDeHighlightMapLocation(args: {mapLocation: MapLocation}) {
+        this.notifyGamestateChange({details: {changeLabel: "DeHighlightMapLocation", relatedLocation: args.mapLocation}});
+    }
+
+    
 }
