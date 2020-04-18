@@ -30,6 +30,8 @@ export type gameStateChangeType =
     "no change" |
     "Submarine Missile Shot Down By ABM" |
     "Tick" |
+    "Initializing ..." |
+    "Initialization complete, make your first move." |
     "War Declared";
 
 export interface gameStateChangeDetails {
@@ -42,8 +44,6 @@ export interface gameStateChangeDetails {
 export interface GamestateWatcher {
     handleGamestateChange: (args: { details: gameStateChangeDetails }) => void;
 }
-
-
 
 export class GameLogic {
 
@@ -636,4 +636,9 @@ export class GameLogic {
 
         return processedResult;
     }
+
+    public static notifyGameReady() {
+        this.notifyGamestateChange({details: {changeLabel: "Initialization complete, make your first move."}});
+    }
+
 }

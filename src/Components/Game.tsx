@@ -7,6 +7,7 @@ import { Game } from '../Entities/gameEntity';
 import { MapLocation } from '../Entities/MapObjects/MapLocation';
 import { MapComponent } from './MapComponents/MapComponent';
 import { BuildVersion } from '../Game/BuildVersion';
+import { GameLogic } from '../Game/GameLogic';
 
 export interface playerMapClickListener {
     handlePlayerMapClick: (args: { location: MapLocation }) => void;
@@ -19,6 +20,9 @@ export class GameComponent extends Component {
         const gameEntity = Game.getInstance();
 
         gameEntity.startGame();
+
+        GameLogic.notifyGameReady();
+
     }
 
     private userActionsComponent: UserActionsComponent | null = null;

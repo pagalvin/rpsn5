@@ -39,7 +39,7 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
         GameLogic.registerGamestateWatcher({ watcher: this });
 
         this.setState({
-            currentMessage: "Initialzing..."
+            currentMessage: "Initializing..."
         })
     }
 
@@ -74,12 +74,12 @@ export class GameLogComponent extends Component<props, state> implements Gamesta
         }
         else if (args.gsc.changeLabel === "New base constructed") {
             if (args.gsc.relatedBase) {
-            const baseLabel = args.gsc.relatedBase.WorldObjectLabel;
-            const baseName = args.gsc.relatedBase.Name;
-            return `Constructed a new ${baseLabel} base: ${baseName}`;
+                const baseLabel = args.gsc.relatedBase.WorldObjectLabel;
+                const baseName = args.gsc.relatedBase.Name;
+                return `Constructed a new ${baseLabel} base, "${baseName}."`;
             }
             else {
-                return `Cosntructed a new base but I don't know what kind!`;
+                return `Constructed a new base but I don't know what kind!`;
             }
         }
         else if (args.gsc.changeLabel === "Location Nuked") {
