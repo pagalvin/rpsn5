@@ -234,6 +234,7 @@ export class MapComponent extends React.Component<props, state> implements Games
       // console.log(`MapComponent.ts: handleLocationNuked: Got a nuked location OK.`);
 
       const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.nukedLocation));
+      // const mapElement = document.getElementById(args.nukedLocation.uniqueID);
 
       if (mapLocElement) {
         // console.log(`MapComponent.ts: handleLocationNuked: fiddling with nuke classes.`);
@@ -242,6 +243,9 @@ export class MapComponent extends React.Component<props, state> implements Games
         const { nukedLocation } = args;
 
         mapLocElement.classList.add(nukeClasses[nukedLocation.nuclearStrikes >= 3 ? 2 : nukedLocation.nuclearStrikes - 1]);
+
+        // mapLocElement.classList.add("shake-crazy");
+        // mapLocElement.classList.add("shake-freeze");
 
         this.handleLocationDetargeted({ detargetedLocation: args.nukedLocation });
       }
