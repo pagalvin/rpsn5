@@ -557,9 +557,21 @@ export class GameLogic {
 
         console.log(`GameLogic.ts: advanceTurn: new game turn / year:`, { turn: game.turn, year: game.gameYear });
 
+        this.increasePopulation();
+
         this.notifyGamestateChange({ details: { changeLabel: "Advance Turn" } });
 
         return;
+
+    }
+
+    static increasePopulation() {
+
+        const computerPlayerMap = Game.getInstance().computerPlayer.map;
+        const humanPlayerMap = Game.getInstance().humanPlayer.map;
+
+        computerPlayerMap.increasePopulation();
+        humanPlayerMap.increasePopulation();
 
     }
 

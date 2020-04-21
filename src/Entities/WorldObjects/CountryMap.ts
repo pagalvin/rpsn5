@@ -88,23 +88,7 @@ export class CountryMap {
             factoryFunc: this.newTown
         });
 
-        // let citiesToPlace: number = Rng.throwDice({hiNumberMinus1: Constants.MAX_INITIAL_CITIES - Constants.MIN_INITIAL_CITIES}) + Constants.MIN_INITIAL_CITIES;
-
-        // while (citiesToPlace > 0) {
-
-        //     const tryX = Rng.throwDice({hiNumberMinus1: this.sizeX - 1});
-        //     const tryY = Rng.throwDice({hiNumberMinus1: this.sizeY - 1});
-
-        //     const mi: MapLocation = this.map[tryX][tryY];
-
-        //     if (mi.Contents.WorldObjectLabel === "Rural") {
-        //         citiesToPlace --;
-        //         mi.Contents = this.newCity();
-        //     }
-
-        // }
-
-        
+      
     }
 
     public getAllMilitaryBases(): Exclude<MilitaryBaseTypes, null>[] {
@@ -130,5 +114,13 @@ export class CountryMap {
         return (
             this.map[x][y]
          );
+    }
+
+    public increasePopulation() {
+        for (let x = 0; x < this.sizeX; x++) {
+            for (let y = 0; y < this.sizeY; y++) {
+                this.map[x][y].increasePopulation({popModifier: Constants.POPULATION_INCREASE_MODIFIER});
+            }
+        }
     }
 }

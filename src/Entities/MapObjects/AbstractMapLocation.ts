@@ -8,7 +8,6 @@ export abstract class AbstractMapLocation {
     
     public isTargeted: boolean = false;
     abstract myMap: CountryMap;
-    abstract population: number;
 
     public enemyVisibility: number;
 
