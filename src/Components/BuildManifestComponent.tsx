@@ -58,11 +58,11 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
     }
 
-    private handleDropResult(args: {result: buildBaseResult}) {
+    private handleDropResult(args: { result: buildBaseResult }) {
         console.log(`BuidManifestComponent: handleDropResult: drop finished, result:`, args.result);
-        
+
         this.setState({
-            buildManifest: this.state.buildManifest.reduce( (prev, curr, idx) => {
+            buildManifest: this.state.buildManifest.reduce((prev, curr, idx) => {
 
                 if (idx === args.result.manifestIndex) {
                     const newBuildManfest: buildSelection = {
@@ -72,7 +72,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
                         buildResultText: args.result.message
                     }
 
-                    console.log(`BuidManifestComponent: handleDropResult: updated manifest:`, {updatedManifest: newBuildManfest});
+                    console.log(`BuidManifestComponent: handleDropResult: updated manifest:`, { updatedManifest: newBuildManfest });
 
                     return prev.concat(newBuildManfest);
                 }
@@ -86,7 +86,7 @@ export class BuildManifestComponent extends Component<props, state> implements G
 
     render() {
 
-        console.log(`BuildManifestComponent: render: Entering with props and state:`, {props: this.props, state: this.state});
+        console.log(`BuildManifestComponent: render: Entering with props and state:`, { props: this.props, state: this.state });
 
         const buildManifestCompletedMarkup = () => {
             return (
@@ -102,27 +102,27 @@ export class BuildManifestComponent extends Component<props, state> implements G
             )
         }
 
-        const dragStartMarkup = (args: {dragEvent: React.DragEvent, baseType: tacticalMoveOptions, manifestIndex: number}) => {
-            console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragStart: e, ab:`, 
-            { 
-                e: args.dragEvent, 
-                ab: args.baseType,
-                manifestIndex: args.manifestIndex
-            });
+        const dragStartMarkup = (args: { dragEvent: React.DragEvent, baseType: tacticalMoveOptions, manifestIndex: number }) => {
+            // console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragStart: e, ab:`, 
+            // { 
+            //     e: args.dragEvent, 
+            //     ab: args.baseType,
+            //     manifestIndex: args.manifestIndex
+            // });
 
             args.dragEvent.dataTransfer.setData(Constants.DROPTYPE, Constants.BUILD_DROP);
             args.dragEvent.dataTransfer.setData(Constants.BASETYPE, args.baseType as string);
             args.dragEvent.dataTransfer.setData(Constants.MANIFESTINDEX, args.manifestIndex.toString());
-            
+
             (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
         }
 
-        const allowedBaseMarkup = (args: {forManifestIndex: number}) => {
+        const allowedBaseMarkup = (args: { forManifestIndex: number }) => {
             return (
                 this.props.allowedBasesToBuild.map((allowedBase, idx) => (
                     <span key={this.uiKey()}
                         draggable
-                        onDragStart={(e) => dragStartMarkup({baseType:allowedBase, dragEvent: e, manifestIndex: args.forManifestIndex})}
+                        onDragStart={(e) => dragStartMarkup({ baseType: allowedBase, dragEvent: e, manifestIndex: args.forManifestIndex })}
                         onDragEnd={
                             (e) => {
                                 console.log(`BuildManifestComponent: tacticalOptionsMarkup: onDragEnd: e, ab:`,
@@ -131,17 +131,17 @@ export class BuildManifestComponent extends Component<props, state> implements G
                             }
                         }
                     >
-                        {individualAllowedBaseMarkup({forBaseType: allowedBase as string})}
-                </span>
+                        {individualAllowedBaseMarkup({ forBaseType: allowedBase as string })}
+                    </span>
                 )))
         };
 
-        const individualAllowedBaseMarkup = (args: {forBaseType: string}) => {
+        const individualAllowedBaseMarkup = (args: { forBaseType: string }) => {
 
             const title = `${args.forBaseType} base`;
             const baseTokenSrc = `images/baseTokens/${args.forBaseType}base.png`
-            return (<span className="allowedBase" ><img src={baseTokenSrc} width="20" height="20" title={title}/> {args.forBaseType}</span>);
-        }   
+            return (<span className="allowedBase" ><img className="selectableBase" src={baseTokenSrc} width="18" height="18" title={title} />{/*args.forBaseType*/}</span>);
+        }
 
         const qtyMessage = () => {
             return (
@@ -153,41 +153,46 @@ export class BuildManifestComponent extends Component<props, state> implements G
         };
 
         const manifestMarkup = () => {
-
-            console.log(`BuildManifestComponent: manifestMarkup: building up a selection:`, this.state.buildManifest);
-
-            return (<ol> { this.state.buildManifest.map((selection, idx) => individualManifestChoiceMarkup(selection, idx)) }</ol>)
+            return (<ol> {this.state.buildManifest.map((selection, idx) => individualManifestChoiceMarkup(selection, idx))}</ol>)
         }
 
+        const wasBuildError = (selection: buildSelection): boolean => selection.buildResultText !== null && !selection.didBuild;
+        
         const individualManifestChoiceMarkup = (selection: buildSelection, idx: number) => {
 
             return (
                 <li key={this.uiKey()}>
-                {selection.didBuild ? selection.buildResultText : allowedBaseMarkup({forManifestIndex: idx})}
-                {/* Did Build? {selection.didBuild ? "Yes" : "No"} */}
-                {
-                    (selection.buildResultText && ! selection.didBuild) ? selection.buildResultText : null
-                }
-            </li>
-    );
+                    {
+                        selection.didBuild 
+                            ? selection.buildResultText 
+                            : allowedBaseMarkup({ forManifestIndex: idx })
+                    }
+                    {
+                        wasBuildError(selection)
+                            ? " Error: " + selection.buildResultText
+                            : null
+                    }
+                </li>
+            );
+
         }
+
+        const stillBuilding = (): boolean => this.state.buildManifest.filter(m => m.didBuild).length === this.state.buildManifest.length;
 
         const toRender = (
             <React.Fragment>
 
-                {qtyMessage()}
+                {qtyMessage()} {/* How many are we allowed to build? */}
 
                 {
                     <div>
-                        <h5><TickerComponent tickerInterval={25} tickerMessage="Build manifest:"/></h5>
+                        <h5><TickerComponent tickerInterval={25} tickerMessage="Build manifest:" /></h5>
                         {manifestMarkup()}
                     </div>
                 }
 
                 {
-                    this.state.buildManifest.filter(m => m.didBuild).length === this.state.buildManifest.length
-                        ? buildManifestCompletedMarkup()
-                        : null
+                    stillBuilding() ? buildManifestCompletedMarkup() : null
                 }
 
             </React.Fragment>

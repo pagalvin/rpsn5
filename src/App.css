@@ -171,6 +171,13 @@ body {
 
 }
 
+.selectableBase {
+  width: 15px;
+  height: 15px;
+  padding-right: 10px;
+  margin-bottom: -2px;
+}
+
 .passiveRadarPulseUp {
   transition: background-color 4.0s ease;
   background-color: gainsboro;

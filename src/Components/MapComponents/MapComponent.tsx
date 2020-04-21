@@ -402,7 +402,7 @@ export class MapComponent extends React.Component<props, state> implements Games
           result: {
             didSucceed: false,
             manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
-            message: "You cannot build the base at that location. You can only build new bases in rural areas. Navy bases must border the ocean."
+            message: `You cannot build the ${args.dropEvent.dataTransfer.getData(Constants.BASETYPE)} base at that location. You can only build new bases in rural areas. Navy bases must border the ocean.`
           }
         });
     }
