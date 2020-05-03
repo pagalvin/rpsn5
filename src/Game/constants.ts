@@ -28,9 +28,10 @@ export class Constants {
     public static readonly EXPECTED_BASE_COUNT_FACTOR = 1.75;
 
     // Supporting drag and drop on the screen.
-    public static readonly DROPTYPE = "dropType";
-    public static readonly BASETYPE = "baseType";
-    public static readonly MANIFESTINDEX = "manifestIndex";
+    public static readonly DROPCONSTANTS_DROPTYPE = "dropType";
+    public static readonly DROPCONSTANTS_BASETYPE = "baseType";
+    public static readonly DROPCONSTANTS_MANIFESTINDEX = "manifestIndex";
+    public static readonly DROPCONSTANTS_MISSILEINDEX = "missileIndex";
 
     // Base labels
     public static readonly ARMY_BASELABEL = "Army";

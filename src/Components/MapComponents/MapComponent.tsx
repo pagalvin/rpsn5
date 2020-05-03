@@ -298,21 +298,21 @@ export class MapComponent extends React.Component<props, state> implements Games
     console.log(`MapComponent.tsx: handleDrop: Got a drop event on a cell:`, {
       event: args.dropEvent,
       cell: args.cell,
-      baseType: args.dropEvent.dataTransfer.getData("baseType"),
-      manifestIndex: args.dropEvent.dataTransfer.getData("manifestIndex"),
-      dropType: args.dropEvent.dataTransfer.getData("dropType")
+      baseType: args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_BASETYPE),
+      manifestIndex: args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_MANIFESTINDEX),
+      dropType: args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_DROPTYPE)
     }
     );
 
-    if (args.dropEvent.dataTransfer.getData("dropType") === Constants.BUILD_DROP) {
+    if (args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_DROPTYPE) === Constants.BUILD_DROP) {
       this.handleBuildDrop(args);
       this.forceUpdate();
     }
-    else if (args.dropEvent.dataTransfer.getData("dropType") === Constants.TARGET_MISSILE_DROP) {
+    else if (args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_DROPTYPE) === Constants.TARGET_MISSILE_DROP) {
       this.handleTargetDrop(args);
     }
     else {
-      console.log(`MapComponent: handleDrop: got an unknown drop type:`, args.dropEvent.dataTransfer.getData("dropType"));
+      console.log(`MapComponent: handleDrop: got an unknown drop type:`, args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_DROPTYPE));
     }
 
   }
@@ -324,8 +324,8 @@ export class MapComponent extends React.Component<props, state> implements Games
     console.log(`MapComponent.tsx: handleTargetDrop: Got a drop event on a cell:`, {
       event: args.dropEvent,
       cell: args.cell,
-      baseType: args.dropEvent.dataTransfer.getData("baseType"),
-      manifestIndex: args.dropEvent.dataTransfer.getData("manifestIndex")
+      baseType: args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_BASETYPE),
+      manifestIndex: args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_MANIFESTINDEX)
     }
     );
 
@@ -335,7 +335,7 @@ export class MapComponent extends React.Component<props, state> implements Games
       {
         result: {
           didSucceed: true,
-          missileIndex: parseInt(args.dropEvent.dataTransfer.getData("missileIndex")),
+          missileIndex: parseInt(args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_MISSILEINDEX)),
           message: `Successfully targeted enemy sector ${args.cell.uniqueID}.`,
           targetedLocation: args.cell
         }
@@ -350,15 +350,15 @@ export class MapComponent extends React.Component<props, state> implements Games
     console.log(`MapComponent.tsx: handleBuildDrop: Got a drop event on a cell:`, {
       event: args.dropEvent,
       cell: args.cell,
-      baseType: args.dropEvent.dataTransfer.getData("baseType"),
-      manifestIndex: args.dropEvent.dataTransfer.getData("manifestIndex")
+      baseType: args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_BASETYPE),
+      manifestIndex: args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_MANIFESTINDEX)
     }
     );
 
     const isOK = args.cell.Contents !== null && GameRules.canPlaceItemAtMapLocation(
       {
         atLocation: args.cell,
-        itemToCheck: args.dropEvent.dataTransfer.getData("baseType"),
+        itemToCheck: args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_BASETYPE),
         map: this.props.countryMap
       });
 
@@ -366,7 +366,7 @@ export class MapComponent extends React.Component<props, state> implements Games
 
       const newBase = MilitaryBaseFactory.getInstance().createNewBase(
         {
-          baseType: (args.dropEvent.dataTransfer.getData(Constants.BASETYPE) as MilitaryBaseTypeLabels),
+          baseType: (args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_BASETYPE) as MilitaryBaseTypeLabels),
           atLocation: args.cell
         });
 
@@ -377,7 +377,7 @@ export class MapComponent extends React.Component<props, state> implements Games
           {
             result: {
               didSucceed: true,
-              manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
+              manifestIndex: parseInt(args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_MANIFESTINDEX)),
               message: `${newBase.WorldObjectLabel} base ${newBase.Name} slated for construction.`
             }
           });
@@ -390,7 +390,7 @@ export class MapComponent extends React.Component<props, state> implements Games
           {
             result: {
               didSucceed: true,
-              manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
+              manifestIndex: parseInt(args.dropEvent.dataTransfer.getData()),
               message: `unknown base type!.`
             }
           });
@@ -401,8 +401,8 @@ export class MapComponent extends React.Component<props, state> implements Games
         {
           result: {
             didSucceed: false,
-            manifestIndex: parseInt(args.dropEvent.dataTransfer.getData("manifestIndex")),
-            message: `You cannot build the ${args.dropEvent.dataTransfer.getData(Constants.BASETYPE)} base at that location. You can only build new bases in rural areas. Navy bases must border the ocean.`
+            manifestIndex: parseInt(args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_MANIFESTINDEX)),
+            message: `You cannot build the ${args.dropEvent.dataTransfer.getData(Constants.DROPCONSTANTS_BASETYPE)} base at that location. You can only build new bases in rural areas. Navy bases must border the ocean.`
           }
         });
     }

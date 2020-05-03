@@ -110,9 +110,9 @@ export class BuildManifestComponent extends Component<props, state> implements G
             //     manifestIndex: args.manifestIndex
             // });
 
-            args.dragEvent.dataTransfer.setData(Constants.DROPTYPE, Constants.BUILD_DROP);
-            args.dragEvent.dataTransfer.setData(Constants.BASETYPE, args.baseType as string);
-            args.dragEvent.dataTransfer.setData(Constants.MANIFESTINDEX, args.manifestIndex.toString());
+            args.dragEvent.dataTransfer.setData(Constants.DROPCONSTANTS_DROPTYPE, Constants.BUILD_DROP);
+            args.dragEvent.dataTransfer.setData(Constants.DROPCONSTANTS_BASETYPE, args.baseType as string);
+            args.dragEvent.dataTransfer.setData(Constants.DROPCONSTANTS_MANIFESTINDEX, args.manifestIndex.toString());
 
             (window as any)[Constants.NOTIFY_BUILD_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
         }

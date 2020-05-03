@@ -50,8 +50,8 @@ export class OrdnanceTargetingComponent extends React.Component<props, state> im
                     manifestIndex: args.missileIndex
                 });
 
-            args.dragEvent.dataTransfer.setData("dropType", Constants.TARGET_MISSILE_DROP);
-            args.dragEvent.dataTransfer.setData("missileIndex", args.missileIndex.toString());
+            args.dragEvent.dataTransfer.setData(Constants.DROPCONSTANTS_DROPTYPE, Constants.TARGET_MISSILE_DROP);
+            args.dragEvent.dataTransfer.setData(Constants.DROPCONSTANTS_MISSILEINDEX, args.missileIndex.toString());
 
             (window as any)[Constants.NOTIFY_TARGET_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
 
