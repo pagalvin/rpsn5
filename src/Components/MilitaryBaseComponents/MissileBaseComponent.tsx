@@ -5,6 +5,7 @@ import { MissileBase } from '../../Entities/WorldObjects/Bases/MissileBase';
 import { Button } from '@material-ui/core';
 import { OrdnanceTargetingComponent } from '../OrdnanceTargetingComponent';
 import { UIComponent } from '../GameButton';
+import { Game } from '../../Entities/gameEntity';
 
 interface props {
     base: MissileBase;
@@ -91,7 +92,10 @@ export class MissileBaseComponent extends Component<props, state> {
         if (base.wasDestroyed) { return wasDestroyedMarkup }
         if (this.state.isTargetingMissiles) { return wrapper(isTargetingMarkup); }
         if (!base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
-        if (base.isAllOrdnanceTargeted()) { return wrapper(allTargetedMarkup); }
+        if (base.isAllOrdnanceTargeted()) { 
+            GameLogic.notifyBaseConsumed({attackingPlayer: Game.getInstance().humanPlayer, base: base})
+            return wrapper(allTargetedMarkup); 
+        }
 
         return wrapper(readyToActivateMarkup);
 

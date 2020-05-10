@@ -162,13 +162,17 @@ body {
   background-color: red;
 }
 
+/* This style is applied to a base after it was activated. */
 .activatedBase {
   transition: background-color 2.0s ease;
-  /* transition: opacity 2.0s ease; */
   background-color: rgb(44, 71, 2);
-  /* opacity: 1; */
-  /* background: radial-gradient(circle, red, yellow, green);  */
+}
 
+/*  This style is applied to a base after it was "consumed" (all its missiles launched, planes flying, etc.) */
+.consumedBase {
+  transition: background-color 2.0s ease;
+  background-color: rgb(0,0,0);
+  color: #ccc;
 }
 
 .selectableBase {

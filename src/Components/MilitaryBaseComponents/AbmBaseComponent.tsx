@@ -3,6 +3,7 @@ import { Button } from '@material-ui/core';
 import { AbmBase } from '../../Entities/WorldObjects/Bases/AbmBase';
 import { GameLogic } from '../../Game/GameLogic';
 import { UIComponent } from '../GameButton';
+import { Game } from '../../Entities/gameEntity';
 
 interface props {
     base: AbmBase;
@@ -73,6 +74,10 @@ export class AbmBaseComponent extends Component<props, state> {
             </React.Fragment>
 
         if (base.wasDestroyed) { return wasDestroyedMarkup }
+
+        // if (base.isTracking && base.totalMissiles < 1) {
+        //     GameLogic.notifyBaseConsumed({atMapLocation: base.myMapLocation, attackingPlayer: Game.getInstance().humanPlayer});
+        // }
 
         return (
 

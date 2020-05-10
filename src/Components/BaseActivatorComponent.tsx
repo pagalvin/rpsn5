@@ -96,7 +96,6 @@ export class BaseActivatorComponent extends Component<props, state> implements G
             mapLocElement.classList.remove("activatedBase");
             mapLocElement.classList.add("activatedBase");
         }
-
     }
 
     componentDidMount() {

@@ -4,6 +4,7 @@ import { Button } from '@material-ui/core';
 import { GameLogic } from '../../Game/GameLogic';
 import { OrdnanceTargetingComponent } from '../OrdnanceTargetingComponent';
 import { UIComponent } from '../GameButton';
+import { Game } from '../../Entities/gameEntity';
 
 interface props {
     base: AirBase;
@@ -37,11 +38,13 @@ export class AirBaseComponent extends Component<props, state> {
         this.setState({ isTargetingBombers: true });
     }
 
-    private handleAllOrdnanceTargeted() {
-        this.setState({
-            isTargetingBombers: false
-        })
-    }
+    // private handleAllOrdnanceTargeted() {
+    //     this.setState({
+    //         isTargetingBombers: false
+    //     })
+
+    //     GameLogic.notifyBaseConsumed({attackingPlayer: Game.getInstance().humanPlayer, atMapLocation: this.props.base.myMapLocation});
+    // }
 
     render() {
 
@@ -75,7 +78,6 @@ export class AirBaseComponent extends Component<props, state> {
                 </span>
             </React.Fragment>;
 
-
         const isNotReceivingOrdersMarkup =
             <React.Fragment>
                 <span>Flight crews prepping...</span>
@@ -98,7 +100,12 @@ export class AirBaseComponent extends Component<props, state> {
         if (base.wasDestroyed) { return wasDestroyedMarkup }
         if (this.state.isTargetingBombers) { return wrapper(isTargetingMarkup); }
         if (!base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
-        if (base.isAllOrdnanceTargeted()) { return wrapper(isFlyingMarkup); }
+        if (base.isAllOrdnanceTargeted()) { 
+            
+            GameLogic.notifyBaseConsumed({attackingPlayer: Game.getInstance().humanPlayer, base: this.props.base});
+
+            return wrapper(isFlyingMarkup); 
+        }
 
         return wrapper(readyToActivateMarkup);
 

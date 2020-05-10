@@ -183,9 +183,16 @@ export class MapComponent extends React.Component<props, state> implements Games
         this.handleBaseActivated({ nukedLocation: relatedBase.myMapLocation })
       }
     }
+
     else if (args.details.changeLabel === "Location Nuked") {
       this.handleLocationNuked({ nukedLocation: args.details.relatedLocation });
     }
+
+    else if (args.details.changeLabel === "Base Consumed") {
+      console.log("MapComponent: got a base consumed message.");
+      this.handleBaseConsumed({baseLocation: args.details.relatedLocation});
+    }
+
     else if (args.details.changeLabel === "ICBM Intercepted" ||
       args.details.changeLabel === "Submarine Missile Shot Down By ABM" ||
       args.details.changeLabel === "Bomber was shot down by ABM" ||
@@ -248,6 +255,19 @@ export class MapComponent extends React.Component<props, state> implements Games
         // mapLocElement.classList.add("shake-freeze");
 
         this.handleLocationDetargeted({ detargetedLocation: args.nukedLocation });
+      }
+    }
+  }
+
+  private handleBaseConsumed(args: { baseLocation: MapLocation | undefined }) {
+
+    if (args.baseLocation) {
+
+      const mapLocElement = document.getElementById(this.getMapLocationHtmlID(args.baseLocation));
+
+      if (mapLocElement) {
+        mapLocElement.classList.remove("activatedBase");
+        mapLocElement.classList.add("consumedBase");
       }
     }
   }

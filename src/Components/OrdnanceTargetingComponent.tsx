@@ -55,7 +55,6 @@ export class OrdnanceTargetingComponent extends React.Component<props, state> im
 
             (window as any)[Constants.NOTIFY_TARGET_RESULT_CALLBACK_NAME] = this.handleDropResult.bind(this);
 
-
         }
 
         const targetedMarkup = (args: { forMissileIndex: number}) => {

@@ -107,6 +107,12 @@ export class CountryMap {
         return this.getAllMilitaryBases().filter(b => b.WorldObjectLabel === "ABM") as AbmBase[];
     }
 
+    public getAllDefenseCapableABMBases(): AbmBase[] {
+        return (
+            this.getAllMilitaryBases().filter(b => b.WorldObjectLabel === "ABM") as AbmBase[])
+            .filter(b => b.totalMissiles > 0);
+    }
+
     public getRandomLocation() {
         const x = Rng.throwDice({hiNumberMinus1: this.map.length - 1});
         const y = Rng.throwDice({hiNumberMinus1: this.map.length - 1});
