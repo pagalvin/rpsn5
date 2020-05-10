@@ -3,6 +3,7 @@ import { Button } from '@material-ui/core';
 import { ArmyBase } from '../../Entities/WorldObjects/Bases/ArmyBase';
 import { GameLogic } from '../../Game/GameLogic';
 import { UIComponent } from '../GameButton';
+import { Game } from '../../Entities/gameEntity';
 
 interface props {
     base: ArmyBase;
@@ -75,6 +76,10 @@ export class ArmyBaseComponent extends Component<props, state> {
 
         if (base.wasDestroyed) { return wasDestroyedMarkup }
 
+        if (base.isDecamped) { 
+            GameLogic.notifyBaseConsumed({base: base, attackingPlayer: Game.getInstance().humanPlayer});
+        }
+        
         return (
             base.isReceivingOrders
                 ? (

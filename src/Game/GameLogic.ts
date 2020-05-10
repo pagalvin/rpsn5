@@ -15,10 +15,12 @@ import { MapUtil } from "../Utils/MapUtils";
 import { RadarBase } from "../Entities/WorldObjects/Bases/RadarBase";
 import { MilitaryBaseTypes, NonNullMilitaryBaseTypes } from "../Entities/WorldObjects/Bases/MilitaryBaseTypes";
 import { getNameProcessResult } from "../Entities/nameableGameObject";
+import { AbstractMilitaryBase } from "../Entities/WorldObjects/Bases/AbstractMilitaryBase";
 
 export type gameStateChangeType =
     "Advance Turn" |
     "Base Activated" |
+    "Base Consumed" |
     "Bomber was shot down by ABM" |
     "Bomber was shot down by Fighter" |
     "Computer Finished Its Turn" |
@@ -129,6 +131,17 @@ export class GameLogic {
 
     }
 
+    public static notifyBaseConsumed(args: { attackingPlayer: AbstractPlayer, base: MilitaryBaseTypes}) {
+
+        this.notifyGamestateChange({ 
+            details: { 
+                changeLabel: "Base Consumed", 
+                relatedLocation: args.base.myMapLocation, 
+                relatedBase: args.base
+            } 
+        })
+    }
+
     public static activateAirBase(args: { forBase: AirBase }) {
 
         console.log(`GameLogic: activateAirBase: Entering:`, args);
@@ -225,7 +238,6 @@ export class GameLogic {
                 console.log(`GameLogic.ts: tryAbmDefense: tryIntercept: Entering, ABM Base:`, {base: args.defender});
 
                 if (! args.defender) { return "failed" }; // there is no ABM base on line to defend this attack against.
-                if (args.defender.totalMissiles < 1) { return "failed" }
 
                 const didShootDownOrdnance = Rng.throwDice({ hiNumberMinus1: 100 }) < 50;
 
@@ -233,6 +245,11 @@ export class GameLogic {
 
                 // consume an abm missile.
                 args.defender.totalMissiles--;
+
+                // Notify map UI that this ABM base was used up.
+                if (args.defender.totalMissiles < 1) { 
+                    this.notifyBaseConsumed({base: args.defender, attackingPlayer: args.defender.myMapLocation.myMap.owningPlayer});
+                }
 
                 if (didShootDownOrdnance) {
 
@@ -249,7 +266,7 @@ export class GameLogic {
 
             let abmBaseIndex = 0;
 
-            const availableABMBases = args.defendingPlayer.map.getAllABMBases();
+            const availableABMBases = args.defendingPlayer.map.getAllDefenseCapableABMBases();
 
             // If no ABM bases, then the user can't defend.
             if (availableABMBases.length < 1) {

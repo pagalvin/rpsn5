@@ -4,6 +4,7 @@ import { NavyBase } from '../../Entities/WorldObjects/Bases/NavyBase';
 import { GameLogic } from '../../Game/GameLogic';
 import { OrdnanceTargetingComponent } from '../OrdnanceTargetingComponent';
 import { UIComponent } from '../GameButton';
+import { Game } from '../../Entities/gameEntity';
 
 interface props {
     base: NavyBase;
@@ -26,7 +27,6 @@ export class NavyBaseComponent extends Component<props, state> {
 
     private activateNavyBase() {
         console.log(`NavyBaseComponent: activateNavyBase: entering.`);
-        // GameLogic.activateNavyBase({ forBase: this.props.base });
         this.setState({ isTargetingMissiles: true });
     }
 
@@ -86,7 +86,10 @@ export class NavyBaseComponent extends Component<props, state> {
         if (base.wasDestroyed) { return wasDestroyedMarkup }
         if (this.state.isTargetingMissiles) { return wrapper(isTargetingMarkup); }
         if (!base.isReceivingOrders) { return wrapper(isNotReceivingOrdersMarkup); }
-        if (base.isAllOrdnanceTargeted()) { return wrapper(allTargetedMarkup); }
+        if (base.isAllOrdnanceTargeted()) { 
+            GameLogic.notifyBaseConsumed({base: this.props.base, attackingPlayer: Game.getInstance().humanPlayer});
+            return wrapper(allTargetedMarkup); 
+        }
 
         return wrapper(readyToActivateMarkup);
 

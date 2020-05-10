@@ -130,6 +130,7 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
         const armybase1 = myMapSummary.allArmyBases[0];
         GameLogic.activateArmyBase({ forBase: armybase1 });
 
+        GameLogic.notifyBaseConsumed({base: armybase1, attackingPlayer: this});
     }
 
     private missileTest() {
@@ -154,6 +155,8 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
             console.log(`ComputerPlayer.ts: missileTest: targeted missile ordnance:`, o);
         })
 
+        GameLogic.notifyBaseConsumed({attackingPlayer: this, base: missile1});
+
     }
 
     private navyBaseTest() {
@@ -174,7 +177,9 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
                     atMapLocation: this.getRandomLocation({ fromMap: Game.getInstance().humanPlayer.map }),
                     targetingOrdnance: o
                 });
-        })
+        });
+
+        GameLogic.notifyBaseConsumed({base: navyBase, attackingPlayer: this});
     }
 
     private airBaseTest() {
@@ -195,7 +200,9 @@ export class ComputerPlayer extends AbstractPlayer implements GamestateWatcher {
                     atMapLocation: this.getRandomLocation({ fromMap: Game.getInstance().humanPlayer.map }),
                     targetingOrdnance: o
                 });
-        })
+        });
+
+        GameLogic.notifyBaseConsumed({attackingPlayer: this, base: airBase});
     }
 
     private radarTest() {
